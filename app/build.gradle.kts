@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     // Flow and structured concurrency — the data and domain layers depend on this directly.
     implementation(libs.kotlinx.coroutines.core)
+    // Serialization: the typed session store and the navigation keys.
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
 
@@ -78,6 +80,9 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+    // Preferences store for settings, typed store for the resumable session.
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore)
 
     // Compose
     implementation(libs.androidx.compose.ui)
