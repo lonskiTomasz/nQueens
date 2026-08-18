@@ -9,6 +9,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.queens.puzzle.ui.game.GameScreen
+import com.queens.puzzle.ui.home.HomeScreen
 
 @Composable
 fun QueensNavHost(modifier: Modifier = Modifier) {
@@ -23,7 +24,15 @@ fun QueensNavHost(modifier: Modifier = Modifier) {
             rememberViewModelStoreNavEntryDecorator(),
         ),
         entryProvider = entryProvider {
-            entry<HomeKey> { Text("home") }
+            entry<HomeKey> {
+                HomeScreen(
+                    onStartGame = { boardSize -> backStack.add(GameKey(boardSize.value)) },
+                    onResumeGame = { boardSize ->
+                        backStack.add(GameKey(boardSize.value, resume = true))
+                    },
+                    onSeeAllBestTimes = { backStack.add(BestTimesKey) },
+                )
+            }
             entry<GameKey> { key ->
                 GameScreen(
                     boardSize = key.boardSize,

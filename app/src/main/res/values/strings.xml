@@ -11,7 +11,6 @@
     <string name="home_best_times">Best times</string>
     <string name="home_see_all">See all</string>
     <string name="home_no_best_times">No solves yet. Your times will appear here.</string>
-    <string name="home_theme_light">Light theme</string>
     <string name="home_theme_dark">Dark theme</string>
     <string name="home_board_size_option">%1$d × %1$d board</string>
 
