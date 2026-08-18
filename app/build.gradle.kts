@@ -56,6 +56,8 @@ dependencies {
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
+    // Flow and structured concurrency — the data and domain layers depend on this directly.
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
 
