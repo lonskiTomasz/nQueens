@@ -1,7 +1,9 @@
 package com.queens.puzzle.ui.designsystem.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +20,9 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
 /** A board-size pill on the home screen. 48 dp tall, so it is already a legal touch target. */
 @Composable
@@ -49,6 +53,18 @@ fun SizeChip(
             contentAlignment = Alignment.Center,
         ) {
             Text(text = label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun SizeChipPreview() {
+    QueensPreviewSurface {
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            SizeChip(label = "4", selected = false, onClick = {})
+            SizeChip(label = "8", selected = true, onClick = {})
+            SizeChip(label = "12", selected = false, onClick = {})
         }
     }
 }

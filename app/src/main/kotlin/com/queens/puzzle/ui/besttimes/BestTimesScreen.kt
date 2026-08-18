@@ -40,6 +40,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +52,9 @@ import com.queens.puzzle.common.time.DurationFormatter
 import com.queens.puzzle.common.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.ui.designsystem.component.SizeChip
+import com.queens.puzzle.ui.designsystem.preview.PreviewSolveRows
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
+import com.queens.puzzle.ui.designsystem.preview.previewBestTimesUiState
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
 import com.queens.puzzle.ui.designsystem.theme.QueensTheme
 import java.text.SimpleDateFormat
@@ -286,3 +291,48 @@ private fun RelativeDay.label(completedAtMillis: Long): String = when (this) {
 
 private fun clockTime(millis: Long): String =
     SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(millis))
+
+/** History with every date bucket the rows can show, and a best row picked out. */
+@PreviewLightDark
+@Composable
+private fun BestTimesScreenPreview() {
+    QueensPreviewScreen {
+        BestTimesScreen(
+            uiState = previewBestTimesUiState(),
+            onFilterSelected = {},
+            onClearHistory = {},
+            onNavigateBack = {},
+        )
+    }
+}
+
+/** Filtered to one size. */
+@Preview
+@Composable
+private fun BestTimesScreenFilteredPreview() {
+    QueensPreviewScreen {
+        BestTimesScreen(
+            uiState = previewBestTimesUiState(
+                selectedFilter = 8,
+                rows = PreviewSolveRows.filter { it.solve.boardSize.value == 8 },
+            ),
+            onFilterSelected = {},
+            onClearHistory = {},
+            onNavigateBack = {},
+        )
+    }
+}
+
+/** Nothing solved yet. */
+@Preview
+@Composable
+private fun BestTimesScreenEmptyPreview() {
+    QueensPreviewScreen {
+        BestTimesScreen(
+            uiState = BestTimesUiState(),
+            onFilterSelected = {},
+            onClearHistory = {},
+            onNavigateBack = {},
+        )
+    }
+}

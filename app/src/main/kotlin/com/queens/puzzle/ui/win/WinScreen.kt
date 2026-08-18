@@ -41,6 +41,8 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +52,8 @@ import com.queens.puzzle.R
 import com.queens.puzzle.common.time.DurationFormatter
 import com.queens.puzzle.model.WinSummary
 import com.queens.puzzle.ui.designsystem.component.QueenGlyph
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
+import com.queens.puzzle.ui.designsystem.preview.previewWinSummary
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
 import com.queens.puzzle.ui.designsystem.theme.QueensTheme
 
@@ -338,5 +342,65 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
                 color = MaterialTheme.colorScheme.outline,
             )
         }
+    }
+}
+
+/** The screen it is built for: a new best, with the improvement spelled out. */
+@PreviewLightDark
+@Composable
+private fun WinScreenNewBestPreview() {
+    QueensPreviewScreen {
+        WinScreen(
+            uiState = WinUiState.Solved(previewWinSummary()),
+            onPlay = {},
+            onSeeBestTimes = {},
+            onClose = {},
+        )
+    }
+}
+
+/** A first solve of a size: a best, but with nothing to have beaten. */
+@Preview
+@Composable
+private fun WinScreenFirstSolvePreview() {
+    QueensPreviewScreen {
+        WinScreen(
+            uiState = WinUiState.Solved(
+                previewWinSummary(improvementMillis = null, solveCountForSize = 1),
+            ),
+            onPlay = {},
+            onSeeBestTimes = {},
+            onClose = {},
+        )
+    }
+}
+
+/** Slower than the best — the badge has to congratulate without celebrating. */
+@Preview
+@Composable
+private fun WinScreenSlowerPreview() {
+    QueensPreviewScreen {
+        WinScreen(
+            uiState = WinUiState.Solved(
+                previewWinSummary(isNewBest = false, improvementMillis = -54_000),
+            ),
+            onPlay = {},
+            onSeeBestTimes = {},
+            onClose = {},
+        )
+    }
+}
+
+/** The solve is gone — the history was cleared while this screen was open. */
+@Preview
+@Composable
+private fun WinScreenMissingPreview() {
+    QueensPreviewScreen {
+        WinScreen(
+            uiState = WinUiState.Missing,
+            onPlay = {},
+            onSeeBestTimes = {},
+            onClose = {},
+        )
     }
 }

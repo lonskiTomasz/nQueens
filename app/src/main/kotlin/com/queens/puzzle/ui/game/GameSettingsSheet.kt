@@ -23,10 +23,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.queens.puzzle.R
 import com.queens.puzzle.model.GameSettings
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
 /**
  * Gameplay options.
@@ -45,43 +48,62 @@ fun GameSettingsSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(),
     ) {
-        Column(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 28.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+        GameSettingsContent(
+            settings = settings,
+            onShowAttackLinesChanged = onShowAttackLinesChanged,
+            onHapticsChanged = onHapticsChanged,
+            onDone = onDismiss,
+        )
+    }
+}
+
+/**
+ * The sheet's contents, held apart from the sheet itself so they can be previewed: a
+ * `ModalBottomSheet` renders as an empty window in the preview tooling, its contents do not.
+ */
+@Composable
+private fun GameSettingsContent(
+    settings: GameSettings,
+    onShowAttackLinesChanged: (Boolean) -> Unit,
+    onHapticsChanged: (Boolean) -> Unit,
+    onDone: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 28.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.settings_title),
+            style = MaterialTheme.typography.titleLarge,
+        )
+
+        OutlinedCard(shape = RoundedCornerShape(20.dp)) {
+            SettingRow(
+                title = stringResource(R.string.settings_attack_lines),
+                detail = stringResource(R.string.settings_attack_lines_detail),
+                checked = settings.showAttackLines,
+                onCheckedChange = onShowAttackLinesChanged,
+            )
+            HorizontalDivider()
+            SettingRow(
+                title = stringResource(R.string.settings_haptics),
+                detail = stringResource(R.string.settings_haptics_detail),
+                checked = settings.hapticsEnabled,
+                onCheckedChange = onHapticsChanged,
+            )
+        }
+
+        Button(
+            onClick = onDone,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(percent = 50),
         ) {
             Text(
-                text = stringResource(R.string.settings_title),
-                style = MaterialTheme.typography.titleLarge,
+                text = stringResource(R.string.settings_done),
+                style = MaterialTheme.typography.labelLarge,
             )
-
-            OutlinedCard(shape = RoundedCornerShape(20.dp)) {
-                SettingRow(
-                    title = stringResource(R.string.settings_attack_lines),
-                    detail = stringResource(R.string.settings_attack_lines_detail),
-                    checked = settings.showAttackLines,
-                    onCheckedChange = onShowAttackLinesChanged,
-                )
-                HorizontalDivider()
-                SettingRow(
-                    title = stringResource(R.string.settings_haptics),
-                    detail = stringResource(R.string.settings_haptics_detail),
-                    checked = settings.hapticsEnabled,
-                    onCheckedChange = onHapticsChanged,
-                )
-            }
-
-            Button(
-                onClick = onDismiss,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(percent = 50),
-            ) {
-                Text(
-                    text = stringResource(R.string.settings_done),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
         }
     }
 }
@@ -110,5 +132,31 @@ private fun SettingRow(
             )
         }
         Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GameSettingsContentPreview() {
+    QueensPreviewSurface(padding = 0.dp) {
+        GameSettingsContent(
+            settings = GameSettings(showAttackLines = true, hapticsEnabled = false),
+            onShowAttackLinesChanged = {},
+            onHapticsChanged = {},
+            onDone = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun GameSettingsContentBothOnPreview() {
+    QueensPreviewSurface(padding = 0.dp) {
+        GameSettingsContent(
+            settings = GameSettings(showAttackLines = true, hapticsEnabled = true),
+            onShowAttackLinesChanged = {},
+            onHapticsChanged = {},
+            onDone = {},
+        )
     }
 }

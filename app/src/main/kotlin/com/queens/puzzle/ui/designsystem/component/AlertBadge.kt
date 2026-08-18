@@ -1,7 +1,9 @@
 package com.queens.puzzle.ui.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -12,8 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
 /** U+0021. Drawn as text so no vector asset ships, the same way [QueenGlyph] is. */
 private const val ALERT_MARK = "!"
@@ -44,3 +48,22 @@ fun AlertBadge(
     }
 }
 
+/** Its two sizes: the dialog's, and the smaller one that rides inside the conflict banner. */
+@PreviewLightDark
+@Composable
+private fun AlertBadgePreview() {
+    QueensPreviewSurface {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AlertBadge()
+            AlertBadge(
+                size = 24.dp,
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError,
+                textStyle = MaterialTheme.typography.labelLarge,
+            )
+        }
+    }
+}

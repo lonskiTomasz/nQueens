@@ -8,8 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.queens.puzzle.R
 import com.queens.puzzle.ui.designsystem.component.AlertBadge
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
 /**
  * Confirmation for the destructive reset.
@@ -50,4 +53,21 @@ fun ResetConfirmDialog(
             }
         },
     )
+}
+
+@PreviewLightDark
+@Composable
+private fun ResetConfirmDialogPreview() {
+    QueensPreviewSurface {
+        ResetConfirmDialog(queensPlaced = 5, onConfirm = {}, onDismiss = {})
+    }
+}
+
+/** The singular case, which takes different copy rather than "1 queens". */
+@Preview
+@Composable
+private fun ResetConfirmDialogSingularPreview() {
+    QueensPreviewSurface {
+        ResetConfirmDialog(queensPlaced = 1, onConfirm = {}, onDismiss = {})
+    }
 }

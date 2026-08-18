@@ -15,11 +15,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.queens.puzzle.R
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Position
+import com.queens.puzzle.ui.designsystem.preview.PreviewQueens
+import com.queens.puzzle.ui.designsystem.preview.PreviewSolvedQueens
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
+import com.queens.puzzle.ui.designsystem.preview.previewSquares
 
 /** The glyph fills about two thirds of its square, matching the spec's 30 sp inside 45 dp. */
 private const val GLYPH_SIZE_RATIO = 0.66f
@@ -116,4 +122,59 @@ private fun BoardSquareState.describe(): String {
         position.column + 1,
         occupancy,
     )
+}
+
+/**
+ * The board carries no game state of its own, so it previews at any size from sample squares
+ * alone — the reason it is a standalone widget rather than part of the game screen.
+ */
+@Preview(widthDp = 340)
+@Composable
+private fun BoardGridEmptyPreview() {
+    QueensPreviewSurface {
+        BoardGrid(
+            boardSize = BoardSize(8),
+            squares = emptyList(),
+            onSquareClick = {},
+        )
+    }
+}
+
+/** Mid-game: five queens down, two of them sharing a diagonal, attack lines on. */
+@PreviewLightDark
+@Composable
+private fun BoardGridInPlayPreview() {
+    QueensPreviewSurface {
+        BoardGrid(
+            boardSize = BoardSize(8),
+            squares = previewSquares(BoardSize(8), PreviewQueens),
+            onSquareClick = {},
+        )
+    }
+}
+
+/** The smallest board there is, solved. */
+@PreviewLightDark
+@Composable
+private fun BoardGridSolvedPreview() {
+    QueensPreviewSurface {
+        BoardGrid(
+            boardSize = BoardSize(4),
+            squares = previewSquares(BoardSize(4), PreviewSolvedQueens),
+            onSquareClick = {},
+        )
+    }
+}
+
+/** The largest board, where the squares are at their smallest. */
+@Preview(widthDp = 340)
+@Composable
+private fun BoardGridLargestPreview() {
+    QueensPreviewSurface {
+        BoardGrid(
+            boardSize = BoardSize(12),
+            squares = previewSquares(BoardSize(12), setOf(Position(0, 0), Position(5, 7))),
+            onSquareClick = {},
+        )
+    }
 }

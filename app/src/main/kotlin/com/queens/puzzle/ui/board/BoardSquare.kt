@@ -7,8 +7,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -20,9 +23,14 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.queens.puzzle.model.Position
 import com.queens.puzzle.ui.designsystem.component.AttackGlyph
 import com.queens.puzzle.ui.designsystem.component.QueenGlyph
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.ui.designsystem.theme.QueensTheme
 
 /** Timings from the design spec. */
@@ -114,6 +122,57 @@ fun BoardSquare(
                     .fillMaxSize()
                     .scale(glyphScale),
             )
+        }
+    }
+}
+
+/**
+ * The four states of a square, as the design lays them out: empty, empty under attack, a
+ * placed queen, and a queen in conflict.
+ */
+@PreviewLightDark
+@Composable
+private fun BoardSquareStatesPreview() {
+    QueensPreviewSurface {
+        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            listOf(
+                BoardSquareState(Position(0, 0)),
+                BoardSquareState(Position(0, 0), isAttacked = true),
+                BoardSquareState(Position(0, 0), hasQueen = true),
+                BoardSquareState(Position(0, 0), hasQueen = true, isConflicting = true),
+            ).forEach { state ->
+                BoardSquare(
+                    state = state,
+                    glyphSize = 38.sp,
+                    contentDescription = "",
+                    onClick = {},
+                    modifier = Modifier.size(84.dp),
+                )
+            }
+        }
+    }
+}
+
+/** The same states on a dark square, where the glyph takes its other colour. */
+@PreviewLightDark
+@Composable
+private fun BoardSquareOnDarkSquarePreview() {
+    QueensPreviewSurface {
+        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            listOf(
+                BoardSquareState(Position(0, 1)),
+                BoardSquareState(Position(0, 1), isAttacked = true),
+                BoardSquareState(Position(0, 1), hasQueen = true),
+                BoardSquareState(Position(0, 1), hasQueen = true, isConflicting = true),
+            ).forEach { state ->
+                BoardSquare(
+                    state = state,
+                    glyphSize = 38.sp,
+                    contentDescription = "",
+                    onClick = {},
+                    modifier = Modifier.size(84.dp),
+                )
+            }
         }
     }
 }

@@ -19,7 +19,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.sp
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
 
 /**
@@ -57,5 +59,18 @@ fun TimerChip(
             fontWeight = FontWeight.SemiBold,
             letterSpacing = 0.5.sp,
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun TimerChipPreview() {
+    QueensPreviewSurface {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            TimerChip(time = "00:07")
+            TimerChip(time = "02:14")
+            // Past an hour the clock grows a field; the pill has to take it.
+            TimerChip(time = "1:05:09")
+        }
     }
 }

@@ -4,7 +4,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -21,8 +23,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.model.ThemePreference
 
 /** The lit half of the track, and the distance it travels between the two segments. */
@@ -144,5 +148,28 @@ private fun Moon(lit: Boolean, onThumb: Boolean) {
                     CircleShape,
                 )
         )
+    }
+}
+
+/**
+ * Worth previewing in both schemes for a reason the other components do not have: this control
+ * is how the player *changes* scheme, so its two states have to read correctly in each one.
+ */
+@PreviewLightDark
+@Composable
+private fun ThemeTogglePreview() {
+    QueensPreviewSurface {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            ThemeToggle(
+                theme = ThemePreference.Light,
+                onThemeSelected = {},
+                label = "Dark theme",
+            )
+            ThemeToggle(
+                theme = ThemePreference.Dark,
+                onThemeSelected = {},
+                label = "Dark theme",
+            )
+        }
     }
 }
