@@ -26,10 +26,9 @@
     </plurals>
     <string name="game_undo">Undo</string>
     <string name="game_reset">Reset</string>
-    <string name="game_conflict_row">Two queens share a row.</string>
-    <string name="game_conflict_column">Two queens share a column.</string>
-    <string name="game_conflict_diagonal">Two queens share a diagonal.</string>
-    <string name="game_conflict_multiple">Queens are attacking each other.</string>
+    <!-- Conflict banner. One message whatever the queens share: the board is already showing
+         which squares are at fault, so naming the line only says it again in words. -->
+    <string name="game_conflict">Queens are attacking each other.</string>
     <string name="game_board_full">All queens are placed. Remove one to move it.</string>
     <string name="game_solved_announcement">Solved. Every queen is at peace.</string>
 
@@ -42,8 +41,8 @@
 
     <!-- Game settings sheet -->
     <string name="settings_title">Game settings</string>
-    <string name="settings_attack_lines">Show attack lines</string>
-    <string name="settings_attack_lines_detail">Dim every square a queen covers</string>
+    <string name="settings_attack_lines">Mark attacked squares</string>
+    <string name="settings_attack_lines_detail">Cross out squares a queen covers</string>
     <string name="settings_haptics">Haptic on place</string>
     <string name="settings_haptics_detail">Light tick, double tick on conflict</string>
     <string name="settings_done">Done</string>

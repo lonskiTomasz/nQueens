@@ -12,8 +12,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object HomeKey : NavKey
 
+/** [resume] distinguishes "carry on with the stored board" from "start this size fresh". */
 @Serializable
-data class GameKey(val boardSize: Int) : NavKey
+data class GameKey(val boardSize: Int, val resume: Boolean = false) : NavKey
 
 /** The win screen takes only an id and loads the solve itself, so it survives process death. */
 @Serializable
