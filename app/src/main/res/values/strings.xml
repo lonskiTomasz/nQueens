@@ -64,8 +64,13 @@
     <string name="win_stat_taps">taps</string>
     <string name="win_stat_undos">undos</string>
     <string name="win_stat_solved">solved</string>
+    <!-- The primary action offers the next board up; "Play again" is only for the largest,
+         where there is no next one. -->
+    <string name="win_play_next">Play %1$d × %1$d</string>
     <string name="win_play_again">Play again</string>
-    <string name="win_change_size">Change board size</string>
+    <string name="win_best_times">See best times</string>
+    <string name="win_close">Close</string>
+    <string name="win_home">Back to home</string>
 
     <!-- Best times -->
     <string name="best_times_title">Best times</string>

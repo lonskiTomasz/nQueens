@@ -10,6 +10,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.queens.puzzle.ui.game.GameScreen
 import com.queens.puzzle.ui.home.HomeScreen
+import com.queens.puzzle.ui.win.WinScreen
 
 @Composable
 fun QueensNavHost(modifier: Modifier = Modifier) {
@@ -44,7 +45,20 @@ fun QueensNavHost(modifier: Modifier = Modifier) {
                     },
                 )
             }
-            entry<WinKey> { key -> Text("win ${key.solveId}") }
+            entry<WinKey> { key ->
+                WinScreen(
+                    solveId = key.solveId,
+                    onPlay = { boardSize ->
+                        backStack.removeLastOrNull()
+                        backStack.add(GameKey(boardSize))
+                    },
+                    onSeeBestTimes = { backStack.add(BestTimesKey) },
+                    onClose = {
+                        // Straight home: the win screen is the end of a game, not a step in one.
+                        backStack.removeAll { it != HomeKey }
+                    },
+                )
+            }
             entry<BestTimesKey> { Text("best times") }
         },
     )
