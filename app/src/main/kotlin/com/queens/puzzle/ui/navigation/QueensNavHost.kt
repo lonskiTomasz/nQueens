@@ -1,6 +1,5 @@
 package com.queens.puzzle.ui.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -8,6 +7,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.queens.puzzle.ui.besttimes.BestTimesScreen
 import com.queens.puzzle.ui.game.GameScreen
 import com.queens.puzzle.ui.home.HomeScreen
 import com.queens.puzzle.ui.win.WinScreen
@@ -59,7 +59,9 @@ fun QueensNavHost(modifier: Modifier = Modifier) {
                     },
                 )
             }
-            entry<BestTimesKey> { Text("best times") }
+            entry<BestTimesKey> {
+                BestTimesScreen(onNavigateBack = { backStack.removeLastOrNull() })
+            }
         },
     )
 }
