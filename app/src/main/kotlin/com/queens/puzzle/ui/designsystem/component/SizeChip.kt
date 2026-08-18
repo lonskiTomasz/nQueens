@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ fun SizeChip(
             .defaultMinSize(minWidth = 56.dp)
             .semantics {
                 role = Role.RadioButton
+                this.selected = selected
                 if (contentDescription != null) this.contentDescription = contentDescription
             },
         shape = RoundedCornerShape(percent = 50),

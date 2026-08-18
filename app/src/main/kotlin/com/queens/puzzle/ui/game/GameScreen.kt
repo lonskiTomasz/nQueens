@@ -22,10 +22,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -59,13 +62,20 @@ fun GameScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val feedback = rememberGameFeedback(enabled = uiState.settings.hapticsEnabled)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val boardFullMessage = stringResource(R.string.game_board_full)
 
     LaunchedEffect(viewModel, feedback) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 GameEffect.HapticPlace -> feedback.place()
                 GameEffect.HapticConflict -> feedback.conflict()
-                GameEffect.BoardFull -> feedback.conflict()
+                GameEffect.BoardFull -> {
+                    feedback.conflict()
+                    // The reducer refuses silently; say why rather than looking broken.
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    snackbarHostState.showSnackbar(boardFullMessage)
+                }
                 GameEffect.CelebrateWin -> feedback.win()
                 is GameEffect.NavigateToWin -> onNavigateToWin(effect.solveId)
             }
@@ -84,6 +94,7 @@ fun GameScreen(
         onShowAttackLinesChanged = viewModel::onShowAttackLinesChanged,
         onHapticsChanged = viewModel::onHapticsChanged,
         modifier = modifier,
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -101,8 +112,12 @@ fun GameScreen(
     onShowAttackLinesChanged: (Boolean) -> Unit,
     onHapticsChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
-    Scaffold(modifier = modifier) { padding ->
+    Scaffold(
+        modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()

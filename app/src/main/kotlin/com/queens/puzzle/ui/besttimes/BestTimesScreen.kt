@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
@@ -278,9 +279,9 @@ private fun MiniBoard(boardSize: BoardSize) {
 private fun RelativeDay.label(completedAtMillis: Long): String = when (this) {
     RelativeDay.Today -> stringResource(R.string.date_today, clockTime(completedAtMillis))
     RelativeDay.Yesterday -> stringResource(R.string.date_yesterday)
-    is RelativeDay.DaysAgo -> stringResource(R.string.date_days_ago, days)
+    is RelativeDay.DaysAgo -> pluralStringResource(R.plurals.date_days_ago, days, days)
     RelativeDay.LastWeek -> stringResource(R.string.date_last_week)
-    is RelativeDay.WeeksAgo -> stringResource(R.string.date_weeks_ago, weeks)
+    is RelativeDay.WeeksAgo -> pluralStringResource(R.plurals.date_weeks_ago, weeks, weeks)
 }
 
 private fun clockTime(millis: Long): String =

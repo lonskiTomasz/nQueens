@@ -1,6 +1,8 @@
 package com.queens.puzzle.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,10 +75,13 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     Scaffold(modifier = modifier) { padding ->
+        // Scrolls rather than weighting: the design is drawn at 412x892, and on a shorter
+        // screen a weighted card is squeezed to nothing instead of moving below the fold.
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(padding)
+                .verticalScroll(rememberScrollState()),
         ) {
             HomeTopBar(
                 theme = uiState.theme,
@@ -158,8 +163,7 @@ fun HomeScreen(
                 bestTimes = uiState.bestTimes,
                 onSeeAll = onSeeAllBestTimes,
                 modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp)
-                    .weight(1f),
+                    .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp),
             )
         }
     }

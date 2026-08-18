@@ -29,7 +29,6 @@
          which squares are at fault, so naming the line only says it again in words. -->
     <string name="game_conflict">Queens are attacking each other.</string>
     <string name="game_board_full">All queens are placed. Remove one to move it.</string>
-    <string name="game_solved_announcement">Solved. Every queen is at peace.</string>
 
     <!-- Board square, spoken. Example: "Row 3, column 5, queen, in conflict" -->
     <string name="board_square_description">Row %1$d, column %2$d, %3$s</string>
@@ -85,7 +84,13 @@
     <!-- Relative dates on the history rows -->
     <string name="date_today">Today · %1$s</string>
     <string name="date_yesterday">Yesterday</string>
-    <string name="date_days_ago">%1$d days ago</string>
+    <plurals name="date_days_ago">
+        <item quantity="one">%1$d day ago</item>
+        <item quantity="other">%1$d days ago</item>
+    </plurals>
     <string name="date_last_week">Last week</string>
-    <string name="date_weeks_ago">%1$d weeks ago</string>
+    <plurals name="date_weeks_ago">
+        <item quantity="one">%1$d week ago</item>
+        <item quantity="other">%1$d weeks ago</item>
+    </plurals>
 </resources>
