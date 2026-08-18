@@ -21,6 +21,9 @@ data class QueensExtendedColors(
     val queenOnLightSquare: Color,
     val queenOnDarkSquare: Color,
     val queenConflict: Color,
+    val conflictTint: Color,
+    val attackMarkOnLightSquare: Color,
+    val attackMarkOnDarkSquare: Color,
     val winHeadline: Color,
     val winGradientTop: Color,
 )
@@ -32,6 +35,9 @@ private val LightExtended = QueensExtendedColors(
     queenOnLightSquare = QueenOnLightSquare,
     queenOnDarkSquare = QueenOnDarkSquare,
     queenConflict = QueenConflictLight,
+    conflictTint = ConflictTintLight,
+    attackMarkOnLightSquare = AttackMarkOnLightSquare,
+    attackMarkOnDarkSquare = AttackMarkOnDarkSquare,
     winHeadline = WinHeadlineLight,
     winGradientTop = WinGradientTopLight,
 )
@@ -43,6 +49,10 @@ private val DarkExtended = QueensExtendedColors(
     queenOnLightSquare = QueenOnDimSquare,
     queenOnDarkSquare = QueenOnDimSquare,
     queenConflict = QueenConflictDark,
+    conflictTint = ConflictTintDark,
+    // Both square shades are dark here, so the cross is light on both.
+    attackMarkOnLightSquare = AttackMarkOnDimSquare,
+    attackMarkOnDarkSquare = AttackMarkOnDimSquare,
     winHeadline = TertiaryDark,
     winGradientTop = WinGradientTopDark,
 )

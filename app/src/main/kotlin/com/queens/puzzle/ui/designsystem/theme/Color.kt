@@ -69,6 +69,16 @@ val QueenOnDimSquare = Color(0xFFE8E6E1)
 val QueenConflictLight = Color(0xFF8A4E12)
 val QueenConflictDark = Color(0xFFF0A868)
 
+// Board overlays. The conflict tint is the error role at the spec's alpha.
+val ConflictTintLight = Color(0x66E08E45)
+val ConflictTintDark = Color(0x59F0A868)
+
+// The cross on a square a queen covers. Semi-transparent so it stays behind the queens in the
+// reading order, and per square shade because one colour cannot carry both.
+val AttackMarkOnLightSquare = Color(0x8C3D3226)
+val AttackMarkOnDarkSquare = Color(0x99F5EFE4)
+val AttackMarkOnDimSquare = Color(0x8CE8E6E1)
+
 // Win screen: the celebration headline sits on a pale gradient, so it needs its own darker gold
 val WinHeadlineLight = Color(0xFF8A6A0E)
 val WinGradientTopLight = Color(0xFFFBF3DE)
