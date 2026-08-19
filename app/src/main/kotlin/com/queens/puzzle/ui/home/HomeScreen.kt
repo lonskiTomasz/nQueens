@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -239,6 +240,8 @@ private fun BestTimesCard(
             }
         }
 
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 20.dp))
+
         if (bestTimes.isEmpty()) {
             Text(
                 text = stringResource(R.string.home_no_best_times),
@@ -268,7 +271,6 @@ private fun BestTimesCard(
                         style = MaterialTheme.typography.bodyLarge,
                         fontFamily = NumericFont,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
             }
