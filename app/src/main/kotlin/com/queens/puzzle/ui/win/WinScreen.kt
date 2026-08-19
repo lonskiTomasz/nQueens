@@ -6,15 +6,20 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -44,12 +49,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.queens.puzzle.R
 import com.queens.puzzle.common.time.DurationFormatter
+import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.WinSummary
 import com.queens.puzzle.ui.designsystem.component.QueenGlyph
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
@@ -90,7 +98,7 @@ fun WinScreen(
 ) {
     val extended = QueensTheme.extendedColors
 
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
             .background(
@@ -107,6 +115,7 @@ fun WinScreen(
                 summary = uiState.summary,
                 onPlay = onPlay,
                 onSeeBestTimes = onSeeBestTimes,
+                viewportHeight = maxHeight,
             )
         }
 
@@ -126,6 +135,50 @@ fun WinScreen(
                 contentDescription = stringResource(R.string.win_close),
             )
         }
+    }
+}
+
+/** A window shorter than this cannot show the whole celebration at once. */
+private val CompactHeight = 480.dp
+
+/**
+ * The celebration at two scales.
+ *
+ * A rotated phone has room for roughly half the design's vertical spend, and what has to
+ * survive the cut is the time — it is what the screen is for.
+ */
+private data class WinMetrics(
+    val topPadding: Dp,
+    val badgeSize: Dp,
+    val badgeGlyph: TextUnit,
+    val headline: TextUnit,
+    val time: TextUnit,
+    val afterBadge: Dp,
+    val beforeTime: Dp,
+    val beforeStats: Dp,
+) {
+    companion object {
+        val Regular = WinMetrics(
+            topPadding = 72.dp,
+            badgeSize = 88.dp,
+            badgeGlyph = 42.sp,
+            headline = 36.sp,
+            time = 56.sp,
+            afterBadge = 24.dp,
+            beforeTime = 32.dp,
+            beforeStats = 28.dp,
+        )
+
+        val Compact = WinMetrics(
+            topPadding = 20.dp,
+            badgeSize = 56.dp,
+            badgeGlyph = 28.sp,
+            headline = 28.sp,
+            time = 40.sp,
+            afterBadge = 12.dp,
+            beforeTime = 16.dp,
+            beforeStats = 16.dp,
+        )
     }
 }
 
@@ -155,6 +208,59 @@ private fun SolvedContent(
     summary: WinSummary,
     onPlay: (Int) -> Unit,
     onSeeBestTimes: () -> Unit,
+    viewportHeight: Dp,
+) {
+    val scrollState = rememberScrollState()
+    val compact = viewportHeight < CompactHeight
+    val metrics = if (compact) WinMetrics.Compact else WinMetrics.Regular
+
+    if (compact) {
+        // Too short to show the whole celebration: the summary scrolls inside what is left and
+        // the buttons keep their place, because the way out must never be the thing off screen.
+        Column(modifier = Modifier.fillMaxSize()) {
+            Summary(
+                summary = summary,
+                metrics = metrics,
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+                    .padding(top = metrics.topPadding),
+            )
+            WinActions(
+                boardSize = summary.solve.boardSize,
+                onPlay = onPlay,
+                onSeeBestTimes = onSeeBestTimes,
+            )
+        }
+    } else {
+        // A windowful tall at minimum, so SpaceBetween lands the buttons on the bottom exactly
+        // as the design draws them, and the scroll only engages if the text ever outgrows it.
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+                .heightIn(min = viewportHeight),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Summary(
+                summary = summary,
+                metrics = metrics,
+                modifier = Modifier.padding(top = metrics.topPadding),
+            )
+            WinActions(
+                boardSize = summary.solve.boardSize,
+                onPlay = onPlay,
+                onSeeBestTimes = onSeeBestTimes,
+            )
+        }
+    }
+}
+
+@Composable
+private fun Summary(
+    summary: WinSummary,
+    metrics: WinMetrics,
+    modifier: Modifier = Modifier,
 ) {
     val extended = QueensTheme.extendedColors
     val solve = summary.solve
@@ -172,25 +278,28 @@ private fun SolvedContent(
     LaunchedEffect(Unit) { badgeVisible = true }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 24.dp, end = 24.dp, top = 72.dp, bottom = 24.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
             modifier = Modifier
-                .size(88.dp)
+                .size(metrics.badgeSize)
                 .scale(badgeScale)
                 .background(MaterialTheme.colorScheme.tertiary, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            QueenGlyph(color = MaterialTheme.colorScheme.onTertiary, fontSize = 42.sp)
+            QueenGlyph(
+                color = MaterialTheme.colorScheme.onTertiary,
+                fontSize = metrics.badgeGlyph,
+            )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(metrics.afterBadge))
         Text(
             text = stringResource(R.string.win_headline),
-            style = MaterialTheme.typography.headlineLarge.copy(fontSize = 36.sp),
+            style = MaterialTheme.typography.headlineLarge.copy(fontSize = metrics.headline),
             color = extended.winHeadline,
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
@@ -202,18 +311,18 @@ private fun SolvedContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(metrics.beforeTime))
         Text(
             text = DurationFormatter.format(solve.durationMillis),
             fontFamily = NumericFont,
-            fontSize = 56.sp,
+            fontSize = metrics.time,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = 1.sp,
         )
 
         BestBadge(summary = summary, modifier = Modifier.padding(top = 14.dp))
 
-        Spacer(Modifier.height(28.dp))
+        Spacer(Modifier.height(metrics.beforeStats))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -234,18 +343,35 @@ private fun SolvedContent(
                 modifier = Modifier.weight(1f),
             )
         }
+    }
+}
 
-        Spacer(Modifier.weight(1f))
+/**
+ * What to do next, in the order a player wants it: the board one size up, then the times.
+ *
+ * Solving a board is an invitation to the next one, so the primary button offers that rather
+ * than the same board again — the home screen's ladder of sizes, climbed a rung. At the largest
+ * board there is no rung above, and the offer falls back to playing it again.
+ */
+@Composable
+private fun WinActions(
+    boardSize: BoardSize,
+    onPlay: (Int) -> Unit,
+    onSeeBestTimes: () -> Unit,
+) {
+    val next = boardSize.next
 
-        // What to do next, in the order a player wants it: the board one size up, then the
-        // times. Solving a board is an invitation to the next one, so the primary button offers
-        // that rather than the same board again — the home screen's ladder of sizes, climbed a
-        // rung. At the largest board there is no rung above, and the offer falls back to
-        // playing it again.
-        val next = solve.boardSize.next
-
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            // The screen is edge-to-edge and draws its own gradient behind the system bars, so
+            // the actions have to hold themselves clear of the navigation bar.
+            .navigationBarsPadding()
+            .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Button(
-            onClick = { onPlay((next ?: solve.boardSize).value) },
+            onClick = { onPlay((next ?: boardSize).value) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -349,6 +475,20 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
 @PreviewLightDark
 @Composable
 private fun WinScreenNewBestPreview() {
+    QueensPreviewScreen {
+        WinScreen(
+            uiState = WinUiState.Solved(previewWinSummary()),
+            onPlay = {},
+            onSeeBestTimes = {},
+            onClose = {},
+        )
+    }
+}
+
+/** Rotated: the summary scrolls, the buttons stay put. */
+@Preview(widthDp = 740, heightDp = 360)
+@Composable
+private fun WinScreenLandscapePreview() {
     QueensPreviewScreen {
         WinScreen(
             uiState = WinUiState.Solved(previewWinSummary()),

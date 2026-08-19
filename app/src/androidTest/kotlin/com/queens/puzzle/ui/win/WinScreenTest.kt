@@ -1,10 +1,16 @@
 package com.queens.puzzle.ui.win
 
+import androidx.compose.ui.test.DeviceConfigurationOverride
+import androidx.compose.ui.test.ForcedSize
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.Composable
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.model.WinSummary
@@ -84,7 +90,9 @@ class WinScreenTest {
         var asked = false
         setScreen(summary(), onSeeBestTimes = { asked = true })
 
-        composeRule.onNodeWithText("See best times").performClick()
+        // On a short window the summary overflows and this sits below the fold, so scroll to
+        // it first — the column scrolls exactly so it is still reachable there.
+        composeRule.onNodeWithText("See best times").performScrollTo().performClick()
 
         assertEquals(true, asked)
     }
@@ -97,6 +105,16 @@ class WinScreenTest {
         composeRule.onNodeWithContentDescription("Close").performClick()
 
         assertEquals(true, closed)
+    }
+
+    @Test
+    fun theActionsStayOnScreenInALandscapeWindow() {
+        // The summary is taller than a rotated phone, so it scrolls — but the way out of the
+        // screen must not scroll with it.
+        setScreen(summary(), size = DpSize(740.dp, 360.dp))
+
+        composeRule.onNodeWithText("Play 10 × 10").assertIsDisplayed()
+        composeRule.onNodeWithText("See best times").assertIsDisplayed()
     }
 
     private fun summary(
@@ -126,15 +144,28 @@ class WinScreenTest {
         onPlay: (Int) -> Unit = {},
         onSeeBestTimes: () -> Unit = {},
         onClose: () -> Unit = {},
+        size: DpSize? = null,
     ) {
         composeRule.setContent {
-            QueensTheme {
+            ForcedWindow(size) {
                 WinScreen(
                     uiState = WinUiState.Solved(summary),
                     onPlay = onPlay,
                     onSeeBestTimes = onSeeBestTimes,
                     onClose = onClose,
                 )
+            }
+        }
+    }
+
+    /** Scales a window of the given size into the test device; null means the device's own. */
+    @Composable
+    private fun ForcedWindow(size: DpSize?, content: @Composable () -> Unit) {
+        if (size == null) {
+            QueensTheme { content() }
+        } else {
+            DeviceConfigurationOverride(DeviceConfigurationOverride.ForcedSize(size)) {
+                QueensTheme { content() }
             }
         }
     }

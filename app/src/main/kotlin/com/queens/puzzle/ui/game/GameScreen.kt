@@ -1,12 +1,17 @@
 package com.queens.puzzle.ui.game
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,10 +36,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -49,11 +56,10 @@ import com.queens.puzzle.model.Position
 import com.queens.puzzle.ui.board.BoardGrid
 import com.queens.puzzle.ui.designsystem.component.AlertBadge
 import com.queens.puzzle.ui.designsystem.component.QueenPips
+import com.queens.puzzle.ui.designsystem.component.TimerChip
 import com.queens.puzzle.ui.designsystem.preview.PreviewSolvedQueens
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
 import com.queens.puzzle.ui.designsystem.preview.previewGameUiState
-import com.queens.puzzle.ui.designsystem.component.TimerChip
-import com.queens.puzzle.ui.feedback.GameFeedback
 import com.queens.puzzle.ui.feedback.rememberGameFeedback
 
 @Composable
@@ -105,6 +111,15 @@ fun GameScreen(
     )
 }
 
+/**
+ * Below this the window is too short to stack the board between the header and the buttons —
+ * a rotated phone, mostly.
+ */
+private val CompactHeight = 480.dp
+
+/** A controls column narrower than this is not worth the width it takes off the board. */
+private val MinControlsWidth = 220.dp
+
 /** Stateless, so previews and Compose tests can drive it without a ViewModel. */
 @Composable
 fun GameScreen(
@@ -125,86 +140,29 @@ fun GameScreen(
         modifier = modifier,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
-        Column(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            GameTopBar(
-                title = stringResource(R.string.game_board_label, uiState.boardSize.value),
-                elapsed = DurationFormatter.format(uiState.elapsedMillis),
-                onNavigateBack = onNavigateBack,
-                onSettingsOpened = onSettingsOpened,
-            )
+            // Landscape gives the board the height and the controls the width left over. Both
+            // conditions matter: a nearly square window is wider than it is tall and would
+            // still leave the controls a sliver.
+            val sideBySide =
+                maxHeight < CompactHeight && maxWidth >= maxHeight + MinControlsWidth
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = pluralStringResource(
-                            R.plurals.game_queens_left,
-                            uiState.queensRemaining,
-                            uiState.queensRemaining,
-                        ),
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                        ),
-                    )
-                    QueenPips(total = uiState.boardSize.value, placed = uiState.queensPlaced)
-                }
-
-                Spacer(Modifier.height(16.dp))
-
-                BoardGrid(
-                    boardSize = uiState.boardSize,
-                    squares = uiState.squares,
-                    onSquareClick = { onAction(GameAction.TapSquare(it)) },
-                    enabled = !uiState.isSolved,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+            Column(Modifier.fillMaxSize()) {
+                GameTopBar(
+                    title = stringResource(R.string.game_board_label, uiState.boardSize.value),
+                    elapsed = DurationFormatter.format(uiState.elapsedMillis),
+                    onNavigateBack = onNavigateBack,
+                    onSettingsOpened = onSettingsOpened,
                 )
 
-                AnimatedVisibility(visible = uiState.hasConflicts) {
-                    ConflictBanner(
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                OutlinedButton(
-                    onClick = { onAction(GameAction.Undo) },
-                    enabled = uiState.canUndo,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(52.dp),
-                    shape = RoundedCornerShape(percent = 50),
-                ) {
-                    Text(stringResource(R.string.game_undo))
-                }
-                OutlinedButton(
-                    onClick = onResetRequested,
-                    enabled = uiState.canReset,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(52.dp),
-                    shape = RoundedCornerShape(percent = 50),
-                ) {
-                    Text(stringResource(R.string.game_reset))
+                if (sideBySide) {
+                    GameContentSideBySide(uiState, onAction, onResetRequested)
+                } else {
+                    GameContentStacked(uiState, onAction, onResetRequested)
                 }
             }
         }
@@ -225,6 +183,169 @@ fun GameScreen(
             onHapticsChanged = onHapticsChanged,
             onDismiss = onSettingsDismissed,
         )
+    }
+}
+
+/** The design's layout: header, board, then the buttons across the bottom. */
+@Composable
+private fun ColumnScope.GameContentStacked(
+    uiState: GameUiState,
+    onAction: (GameAction) -> Unit,
+    onResetRequested: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxWidth(),
+    ) {
+        QueensRemaining(
+            uiState = uiState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        // The board and its banner are centred together in what the header and the buttons
+        // leave, which is what puts the board in the middle of the screen while the banner
+        // stays against its bottom edge.
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            // Weighted, so the board gets what the header, banner and buttons leave rather
+            // than taking the full width and pushing them off a short screen. `fill = false`
+            // because a square board rarely wants all of that height, and space it does not
+            // want cannot be centred if the board has already swallowed it.
+            BoardGrid(
+                boardSize = uiState.boardSize,
+                squares = uiState.squares,
+                onSquareClick = { onAction(GameAction.TapSquare(it)) },
+                enabled = !uiState.isSolved,
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .padding(horizontal = 16.dp),
+            )
+
+            ConflictBannerSlot(
+                hasConflicts = uiState.hasConflicts,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp),
+            )
+        }
+    }
+
+    GameActions(
+        uiState = uiState,
+        onAction = onAction,
+        onResetRequested = onResetRequested,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+    )
+}
+
+/** Landscape: the board on one side at full height, everything else stacked beside it. */
+@Composable
+private fun ColumnScope.GameContentSideBySide(
+    uiState: GameUiState,
+    onAction: (GameAction) -> Unit,
+    onResetRequested: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 20.dp, bottom = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        BoardGrid(
+            boardSize = uiState.boardSize,
+            squares = uiState.squares,
+            onSquareClick = { onAction(GameAction.TapSquare(it)) },
+            enabled = !uiState.isSolved,
+            // Square off the height, which is the scarce axis here.
+            modifier = Modifier
+                .fillMaxHeight()
+                .aspectRatio(1f),
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+        ) {
+            QueensRemaining(uiState = uiState, modifier = Modifier.fillMaxWidth())
+
+            ConflictBannerSlot(
+                hasConflicts = uiState.hasConflicts,
+                modifier = Modifier.padding(top = 12.dp),
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            GameActions(
+                uiState = uiState,
+                onAction = onAction,
+                onResetRequested = onResetRequested,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun QueensRemaining(uiState: GameUiState, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = pluralStringResource(
+                R.plurals.game_queens_left,
+                uiState.queensRemaining,
+                uiState.queensRemaining,
+            ),
+            style = MaterialTheme.typography.labelLarge.copy(
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+            ),
+        )
+        QueenPips(total = uiState.boardSize.value, placed = uiState.queensPlaced)
+    }
+}
+
+@Composable
+private fun GameActions(
+    uiState: GameUiState,
+    onAction: (GameAction) -> Unit,
+    onResetRequested: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        OutlinedButton(
+            onClick = { onAction(GameAction.Undo) },
+            enabled = uiState.canUndo,
+            modifier = Modifier
+                .weight(1f)
+                .height(52.dp),
+            shape = RoundedCornerShape(percent = 50),
+        ) {
+            Text(stringResource(R.string.game_undo))
+        }
+        OutlinedButton(
+            onClick = onResetRequested,
+            enabled = uiState.canReset,
+            modifier = Modifier
+                .weight(1f)
+                .height(52.dp),
+            shape = RoundedCornerShape(percent = 50),
+        ) {
+            Text(stringResource(R.string.game_reset))
+        }
     }
 }
 
@@ -269,6 +390,36 @@ private fun GameTopBar(
             }
         }
     }
+}
+
+/** Matches the board's conflict tint, so banner and squares settle together. */
+private const val BANNER_FADE_MILLIS = 120
+
+/**
+ * The banner's place in the layout, held whether or not there is anything to warn about.
+ *
+ * The board is weighted, so a banner that came and went would resize the board under the
+ * player's finger every time a queen landed badly. The slot keeps its height and the banner
+ * fades inside it, which is why this is not an [AnimatedVisibility].
+ */
+@Composable
+private fun ConflictBannerSlot(
+    hasConflicts: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val alpha by animateFloatAsState(
+        targetValue = if (hasConflicts) 1f else 0f,
+        animationSpec = tween(durationMillis = BANNER_FADE_MILLIS),
+        label = "conflictBanner",
+    )
+
+    ConflictBanner(
+        modifier = modifier
+            .alpha(alpha)
+            // Invisible to the eye is invisible to a screen reader: a live region left in the
+            // tree would announce a conflict that is no longer there.
+            .then(if (hasConflicts) Modifier else Modifier.clearAndSetSemantics { }),
+    )
 }
 
 /** The banner's mark, small enough to ride inside a label-height row. */
@@ -349,6 +500,15 @@ private fun GameScreenLargestBoardPreview() {
                 queens = setOf(Position(0, 0), Position(2, 5), Position(7, 11)),
             ),
         )
+    }
+}
+
+/** Rotated: the board keeps the height and the controls take the width it leaves. */
+@Preview(widthDp = 740, heightDp = 360)
+@Composable
+private fun GameScreenLandscapePreview() {
+    QueensPreviewScreen {
+        PreviewGameScreen(previewGameUiState())
     }
 }
 

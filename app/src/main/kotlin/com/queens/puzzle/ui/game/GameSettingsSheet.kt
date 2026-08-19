@@ -1,6 +1,8 @@
 package com.queens.puzzle.ui.game
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,7 +48,9 @@ fun GameSettingsSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(),
+        // Opens fully rather than half way: two switches are a short sheet, and half of a
+        // landscape window is not enough to show the second one.
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
         GameSettingsContent(
             settings = settings,
@@ -69,7 +73,11 @@ private fun GameSettingsContent(
     onDone: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 28.dp),
+        // Scrolls because a landscape sheet is shorter than this content, and a switch you
+        // cannot reach is worse than one you have to scroll to.
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(start = 20.dp, end = 20.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(

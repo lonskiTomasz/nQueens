@@ -5,8 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,7 +19,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.queens.puzzle.R
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Position
@@ -35,6 +38,12 @@ private const val GLYPH_SIZE_RATIO = 0.66f
  *
  * Takes squares and a click lambda — it has no ViewModel and knows nothing about the game,
  * which is what lets it be previewed at every size and reused on the win and history screens.
+ *
+ * Takes the largest square that fits the space it is handed, and takes no more room than that
+ * — so whatever is laid out beneath it sits against the board's own edge rather than against
+ * the bottom of the space the board was offered. Sizing off the width alone is what broke
+ * landscape: a board as wide as a 640 dp window is 640 dp tall, so it ran off the bottom of a
+ * 360 dp one and took the buttons with it.
  */
 @Composable
 fun BoardGrid(
@@ -46,23 +55,29 @@ fun BoardGrid(
 ) {
     val byPosition = squares.associateBy { it.position }
 
-    BoxWithConstraints(
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(16.dp))
-            .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-                RoundedCornerShape(16.dp),
-            ),
-    ) {
+    BoxWithConstraints(modifier = modifier) {
+        // An unbounded axis reports Dp.Infinity, so this picks the bounded one — which is what
+        // makes the board still work inside a scrolling column.
+        val side = min(maxWidth, maxHeight)
         val glyphSize = with(LocalDensity.current) {
-            (maxWidth / boardSize.value * GLYPH_SIZE_RATIO).toSp()
+            (side / boardSize.value * GLYPH_SIZE_RATIO).toSp()
         }
 
-        Column(Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .size(DpSize(side, side))
+                .clip(RoundedCornerShape(16.dp))
+                .border(
+                    BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                    RoundedCornerShape(16.dp),
+                ),
+        ) {
             repeat(boardSize.value) { row ->
-                Row(Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
                     repeat(boardSize.value) { column ->
                         val position = Position(row, column)
                         val state = byPosition[position] ?: BoardSquareState(position)
@@ -73,9 +88,11 @@ fun BoardGrid(
                             contentDescription = state.describe(),
                             onClick = { onSquareClick(position) },
                             enabled = enabled,
+                            // Weights rather than an aspect ratio: the container is already
+                            // square, and dividing it leaves no rounding to overflow with.
                             modifier = Modifier
                                 .weight(1f)
-                                .aspectRatio(1f),
+                                .fillMaxHeight(),
                         )
                     }
                 }
