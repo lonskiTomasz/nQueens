@@ -14,14 +14,6 @@ import com.queens.puzzle.ui.board.BoardSquareState
 import com.queens.puzzle.ui.game.GameUiState
 import com.queens.puzzle.ui.home.HomeUiState
 
-/**
- * Sample state for the previews.
- *
- * Boards are run through the real [BoardEvaluator] rather than having their conflicts written
- * out by hand, so a preview cannot quietly disagree with the rules it is meant to illustrate.
- */
-
-/** The mid-game board the design canvas is drawn with: five queens, one diagonal conflict. */
 val PreviewQueens: Set<Position> = setOf(
     Position(0, 0),
     Position(1, 4),
@@ -30,7 +22,6 @@ val PreviewQueens: Set<Position> = setOf(
     Position(4, 6),
 )
 
-/** One of the two 4x4 solutions. */
 val PreviewSolvedQueens: Set<Position> = setOf(
     Position(0, 1),
     Position(1, 3),

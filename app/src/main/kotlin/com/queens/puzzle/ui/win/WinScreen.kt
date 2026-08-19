@@ -87,7 +87,6 @@ fun WinScreen(
     )
 }
 
-/** Stateless, so previews and Compose tests can drive it without a ViewModel. */
 @Composable
 fun WinScreen(
     uiState: WinUiState,
@@ -119,10 +118,6 @@ fun WinScreen(
             )
         }
 
-        // The way out, in the corner rather than in the stack of actions: leaving is not a
-        // third thing to consider alongside the next board and the times, and in the corner it
-        // keeps its place while the summary beneath it scrolls. Outside the `when`, so a screen
-        // still loading its solve is never a screen with no way off it.
         IconButton(
             onClick = onClose,
             modifier = Modifier
@@ -214,9 +209,7 @@ private fun SolvedContent(
     val compact = viewportHeight < CompactHeight
     val metrics = if (compact) WinMetrics.Compact else WinMetrics.Regular
 
-    if (compact) {
-        // Too short to show the whole celebration: the summary scrolls inside what is left and
-        // the buttons keep their place, because the way out must never be the thing off screen.
+    if (compact) { // too short to show the whole celebration
         Column(modifier = Modifier.fillMaxSize()) {
             Summary(
                 summary = summary,
@@ -233,8 +226,6 @@ private fun SolvedContent(
             )
         }
     } else {
-        // A windowful tall at minimum, so SpaceBetween lands the buttons on the bottom exactly
-        // as the design draws them, and the scroll only engages if the text ever outgrows it.
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -346,13 +337,6 @@ private fun Summary(
     }
 }
 
-/**
- * What to do next, in the order a player wants it: the board one size up, then the times.
- *
- * Solving a board is an invitation to the next one, so the primary button offers that rather
- * than the same board again — the home screen's ladder of sizes, climbed a rung. At the largest
- * board there is no rung above, and the offer falls back to playing it again.
- */
 @Composable
 private fun WinActions(
     boardSize: BoardSize,
@@ -400,7 +384,6 @@ private fun WinActions(
     }
 }
 
-/** "NEW BEST · −54s" when the solve beat the previous best, and nothing loud when it did not. */
 @Composable
 private fun BestBadge(summary: WinSummary, modifier: Modifier = Modifier) {
     val extended = QueensTheme.extendedColors

@@ -33,11 +33,6 @@ import com.queens.puzzle.R
 import com.queens.puzzle.model.GameSettings
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
-/**
- * Gameplay options.
- *
- * A sheet inside the game screen, not a destination — see [ResetConfirmDialog] for why.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameSettingsSheet(
@@ -48,8 +43,6 @@ fun GameSettingsSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        // Opens fully rather than half way: two switches are a short sheet, and half of a
-        // landscape window is not enough to show the second one.
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
         GameSettingsContent(
@@ -61,10 +54,6 @@ fun GameSettingsSheet(
     }
 }
 
-/**
- * The sheet's contents, held apart from the sheet itself so they can be previewed: a
- * `ModalBottomSheet` renders as an empty window in the preview tooling, its contents do not.
- */
 @Composable
 private fun GameSettingsContent(
     settings: GameSettings,
@@ -73,8 +62,6 @@ private fun GameSettingsContent(
     onDone: () -> Unit,
 ) {
     Column(
-        // Scrolls because a landscape sheet is shorter than this content, and a switch you
-        // cannot reach is worse than one you have to scroll to.
         modifier = Modifier
             .verticalScroll(rememberScrollState())
             .padding(start = 20.dp, end = 20.dp, bottom = 28.dp),

@@ -24,9 +24,7 @@ import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 /**
- * The two stores of §5.2.
- *
- * Each gets its own supervised scope, so a failure writing one cannot cancel the other. Both
+ * Each store gets its own supervised scope, so a failure writing one cannot cancel the other. Both
  * fall back to their empty value on a corrupt file: settings and an unfinished board are both
  * cheap to lose, and refusing to start is not.
  */
@@ -38,7 +36,7 @@ object DataStoreModule {
     @Singleton
     fun providesPreferencesDataStore(
         @ApplicationContext context: Context,
-        @Dispatcher(QueensDispatcher.IO) ioDispatcher: CoroutineDispatcher,
+        @Dispatcher(AppDispatcher.IO) ioDispatcher: CoroutineDispatcher,
     ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
         corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
         scope = CoroutineScope(ioDispatcher + SupervisorJob()),
@@ -49,7 +47,7 @@ object DataStoreModule {
     @Singleton
     fun providesSessionDataStore(
         @ApplicationContext context: Context,
-        @Dispatcher(QueensDispatcher.IO) ioDispatcher: CoroutineDispatcher,
+        @Dispatcher(AppDispatcher.IO) ioDispatcher: CoroutineDispatcher,
     ): DataStore<SavedSession?> = DataStoreFactory.create(
         serializer = SessionSerializer,
         corruptionHandler = ReplaceFileCorruptionHandler { null },

@@ -12,13 +12,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-/**
- * The whole app, over the real database and stores: pick a size, solve the board, land on the
- * win screen.
- *
- * The 4x4 solution is placed on squares no earlier queen attacks, so every one of them is still
- * announced as plain "empty" when it is tapped.
- */
 @HiltAndroidTest
 class SolveGameEndToEndTest {
 

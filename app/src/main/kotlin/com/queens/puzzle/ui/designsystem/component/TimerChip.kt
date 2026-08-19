@@ -24,11 +24,6 @@ import androidx.compose.ui.unit.sp
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
 
-/**
- * The running clock in the app bar.
- *
- * Monospaced, so the pill does not resize as the digits tick over.
- */
 @Composable
 fun TimerChip(
     time: String,

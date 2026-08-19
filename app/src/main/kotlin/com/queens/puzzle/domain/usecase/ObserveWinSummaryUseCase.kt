@@ -9,7 +9,7 @@ import javax.inject.Inject
 /**
  * Reads one solve back and works out how it stands against the rest of its size.
  *
- * The win screen is reached with an id alone, so that it survives process death (§6.2) — which
+ * The win screen is reached with an id alone, so that it survives process death — which
  * means the "new best, −54s" comparison has to be reconstructed rather than carried through the
  * back stack. "Previous best" is the fastest of the *other* solves at that size, so a solve is
  * never compared against itself.
@@ -28,7 +28,6 @@ class ObserveWinSummaryUseCase @Inject constructor(
 
             WinSummary(
                 solve = solve,
-                // A first solve of a size is a personal best; there is nothing to have beaten.
                 isNewBest = previousBest == null || solve.durationMillis < previousBest,
                 improvementMillis = previousBest?.let { it - solve.durationMillis },
                 solveCountForSize = sameSize.size,

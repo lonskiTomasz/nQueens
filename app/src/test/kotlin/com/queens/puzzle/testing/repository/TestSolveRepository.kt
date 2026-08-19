@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
-/** An in-memory [SolveRepository]. */
 class TestSolveRepository(initialSolves: List<Solve> = emptyList()) : SolveRepository {
 
     private val solves = MutableStateFlow(initialSolves)
@@ -30,7 +29,7 @@ class TestSolveRepository(initialSolves: List<Solve> = emptyList()) : SolveRepos
     override suspend fun record(solve: Solve): Long {
         val stored = solve.copy(id = nextId++)
         _recorded += stored
-        solves.value = solves.value + stored
+        solves.value += stored
         return stored.id
     }
 

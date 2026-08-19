@@ -19,13 +19,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
-/** U+0021. Drawn as text so no vector asset ships, the same way [QueenGlyph] is. */
 private const val ALERT_MARK = "!"
 
 /**
- * The disc that marks something gone wrong — the reset dialog's warning and the game screen's
- * conflict banner wear the same one, at their own sizes and colours.
- *
  * Semantics are cleared: what the badge sits beside is the message, and a screen reader that
  * says "exclamation mark" first only delays it.
  */

@@ -1,7 +1,5 @@
 package com.queens.puzzle.ui.win
 
-import androidx.compose.ui.test.DeviceConfigurationOverride
-import androidx.compose.ui.test.ForcedSize
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -10,11 +8,10 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.Composable
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.model.WinSummary
-import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import com.queens.puzzle.testing.ForcedWindow
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -63,7 +60,6 @@ class WinScreenTest {
         composeRule.onNodeWithText("12").assertIsDisplayed()
     }
 
-    /** Solving one board offers the next one up, not the same board over again. */
     @Test
     fun theNextBoardUpIsWhatIsOffered() {
         var played: Int? = null
@@ -154,18 +150,6 @@ class WinScreenTest {
                     onSeeBestTimes = onSeeBestTimes,
                     onClose = onClose,
                 )
-            }
-        }
-    }
-
-    /** Scales a window of the given size into the test device; null means the device's own. */
-    @Composable
-    private fun ForcedWindow(size: DpSize?, content: @Composable () -> Unit) {
-        if (size == null) {
-            QueensTheme { content() }
-        } else {
-            DeviceConfigurationOverride(DeviceConfigurationOverride.ForcedSize(size)) {
-                QueensTheme { content() }
             }
         }
     }

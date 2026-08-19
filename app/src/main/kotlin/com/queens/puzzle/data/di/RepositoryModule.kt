@@ -16,7 +16,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-/** Binds each interface to the implementation that ships. Tests substitute their own. */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {

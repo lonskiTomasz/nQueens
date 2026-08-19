@@ -16,12 +16,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
-/**
- * One dot per queen, filled for those already placed.
- *
- * Decorative: the "N queens left" label beside it already says this in words, so the pips are
- * hidden from the screen reader rather than spoken as a row of unlabelled dots.
- */
 @Composable
 fun QueenPips(
     total: Int,

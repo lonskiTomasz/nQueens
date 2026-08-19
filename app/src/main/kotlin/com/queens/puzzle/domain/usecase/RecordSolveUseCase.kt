@@ -40,7 +40,6 @@ class RecordSolveUseCase @Inject constructor(
 
         return SolveOutcome(
             solveId = solveId,
-            // A first solve of a size is a personal best; there is nothing to have beaten.
             isNewBest = previousBest == null || durationMillis < previousBest.durationMillis,
             improvementMillis = improvement,
         )

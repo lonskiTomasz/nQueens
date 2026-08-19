@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
-/** A board-size pill on the home screen. 48 dp tall, so it is already a legal touch target. */
 @Composable
 fun SizeChip(
     label: String,

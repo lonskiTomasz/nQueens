@@ -11,12 +11,9 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 
-/** U+265B, the chess queen. Drawn as text so no vector asset ships. */
 private const val QUEEN = "♛"
 
 /**
- * The queen, sized to its square.
- *
  * Semantics are cleared: the square that owns the glyph already describes itself, and a second
  * spoken node per queen would double every board announcement.
  */

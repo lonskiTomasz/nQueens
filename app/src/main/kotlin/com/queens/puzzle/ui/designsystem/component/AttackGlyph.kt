@@ -11,7 +11,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 
-/** U+2715, the multiplication cross. Drawn as text so no vector asset ships. */
 private const val ATTACK_MARK = "✕"
 
 /**

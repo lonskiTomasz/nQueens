@@ -1,6 +1,6 @@
 package com.queens.puzzle.common.time
 
-/** How long ago something happened, in the buckets the history screen names. */
+/** How long ago something happened */
 sealed interface RelativeDay {
 
     data object Today : RelativeDay

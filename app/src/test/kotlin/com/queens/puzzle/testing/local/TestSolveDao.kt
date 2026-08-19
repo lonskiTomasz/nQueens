@@ -7,12 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
-/**
- * An in-memory [SolveDao].
- *
- * Reproduces the ordering and aggregation the real queries perform, so a repository test
- * reads the same values it would against Room without needing a device.
- */
 class TestSolveDao : SolveDao {
 
     private val rows = MutableStateFlow<List<SolveEntity>>(emptyList())
@@ -20,7 +14,7 @@ class TestSolveDao : SolveDao {
 
     /** Inserts [entities] as if recorded in argument order, assigning ids. */
     fun seed(vararg entities: SolveEntity) {
-        entities.forEach { rows.value = rows.value + it.copy(id = nextId++) }
+        entities.forEach { rows.value += it.copy(id = nextId++) }
     }
 
     override fun observeAll(): Flow<List<SolveEntity>> =
@@ -46,7 +40,7 @@ class TestSolveDao : SolveDao {
 
     override suspend fun insert(solve: SolveEntity): Long {
         val stored = solve.copy(id = nextId++)
-        rows.value = rows.value + stored
+        rows.value += stored
         return stored.id
     }
 

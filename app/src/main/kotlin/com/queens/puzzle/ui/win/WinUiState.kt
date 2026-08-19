@@ -2,7 +2,6 @@ package com.queens.puzzle.ui.win
 
 import com.queens.puzzle.model.WinSummary
 
-/** Everything the win screen renders. */
 sealed interface WinUiState {
 
     data object Loading : WinUiState

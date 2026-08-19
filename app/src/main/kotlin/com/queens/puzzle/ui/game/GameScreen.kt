@@ -120,7 +120,6 @@ private val CompactHeight = 480.dp
 /** A controls column narrower than this is not worth the width it takes off the board. */
 private val MinControlsWidth = 220.dp
 
-/** Stateless, so previews and Compose tests can drive it without a ViewModel. */
 @Composable
 fun GameScreen(
     uiState: GameUiState,
@@ -186,7 +185,6 @@ fun GameScreen(
     }
 }
 
-/** The design's layout: header, board, then the buttons across the bottom. */
 @Composable
 private fun ColumnScope.GameContentStacked(
     uiState: GameUiState,
@@ -207,17 +205,10 @@ private fun ColumnScope.GameContentStacked(
 
         Spacer(Modifier.height(16.dp))
 
-        // The board and its banner are centred together in what the header and the buttons
-        // leave, which is what puts the board in the middle of the screen while the banner
-        // stays against its bottom edge.
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center,
         ) {
-            // Weighted, so the board gets what the header, banner and buttons leave rather
-            // than taking the full width and pushing them off a short screen. `fill = false`
-            // because a square board rarely wants all of that height, and space it does not
-            // want cannot be centred if the board has already swallowed it.
             BoardGrid(
                 boardSize = uiState.boardSize,
                 squares = uiState.squares,
@@ -245,7 +236,6 @@ private fun ColumnScope.GameContentStacked(
     )
 }
 
-/** Landscape: the board on one side at full height, everything else stacked beside it. */
 @Composable
 private fun ColumnScope.GameContentSideBySide(
     uiState: GameUiState,
@@ -392,16 +382,8 @@ private fun GameTopBar(
     }
 }
 
-/** Matches the board's conflict tint, so banner and squares settle together. */
 private const val BANNER_FADE_MILLIS = 120
 
-/**
- * The banner's place in the layout, held whether or not there is anything to warn about.
- *
- * The board is weighted, so a banner that came and went would resize the board under the
- * player's finger every time a queen landed badly. The slot keeps its height and the banner
- * fades inside it, which is why this is not an [AnimatedVisibility].
- */
 @Composable
 private fun ConflictBannerSlot(
     hasConflicts: Boolean,
@@ -422,17 +404,8 @@ private fun ConflictBannerSlot(
     )
 }
 
-/** The banner's mark, small enough to ride inside a label-height row. */
 private val BannerBadgeSize = 24.dp
 
-/**
- * One sentence, whatever the queens share.
- *
- * The evaluator knows whether it is a row, a column or a diagonal, and the banner used to say
- * so — but the board is already marking the squares at fault, and naming the line only put
- * that into words. Saying it once is also what keeps the banner a fixed height, since the
- * sentence can no longer change under it.
- */
 @Composable
 private fun ConflictBanner(modifier: Modifier = Modifier) {
     Row(
@@ -444,8 +417,6 @@ private fun ConflictBanner(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        // The reset dialog's warning mark, shrunk: both say the same thing, so they look the
-        // same. Inverted colours, because the dialog's disc would vanish into this background.
         AlertBadge(
             size = BannerBadgeSize,
             containerColor = MaterialTheme.colorScheme.error,

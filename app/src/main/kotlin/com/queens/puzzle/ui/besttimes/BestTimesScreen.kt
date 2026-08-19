@@ -78,7 +78,6 @@ fun BestTimesScreen(
     )
 }
 
-/** Stateless, so previews and Compose tests can drive it without a ViewModel. */
 @Composable
 fun BestTimesScreen(
     uiState: BestTimesUiState,
@@ -95,12 +94,6 @@ fun BestTimesScreen(
         ) {
             TopBar(onNavigateBack = onNavigateBack, onClearHistory = onClearHistory)
 
-            // One chip per size the player has solved, plus "all boards" — more than a phone's
-            // width holds by the third or fourth, and the sizes are added in ascending order, so
-            // the largest boards were the ones falling off the end. The bar scrolls sideways
-            // rather than wrapping, which keeps it one line however long the history gets.
-            // The side padding sits inside the scroll so it reads as content padding: the first
-            // and last chips clear the edges at rest and still scroll to them.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -249,13 +242,6 @@ private fun SolveRowItem(row: SolveRow) {
     }
 }
 
-/**
- * A decorative checkerboard at the row's own size.
- *
- * Not a [com.queens.puzzle.ui.board.BoardGrid]: a solve stores its time, not its queens, so
- * there is no arrangement to draw — and a 12x12 grid of real squares per row would cost 144
- * composables for decoration.
- */
 @Composable
 private fun MiniBoard(boardSize: BoardSize) {
     val light = QueensTheme.extendedColors.boardSquareLight

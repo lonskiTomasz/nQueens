@@ -7,7 +7,6 @@ import com.queens.puzzle.model.ThemePreference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-/** An in-memory [AppSettingsRepository]. */
 class TestAppSettingsRepository(
     initial: AppSettings = AppSettings(),
     private var themeStored: Boolean = false,

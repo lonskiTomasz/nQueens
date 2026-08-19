@@ -20,12 +20,6 @@ sealed interface ThemeState {
     data class Ready(val theme: ThemePreference) : ThemeState
 }
 
-/**
- * Holds the one thing the root composable needs: which scheme to paint.
- *
- * Light and dark are the player's choice rather than the system's (§12, row 12); the system
- * value only seeds the setting the first time the app runs.
- */
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val appSettingsRepository: AppSettingsRepository,
@@ -39,7 +33,6 @@ class MainViewModel @Inject constructor(
             initialValue = ThemeState.Loading,
         )
 
-    /** Safe on every launch: it only writes when the player has no stored choice. */
     fun seedTheme(systemTheme: ThemePreference) {
         viewModelScope.launch { appSettingsRepository.seedThemeIfUnset(systemTheme) }
     }

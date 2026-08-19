@@ -6,7 +6,6 @@ import com.queens.puzzle.model.GameSession
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-/** An in-memory [SessionRepository]. */
 class TestSessionRepository(initial: SavedGame? = null) : SessionRepository {
 
     private val saved = MutableStateFlow(initial)

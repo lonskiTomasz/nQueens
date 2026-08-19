@@ -17,12 +17,6 @@ import javax.inject.Inject
 
 private const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
 
-/**
- * The solve history.
- *
- * The per-size best each row is measured against is taken from the whole history, not from the
- * filtered view — filtering to one size must not change what "your best" means.
- */
 @HiltViewModel
 class BestTimesViewModel @Inject constructor(
     private val solveRepository: SolveRepository,

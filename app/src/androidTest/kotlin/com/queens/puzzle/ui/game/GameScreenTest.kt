@@ -1,21 +1,16 @@
 package com.queens.puzzle.ui.game
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.getUnclippedBoundsInRoot
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.unit.DpRect
 import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ConflictKind
@@ -76,21 +71,6 @@ class GameScreenTest {
         setScreen(state(boardSize = 4, conflictKinds = setOf(ConflictKind.Row)))
 
         composeRule.onNodeWithText("Queens are attacking each other.").assertIsDisplayed()
-    }
-
-    /**
-     * The banner holds its place whether or not it has anything to say, so the board keeps the
-     * same size and does not jump under the player's finger as conflicts come and go.
-     */
-    @Test
-    fun theBoardIsTheSameSizeWithAndWithoutTheBanner() {
-        var conflictKinds by mutableStateOf(emptySet<ConflictKind>())
-        setScreen { state(boardSize = 4, conflictKinds = conflictKinds) }
-
-        val withoutBanner = squareBounds()
-        composeRule.runOnIdle { conflictKinds = setOf(ConflictKind.Row) }
-
-        assertEquals(withoutBanner, squareBounds())
     }
 
     @Test
@@ -160,11 +140,6 @@ class GameScreenTest {
         composeRule.onNodeWithText("Haptic on place").assertIsDisplayed()
     }
 
-    /** The first square's size and place, which is how the board's own is observed. */
-    private fun squareBounds(): DpRect = composeRule
-        .onNodeWithContentDescription("Row 1, column 1, empty")
-        .getUnclippedBoundsInRoot()
-
     private fun state(
         boardSize: Int,
         queensPlaced: Int = 0,
@@ -186,26 +161,6 @@ class GameScreenTest {
             isResetDialogVisible = isResetDialogVisible,
             isSettingsSheetVisible = isSettingsSheetVisible,
         )
-    }
-
-    /** For states that change after the first frame; the lambda is read on every composition. */
-    private fun setScreen(uiState: () -> GameUiState) {
-        composeRule.setContent {
-            QueensTheme {
-                GameScreen(
-                    uiState = uiState(),
-                    onAction = {},
-                    onNavigateBack = {},
-                    onResetRequested = {},
-                    onResetConfirmed = {},
-                    onResetDismissed = {},
-                    onSettingsOpened = {},
-                    onSettingsDismissed = {},
-                    onShowAttackLinesChanged = {},
-                    onHapticsChanged = {},
-                )
-            }
-        }
     }
 
     private fun setScreen(

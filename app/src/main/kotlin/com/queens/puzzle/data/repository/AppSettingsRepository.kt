@@ -5,14 +5,12 @@ import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ThemePreference
 import kotlinx.coroutines.flow.Flow
 
-/** Preferences that apply to the whole app, independent of any game. */
 interface AppSettingsRepository {
 
     fun observeAppSettings(): Flow<AppSettings>
 
     suspend fun setTheme(theme: ThemePreference)
 
-    /** Remembers the size just played. */
     suspend fun setLastBoardSize(boardSize: BoardSize)
 
     /**

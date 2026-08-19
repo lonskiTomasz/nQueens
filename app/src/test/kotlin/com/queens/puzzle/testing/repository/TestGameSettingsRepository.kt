@@ -5,7 +5,6 @@ import com.queens.puzzle.model.GameSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-/** An in-memory [GameSettingsRepository]. */
 class TestGameSettingsRepository(
     initial: GameSettings = GameSettings(),
 ) : GameSettingsRepository {

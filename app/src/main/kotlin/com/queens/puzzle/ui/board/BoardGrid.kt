@@ -30,15 +30,10 @@ import com.queens.puzzle.ui.designsystem.preview.PreviewSolvedQueens
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.ui.designsystem.preview.previewSquares
 
-/** The glyph fills about two thirds of its square, matching the spec's 30 sp inside 45 dp. */
+/** The glyph fills about two thirds of its square */
 private const val GLYPH_SIZE_RATIO = 0.66f
 
 /**
- * The board, and nothing else.
- *
- * Takes squares and a click lambda — it has no ViewModel and knows nothing about the game,
- * which is what lets it be previewed at every size and reused on the win and history screens.
- *
  * Takes the largest square that fits the space it is handed, and takes no more room than that
  * — so whatever is laid out beneath it sits against the board's own edge rather than against
  * the bottom of the space the board was offered. Sizing off the width alone is what broke

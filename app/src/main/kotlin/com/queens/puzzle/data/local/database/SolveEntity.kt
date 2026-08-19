@@ -6,8 +6,6 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
- * One completed solve.
- *
  * The index covers the two queries that matter — best-per-size and the best for one size —
  * so both are served from the index without touching the table.
  */

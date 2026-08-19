@@ -4,9 +4,7 @@ import com.queens.puzzle.common.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
 
-/** Everything the history screen renders. */
 data class BestTimesUiState(
-    /** Sizes that have been played, offered as filters beside "all boards". */
     val filters: List<BoardSize> = emptyList(),
     val selectedFilter: BoardSize? = null,
     val rows: List<SolveRow> = emptyList(),

@@ -3,7 +3,7 @@ package com.queens.puzzle.data.local.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
-/** The app's only database. Schemas are exported to `app/schemas` and committed. */
+/** Schemas are exported to `app/schemas` and committed. */
 @Database(
     entities = [SolveEntity::class],
     version = 1,

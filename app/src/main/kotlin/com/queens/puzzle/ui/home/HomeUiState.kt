@@ -4,7 +4,6 @@ import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ThemePreference
 
-/** Everything the home screen renders. */
 data class HomeUiState(
     val sizes: List<BoardSize> = BoardSize.selectable,
     val selectedSize: BoardSize = BoardSize.Default,

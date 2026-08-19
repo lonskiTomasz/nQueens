@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Gameplay options, over the preferences store. */
 @Singleton
 class DefaultGameSettingsRepository @Inject constructor(
     private val settingsDataSource: SettingsDataSource,

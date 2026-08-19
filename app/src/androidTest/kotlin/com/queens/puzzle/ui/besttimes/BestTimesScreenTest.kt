@@ -1,8 +1,5 @@
 package com.queens.puzzle.ui.besttimes
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.DeviceConfigurationOverride
-import androidx.compose.ui.test.ForcedSize
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -13,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.queens.puzzle.common.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
-import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import com.queens.puzzle.testing.ForcedWindow
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -83,18 +80,6 @@ class BestTimesScreenTest {
                     onClearHistory = {},
                     onNavigateBack = {},
                 )
-            }
-        }
-    }
-
-    /** Scales a window of the given size into the test device; null means the device's own. */
-    @Composable
-    private fun ForcedWindow(size: DpSize?, content: @Composable () -> Unit) {
-        if (size == null) {
-            QueensTheme { content() }
-        } else {
-            DeviceConfigurationOverride(DeviceConfigurationOverride.ForcedSize(size)) {
-                QueensTheme { content() }
             }
         }
     }

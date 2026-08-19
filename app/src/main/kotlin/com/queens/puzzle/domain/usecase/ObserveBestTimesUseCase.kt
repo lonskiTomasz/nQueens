@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-/** The best time per board size, largest board first. */
 class ObserveBestTimesUseCase @Inject constructor(
     private val solveRepository: SolveRepository,
 ) {

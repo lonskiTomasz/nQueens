@@ -2,7 +2,7 @@ package com.queens.puzzle.ui.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light scheme — mapped to real ColorScheme roles
+// Light scheme
 val PrimaryLight = Color(0xFF3D5A73)
 val OnPrimaryLight = Color(0xFFFFFFFF)
 val PrimaryContainerLight = Color(0xFFD3E4F0)

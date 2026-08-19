@@ -15,14 +15,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
-
-/**
- * The home screen.
- *
- * Pure pass-through work goes straight to a repository; the one piece of real logic — folding
- * the history into per-size bests — sits in a use case (§4.4).
- */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appSettingsRepository: AppSettingsRepository,
@@ -43,11 +35,10 @@ class HomeViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT_MILLIS),
+        started = SharingStarted.WhileSubscribed(5_000L),
         initialValue = HomeUiState(),
     )
 
-    /** The chosen size is remembered immediately, so it survives leaving without playing. */
     fun onSizeSelected(boardSize: BoardSize) {
         viewModelScope.launch { appSettingsRepository.setLastBoardSize(boardSize) }
     }

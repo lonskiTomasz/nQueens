@@ -21,7 +21,6 @@ import javax.inject.Singleton
 /**
  * The one preferences file, holding both gameplay options and app-wide preferences.
  *
- * Two repositories read it (§12, row 15) — the split is in the interfaces, not the storage.
  * Values that cannot be interpreted fall back to the default rather than throwing: this file
  * is editable on a rooted device and survives a downgrade, so it is not trusted input.
  */
@@ -86,7 +85,6 @@ class SettingsDataSource @Inject constructor(
 
     companion object {
 
-        /** File name of the preferences store, without its `.preferences_pb` suffix. */
         const val STORE_NAME = "settings"
 
         private val DEFAULT_GAME = GameSettings()

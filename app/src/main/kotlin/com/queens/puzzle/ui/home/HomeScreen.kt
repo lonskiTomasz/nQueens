@@ -67,7 +67,6 @@ fun HomeScreen(
     )
 }
 
-/** Stateless, so previews and Compose tests can drive it without a ViewModel. */
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
@@ -79,8 +78,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     Scaffold(modifier = modifier) { padding ->
-        // Scrolls rather than weighting: the design is drawn at 412x892, and on a shorter
-        // screen a weighted card is squeezed to nothing instead of moving below the fold.
         Column(
             modifier = Modifier
                 .fillMaxSize()

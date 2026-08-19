@@ -14,13 +14,6 @@ import com.queens.puzzle.R
 import com.queens.puzzle.ui.designsystem.component.AlertBadge
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
-/**
- * Confirmation for the destructive reset.
- *
- * A dialog inside the game screen rather than a destination: it is transient UI over a board
- * that stays mounted underneath, and making it a destination would tear the board down and
- * rebuild it just to show a scrim.
- */
 @Composable
 fun ResetConfirmDialog(
     queensPlaced: Int,

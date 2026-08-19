@@ -28,7 +28,6 @@ class SessionDataSource @Inject constructor(
     }
 
     companion object {
-        /** File name of the session store. */
         const val STORE_NAME = "session.json"
     }
 }

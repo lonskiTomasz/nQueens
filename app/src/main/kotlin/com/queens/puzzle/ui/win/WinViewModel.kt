@@ -14,12 +14,6 @@ import kotlinx.coroutines.flow.stateIn
 
 private const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
 
-/**
- * The win screen.
- *
- * Takes the solve id as an assisted constructor parameter rather than reading a nullable
- * `SavedStateHandle` key, so a missing or misspelled argument is a compile error (§12, row 8).
- */
 @HiltViewModel(assistedFactory = WinViewModel.Factory::class)
 class WinViewModel @AssistedInject constructor(
     @Assisted private val solveId: Long,

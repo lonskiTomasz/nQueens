@@ -1,8 +1,5 @@
 package com.queens.puzzle.ui.game
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.DeviceConfigurationOverride
-import androidx.compose.ui.test.ForcedSize
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -13,18 +10,12 @@ import androidx.compose.ui.unit.dp
 import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Position
+import com.queens.puzzle.testing.ForcedWindow
 import com.queens.puzzle.ui.board.BoardSquareState
-import com.queens.puzzle.ui.designsystem.theme.QueensTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-/**
- * The game screen at window shapes the design was never drawn at.
- *
- * A rotated phone used to render a board as wide as the window and therefore taller than it,
- * which pushed the top bar off the top and buried Undo and Reset underneath the squares.
- */
 class GameScreenLayoutTest {
 
     @get:Rule
@@ -110,14 +101,5 @@ class GameScreenLayoutTest {
             boardSize = size,
             squares = size.positions().map { BoardSquareState(it) },
         )
-    }
-
-    @Composable
-    private fun ForcedWindow(size: DpSize, content: @Composable () -> Unit) {
-        // Scales a window of the given size into the test device, so one device covers every
-        // shape rather than needing an emulator per orientation.
-        DeviceConfigurationOverride(DeviceConfigurationOverride.ForcedSize(size)) {
-            QueensTheme { content() }
-        }
     }
 }

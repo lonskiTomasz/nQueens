@@ -33,15 +33,12 @@ import com.queens.puzzle.ui.designsystem.component.QueenGlyph
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.ui.designsystem.theme.QueensTheme
 
-/** Timings from the design spec. */
 private const val CONFLICT_FADE_MILLIS = 120
 
 /** The cross marks a square rather than occupying it, so it is drawn half the queen's size. */
 private const val ATTACK_GLYPH_RATIO = 0.5f
 
 /**
- * One square of the board.
- *
  * A button, with a spoken description of the form "Row 3, column 5, queen, in conflict" — which
  * is also what lets the Compose tests select squares by meaning rather than by pixel.
  */

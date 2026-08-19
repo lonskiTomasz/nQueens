@@ -5,7 +5,6 @@ import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
 import kotlinx.coroutines.flow.Flow
 
-/** The solve history. */
 interface SolveRepository {
 
     /** All solves, newest first. */

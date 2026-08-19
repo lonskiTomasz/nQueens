@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * Roles with no standard M3 slot, carried alongside the scheme rather than smuggled into an
- * unrelated one (§12, row 9).
+ * unrelated one.
  */
 data class QueensExtendedColors(
     val success: Color,
@@ -89,14 +89,6 @@ private val DarkScheme = darkColorScheme(
     outline = OutlineDark, outlineVariant = OutlineVariantDark,
 )
 
-/**
- * Dynamic colour is deliberately absent (§12, row 10): the board's squares and the
- * conflict/celebration accents are the product's identity, and Material You would repaint
- * exactly the semantics the player reads.
- *
- * [darkTheme] defaults to the system only so previews have something to follow — the app
- * passes the player's stored choice.
- */
 @Composable
 fun QueensTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -110,7 +102,6 @@ fun QueensTheme(
     }
 }
 
-/** The extended roles, read the same way as `MaterialTheme.colorScheme`. */
 object QueensTheme {
     val extendedColors: QueensExtendedColors
         @Composable @ReadOnlyComposable get() = LocalQueensColors.current

@@ -12,9 +12,6 @@ value class BoardSize(val value: Int) {
         require(value in MIN..MAX) { "Board size must be in $MIN..$MAX, was $value" }
     }
 
-    /** Number of squares on the board. */
-    val squareCount: Int get() = value * value
-
     /**
      * The next size up among [selectable], or `null` at the largest one.
      *

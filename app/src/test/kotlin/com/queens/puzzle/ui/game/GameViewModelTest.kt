@@ -1,6 +1,5 @@
 package com.queens.puzzle.ui.game
 
-import com.queens.puzzle.data.repository.SavedGame
 import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.domain.usecase.RecordSolveUseCase
 import com.queens.puzzle.model.BoardSize
@@ -26,7 +25,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /** The 4x4 board has exactly two solutions; this is one of them. */
-private val SOLUTION_4 = listOf(Position(0, 1), Position(1, 3), Position(2, 0), Position(3, 2))
+private val SOLUTION_4x4 = listOf(Position(0, 1), Position(1, 3), Position(2, 0), Position(3, 2))
 
 class GameViewModelTest {
 
@@ -164,7 +163,7 @@ class GameViewModelTest {
         observe(viewModel)
         timeProvider.advanceBy(90_000)
 
-        SOLUTION_4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
+        SOLUTION_4x4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
 
         assertTrue(viewModel.uiState.value.isSolved)
         assertTrue(effects.contains(GameEffect.CelebrateWin))
@@ -182,7 +181,7 @@ class GameViewModelTest {
         observe(viewModel)
         timeProvider.advanceBy(30_000)
 
-        SOLUTION_4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
+        SOLUTION_4x4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
         timeProvider.advanceBy(60_000)
         advanceTimeBy(1_000)
 
@@ -193,9 +192,9 @@ class GameViewModelTest {
     fun `a solved board stops accepting taps`() = runTest {
         val viewModel = viewModel()
         observe(viewModel)
-        SOLUTION_4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
+        SOLUTION_4x4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
 
-        viewModel.onAction(GameAction.TapSquare(SOLUTION_4.first()))
+        viewModel.onAction(GameAction.TapSquare(SOLUTION_4x4.first()))
 
         assertEquals(4, viewModel.uiState.value.queensPlaced)
         assertEquals(1, solveRepository.recorded.size)
@@ -271,7 +270,7 @@ class GameViewModelTest {
         val viewModel = viewModel()
         observe(viewModel)
 
-        SOLUTION_4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
+        SOLUTION_4x4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
 
         assertNull(sessionRepository.current)
     }
@@ -322,7 +321,6 @@ class GameViewModelTest {
         timeProvider = timeProvider,
     )
 
-    /** `uiState` only runs while collected, so every state assertion needs a subscriber. */
     private fun TestScope.observe(viewModel: GameViewModel) {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect { }

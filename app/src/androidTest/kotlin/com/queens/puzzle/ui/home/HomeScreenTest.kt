@@ -81,17 +81,11 @@ class HomeScreenTest {
         var theme: ThemePreference? = null
         setScreen(HomeUiState(theme = ThemePreference.Light), onThemeSelected = { theme = it })
 
-        // Off, then clicked, then reported: one node carrying both the label and the state is
-        // what makes this a switch to a screen reader rather than a pair of unnamed buttons.
         composeRule.onNodeWithContentDescription("Dark theme").assertIsOff().performClick()
 
         assertEquals(ThemePreference.Dark, theme)
     }
 
-    /**
-     * The half you tap is not the half you get: it is one switch, so a tap flips it whichever
-     * end of the track it lands on.
-     */
     @Test
     fun tappingTheThemeSwitchAgainTurnsItBackOff() {
         var theme: ThemePreference? = null

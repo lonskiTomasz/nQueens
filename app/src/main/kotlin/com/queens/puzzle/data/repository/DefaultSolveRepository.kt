@@ -11,12 +11,6 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * The solve history, over Room.
- *
- * Ordering and aggregation are the DAO's, so this is a mapping boundary and nothing more.
- * Room already runs its queries off the main thread, so there is no dispatcher to inject.
- */
 @Singleton
 class DefaultSolveRepository @Inject constructor(
     private val solveDao: SolveDao,

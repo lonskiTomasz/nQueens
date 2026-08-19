@@ -5,12 +5,6 @@ import com.queens.puzzle.model.ConflictKind
 import com.queens.puzzle.model.GameSettings
 import com.queens.puzzle.ui.board.BoardSquareState
 
-/**
- * Everything the game screen renders.
- *
- * Fully derived: the squares already carry their own flags, so the composable draws and never
- * computes.
- */
 data class GameUiState(
     val boardSize: BoardSize = BoardSize.Default,
     val squares: List<BoardSquareState> = emptyList(),
@@ -27,6 +21,5 @@ data class GameUiState(
 
     val hasConflicts: Boolean get() = conflictKinds.isNotEmpty()
 
-    /** A board with nothing placed has nothing to reset. */
     val canReset: Boolean get() = queensPlaced > 0 || canUndo
 }

@@ -32,20 +32,8 @@ import com.queens.puzzle.model.ThemePreference
 /** The lit half of the track, and the distance it travels between the two segments. */
 private val SegmentWidth = 52.dp
 private val SegmentHeight = 40.dp
-
-/** Long enough to read as a slide, short enough not to delay the scheme change behind it. */
 private const val THUMB_SLIDE_MILLIS = 180
 
-/**
- * The light/dark switch on the home screen.
- *
- * One control, not two buttons: a tap anywhere on it flips the scheme, which is what a switch
- * of this shape promises. The sun and crescent mark the two ends of the track rather than being
- * separate targets — aiming at the one you want is a precision the choice does not need.
- *
- * Drawn rather than iconified: the design's sun and crescent are two circles and an offset
- * cut-out, which is cheaper than shipping an icon pack for two glyphs.
- */
 @Composable
 fun ThemeToggle(
     theme: ThemePreference,
@@ -53,7 +41,7 @@ fun ThemeToggle(
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    val isDark = theme == ThemePreference.Dark
+    val isDark = theme.isDark
     val thumbOffset by animateDpAsState(
         targetValue = if (isDark) SegmentWidth else 0.dp,
         animationSpec = tween(durationMillis = THUMB_SLIDE_MILLIS),
@@ -69,11 +57,7 @@ fun ThemeToggle(
             .toggleable(
                 value = isDark,
                 role = Role.Switch,
-                onValueChange = { wantsDark ->
-                    onThemeSelected(
-                        if (wantsDark) ThemePreference.Dark else ThemePreference.Light,
-                    )
-                },
+                onValueChange = { onThemeSelected(theme.toggled()) },
             )
             .semantics { contentDescription = label }
             .padding(4.dp),
@@ -94,10 +78,6 @@ fun ThemeToggle(
     }
 }
 
-/**
- * The pill that slides under whichever end is current. Drawn behind the two glyphs, so they
- * stay legible as it passes under them.
- */
 @Composable
 private fun Thumb(offset: Dp) {
     Box(

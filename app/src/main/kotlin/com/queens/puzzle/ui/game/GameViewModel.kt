@@ -33,15 +33,6 @@ import kotlinx.coroutines.launch
 /** How often the clock redraws. Fine enough to look live, coarse enough to be cheap. */
 private const val TICK_MILLIS = 200L
 
-/** Keeps the clock running across a configuration change without restarting the game. */
-private const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
-
-/**
- * Orchestrates one game.
- *
- * Holds a [GameSession], applies the pure reducer, evaluates the board, maps the result to
- * state and persists it. All the interesting logic is in the pure functions underneath.
- */
 @HiltViewModel(assistedFactory = GameViewModel.Factory::class)
 class GameViewModel @AssistedInject constructor(
     @Assisted("boardSize") private val boardSizeValue: Int,
@@ -54,18 +45,13 @@ class GameViewModel @AssistedInject constructor(
 
     private val boardSize = BoardSize(boardSizeValue)
 
-    /** Everything except the clock, which ticks on its own. */
     private val boardState = MutableStateFlow(GameUiState(boardSize = boardSize))
 
-    /**
-     * The clock is folded in here rather than written into [boardState], so it only ticks
-     * while something is watching — and a test that never collects never starts it.
-     */
     val uiState: StateFlow<GameUiState> =
         combine(boardState, elapsedTicks()) { state, elapsed -> state.copy(elapsedMillis = elapsed) }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT_MILLIS),
+                started = SharingStarted.WhileSubscribed(5_000L),
                 initialValue = GameUiState(boardSize = boardSize),
             )
 
@@ -74,18 +60,13 @@ class GameViewModel @AssistedInject constructor(
 
     private var session = GameSession(boardSize)
 
-    /**
-     * Monotonic reading the clock started from. Elapsed is always `now - startedAt`, so the
-     * timer cannot drift by accumulating ticks (§6.3).
-     */
     private var startedAt = timeProvider.elapsedMillis()
 
-    /** Set once the board is solved: the clock stops here and the game stops accepting input. */
     private var finalElapsedMillis: Long? = null
 
     /**
      * The board waiting to be written. A `StateFlow` conflates by nature, so a burst of taps
-     * collapses into one write of the latest board rather than one write per tap (§5.2).
+     * collapses into one write of the latest board rather than one write per tap.
      */
     private val pendingSave = MutableStateFlow<SavedPoint?>(null)
 
@@ -193,7 +174,6 @@ class GameViewModel @AssistedInject constructor(
         emit(GameEffect.NavigateToWin(outcome.solveId))
     }
 
-    /** Emits the finished time once and stops; otherwise ticks until the collector goes away. */
     private fun elapsedTicks(): Flow<Long> = flow {
         while (true) {
             val finished = finalElapsedMillis

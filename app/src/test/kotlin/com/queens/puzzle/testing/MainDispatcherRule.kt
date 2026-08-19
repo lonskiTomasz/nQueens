@@ -1,6 +1,7 @@
 package com.queens.puzzle.testing
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -9,11 +10,10 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 /**
- * Puts `viewModelScope` on the test scheduler.
- *
  * Unconfined by default so a ViewModel's `init` work has already happened by the time the test
  * body runs, which keeps the tests free of `advanceUntilIdle` noise.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainDispatcherRule(
     val dispatcher: TestDispatcher = UnconfinedTestDispatcher(),
 ) : TestWatcher() {

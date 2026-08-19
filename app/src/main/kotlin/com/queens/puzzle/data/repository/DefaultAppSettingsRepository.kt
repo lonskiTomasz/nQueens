@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** App-wide preferences, over the preferences store. */
 @Singleton
 class DefaultAppSettingsRepository @Inject constructor(
     private val settingsDataSource: SettingsDataSource,

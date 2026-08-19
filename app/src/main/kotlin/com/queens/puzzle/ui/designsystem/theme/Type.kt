@@ -6,7 +6,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Android system defaults — no custom font files needed
 val DisplayFont = FontFamily.Serif
 val BodyFont = FontFamily.SansSerif
 

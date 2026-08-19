@@ -67,5 +67,4 @@ private fun GameSession.undo(): GameSession {
     }
 }
 
-/** Returns an empty board of the same size, with the undo stack and both counters cleared. */
 private fun GameSession.reset(): GameSession = GameSession(boardSize = boardSize)
