@@ -144,6 +144,19 @@ class GameViewModelTest {
     }
 
     @Test
+    fun `confirming reset restarts the clock`() = runTest {
+        val viewModel = viewModel()
+        observe(viewModel)
+        timeProvider.advanceBy(30_000)
+        viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
+
+        viewModel.onResetRequested()
+        viewModel.onResetConfirmed()
+
+        assertEquals(0L, viewModel.uiState.value.elapsedMillis)
+    }
+
+    @Test
     fun `dismissing reset leaves the board alone`() = runTest {
         val viewModel = viewModel()
         observe(viewModel)

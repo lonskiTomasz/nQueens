@@ -92,6 +92,9 @@ class GameViewModel @AssistedInject constructor(
         }
 
         session = after
+        if (action is GameAction.Reset) {
+            startedAt = timeProvider.elapsedMillis()
+        }
         val evaluation = BoardEvaluator.evaluate(after)
 
         if (action is GameAction.TapSquare && after.hasQueenAt(action.position)) {
