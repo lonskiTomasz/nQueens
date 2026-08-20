@@ -18,8 +18,7 @@ data class QueensExtendedColors(
     val success: Color,
     val boardSquareLight: Color,
     val boardSquareDark: Color,
-    val queenOnLightSquare: Color,
-    val queenOnDarkSquare: Color,
+    val queen: Color,
     val queenConflict: Color,
     val conflictTint: Color,
     val attackMarkOnLightSquare: Color,
@@ -32,8 +31,7 @@ private val LightExtended = QueensExtendedColors(
     success = SuccessGreen,
     boardSquareLight = BoardSquareLight,
     boardSquareDark = BoardSquareDark,
-    queenOnLightSquare = QueenOnLightSquare,
-    queenOnDarkSquare = QueenOnDarkSquare,
+    queen = QueenColor,
     queenConflict = QueenConflictLight,
     conflictTint = ConflictTintLight,
     attackMarkOnLightSquare = AttackMarkOnLightSquare,
@@ -44,15 +42,14 @@ private val LightExtended = QueensExtendedColors(
 
 private val DarkExtended = QueensExtendedColors(
     success = SuccessGreenDark,
-    boardSquareLight = BoardSquareLightDim,
-    boardSquareDark = BoardSquareDarkDim,
-    queenOnLightSquare = QueenOnDimSquare,
-    queenOnDarkSquare = QueenOnDimSquare,
+    // The board keeps its light/dark square colours regardless of app theme.
+    boardSquareLight = BoardSquareLight,
+    boardSquareDark = BoardSquareDark,
+    queen = QueenColor,
     queenConflict = QueenConflictDark,
     conflictTint = ConflictTintDark,
-    // Both square shades are dark here, so the cross is light on both.
-    attackMarkOnLightSquare = AttackMarkOnDimSquare,
-    attackMarkOnDarkSquare = AttackMarkOnDimSquare,
+    attackMarkOnLightSquare = AttackMarkOnLightSquare,
+    attackMarkOnDarkSquare = AttackMarkOnDarkSquare,
     winHeadline = TertiaryDark,
     winGradientTop = WinGradientTopDark,
 )

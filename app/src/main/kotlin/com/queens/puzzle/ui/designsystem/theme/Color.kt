@@ -3,10 +3,10 @@ package com.queens.puzzle.ui.designsystem.theme
 import androidx.compose.ui.graphics.Color
 
 // Light scheme
-val PrimaryLight = Color(0xFF3D5A73)
+val PrimaryLight = Color(0xFF2E7D32)
 val OnPrimaryLight = Color(0xFFFFFFFF)
-val PrimaryContainerLight = Color(0xFFD3E4F0)
-val OnPrimaryContainerLight = Color(0xFF16324A)
+val PrimaryContainerLight = Color(0xFFC8EAC0)
+val OnPrimaryContainerLight = Color(0xFF0D3B12)
 val SecondaryLight = Color(0xFF6B5B4D)
 val OnSecondaryLight = Color(0xFFFFFFFF)
 val SecondaryContainerLight = Color(0xFFE8DDD2)
@@ -36,14 +36,14 @@ val SurfaceBrightLight = Color(0xFFFFFFFF)
 val SurfaceDimLight = Color(0xFFE2DCD0)
 val InverseSurfaceLight = Color(0xFF32302B)
 val InverseOnSurfaceLight = Color(0xFFF5F2EC)
-val InversePrimaryLight = Color(0xFFA8C7E0)
+val InversePrimaryLight = Color(0xFF8AD47A)
 val ScrimLight = Color(0xFF171614)
 
 // Dark scheme
-val PrimaryDark = Color(0xFFA8C7E0)
-val OnPrimaryDark = Color(0xFF16324A)
-val PrimaryContainerDark = Color(0xFF2A4A63)
-val OnPrimaryContainerDark = Color(0xFFD3E4F0)
+val PrimaryDark = Color(0xFF7BC96C)
+val OnPrimaryDark = Color(0xFF0F3512)
+val PrimaryContainerDark = Color(0xFF23481F)
+val OnPrimaryContainerDark = Color(0xFFBEE8B0)
 val SecondaryDark = Color(0xFFC7B6A5)
 val OnSecondaryDark = Color(0xFF3D3226)
 val SecondaryContainerDark = Color(0xFF4A3E32)
@@ -73,21 +73,17 @@ val SurfaceBrightDark = Color(0xFF3A3733)
 val SurfaceDimDark = Color(0xFF171614)
 val InverseSurfaceDark = Color(0xFFE8E6E1)
 val InverseOnSurfaceDark = Color(0xFF1F1E1B)
-val InversePrimaryDark = Color(0xFF3D5A73)
+val InversePrimaryDark = Color(0xFF2E7D32)
 val ScrimDark = Color(0xFF171614)
 
 // Extended roles — no standard M3 slot fits these
 val SuccessGreen = Color(0xFF4C8C6B)
 val SuccessGreenDark = Color(0xFF7FB899)
-val BoardSquareLight = Color(0xFFEDE6D8)
-val BoardSquareDark = Color(0xFF6B5B4D)
-val BoardSquareLightDim = Color(0xFF3A342C)
-val BoardSquareDarkDim = Color(0xFF221E19)
+val BoardSquareLight = Color(0xFFEEEED2)
+val BoardSquareDark = Color(0xFF769656)
 
-// Queen glyph colours, which follow the square rather than a scheme role
-val QueenOnLightSquare = Color(0xFF3D3226)
-val QueenOnDarkSquare = Color(0xFFF5EFE4)
-val QueenOnDimSquare = Color(0xFFE8E6E1)
+// The queen glyph is always this dark tone, regardless of square shade or app theme.
+val QueenColor = Color(0xFF3D3226)
 val QueenConflictLight = Color(0xFF8A4E12)
 val QueenConflictDark = Color(0xFFF0A868)
 
@@ -99,7 +95,6 @@ val ConflictTintDark = Color(0x59F0A868)
 // reading order, and per square shade because one colour cannot carry both.
 val AttackMarkOnLightSquare = Color(0x8C3D3226)
 val AttackMarkOnDarkSquare = Color(0x99F5EFE4)
-val AttackMarkOnDimSquare = Color(0x8CE8E6E1)
 
 // Win screen: the celebration headline sits on a pale gradient, so it needs its own darker gold
 val WinHeadlineLight = Color(0xFF8A6A0E)
