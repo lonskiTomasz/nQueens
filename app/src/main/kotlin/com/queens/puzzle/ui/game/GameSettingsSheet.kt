@@ -166,16 +166,3 @@ private fun GameSettingsContentPreview() {
     }
 }
 
-@Preview
-@Composable
-private fun GameSettingsContentBothOnPreview() {
-    QueensPreviewSurface(padding = 0.dp) {
-        GameSettingsContent(
-            settings = GameSettings(showAttackLines = true, hapticsEnabled = true, soundEnabled = true),
-            onShowAttackLinesChanged = {},
-            onHapticsChanged = {},
-            onSoundChanged = {},
-            onDone = {},
-        )
-    }
-}

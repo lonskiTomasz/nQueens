@@ -64,10 +64,6 @@ class GameViewModel @AssistedInject constructor(
 
     private var finalElapsedMillis: Long? = null
 
-    /**
-     * The board waiting to be written. A `StateFlow` conflates by nature, so a burst of taps
-     * collapses into one write of the latest board rather than one write per tap.
-     */
     private val pendingSave = MutableStateFlow<SavedPoint?>(null)
 
     init {
@@ -143,7 +139,6 @@ class GameViewModel @AssistedInject constructor(
         viewModelScope.launch { gameSettingsRepository.setSoundEnabled(enabled) }
     }
 
-    /** Resumes the stored board when asked, and only when it is the same size. */
     private suspend fun restore() {
         val saved = sessionRepository.observeSavedSession().first()
 

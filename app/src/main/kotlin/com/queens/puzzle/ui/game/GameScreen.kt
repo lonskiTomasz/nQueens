@@ -45,21 +45,19 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.queens.puzzle.R
 import com.queens.puzzle.common.time.DurationFormatter
 import com.queens.puzzle.domain.game.GameAction
-import com.queens.puzzle.model.GameSettings
-import com.queens.puzzle.model.Position
 import com.queens.puzzle.ui.board.BoardGrid
 import com.queens.puzzle.ui.designsystem.component.AlertBadge
 import com.queens.puzzle.ui.designsystem.component.QueenPips
 import com.queens.puzzle.ui.designsystem.component.TimerChip
-import com.queens.puzzle.ui.designsystem.preview.PreviewSolvedQueens
+import com.queens.puzzle.ui.designsystem.preview.PreviewState
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
-import com.queens.puzzle.ui.designsystem.preview.previewGameUiState
 import com.queens.puzzle.ui.feedback.rememberGameFeedback
 import com.queens.puzzle.ui.feedback.rememberGameSound
 import kotlinx.coroutines.Job
@@ -439,66 +437,21 @@ private fun ConflictBanner(modifier: Modifier = Modifier) {
     }
 }
 
-/** A fresh board: nothing placed, undo and reset both off. */
 @PreviewLightDark
 @Composable
-private fun GameScreenFreshPreview() {
+private fun GameScreenPreview(
+    @PreviewParameter(GameScreenPreviewProvider::class) preview: PreviewState<GameUiState>,
+) {
     QueensPreviewScreen {
-        PreviewGameScreen(previewGameUiState(queens = emptySet(), elapsedMillis = 0))
+        PreviewGameScreen(preview.state)
     }
 }
 
-/** Mid-game, with two queens sharing a diagonal — the banner names the line. */
-@PreviewLightDark
-@Composable
-private fun GameScreenInConflictPreview() {
-    QueensPreviewScreen {
-        PreviewGameScreen(previewGameUiState())
-    }
-}
-
-/** The board with attack lines switched off, which is the same board reading differently. */
-@Preview
-@Composable
-private fun GameScreenWithoutAttackLinesPreview() {
-    QueensPreviewScreen {
-        PreviewGameScreen(
-            previewGameUiState(settings = GameSettings(showAttackLines = false)),
-        )
-    }
-}
-
-/** The largest board, where the squares and the glyph are at their smallest. */
-@Preview
-@Composable
-private fun GameScreenLargestBoardPreview() {
-    QueensPreviewScreen {
-        PreviewGameScreen(
-            previewGameUiState(
-                boardSize = 12,
-                queens = setOf(Position(0, 0), Position(2, 5), Position(7, 11)),
-            ),
-        )
-    }
-}
-
-/** Rotated: the board keeps the height and the controls take the width it leaves. */
 @Preview(widthDp = 740, heightDp = 360)
 @Composable
 private fun GameScreenLandscapePreview() {
     QueensPreviewScreen {
         PreviewGameScreen(previewGameUiState())
-    }
-}
-
-/** Solved: the 4x4 board with every queen at peace. */
-@Preview
-@Composable
-private fun GameScreenSolvedPreview() {
-    QueensPreviewScreen {
-        PreviewGameScreen(
-            previewGameUiState(boardSize = 4, queens = PreviewSolvedQueens, elapsedMillis = 12_000),
-        )
     }
 }
 

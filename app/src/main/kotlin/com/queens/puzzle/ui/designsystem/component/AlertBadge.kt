@@ -21,10 +21,6 @@ import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 
 private const val ALERT_MARK = "!"
 
-/**
- * Semantics are cleared: what the badge sits beside is the message, and a screen reader that
- * says "exclamation mark" first only delays it.
- */
 @Composable
 fun AlertBadge(
     modifier: Modifier = Modifier,
@@ -44,7 +40,6 @@ fun AlertBadge(
     }
 }
 
-/** Its two sizes: the dialog's, and the smaller one that rides inside the conflict banner. */
 @PreviewLightDark
 @Composable
 private fun AlertBadgePreview() {

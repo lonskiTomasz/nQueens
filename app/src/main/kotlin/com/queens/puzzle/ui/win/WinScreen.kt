@@ -54,6 +54,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -66,8 +67,8 @@ import com.queens.puzzle.common.time.DurationFormatter
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.WinSummary
 import com.queens.puzzle.ui.designsystem.component.QueenGlyph
+import com.queens.puzzle.ui.designsystem.preview.PreviewState
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
-import com.queens.puzzle.ui.designsystem.preview.previewWinSummary
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
 import com.queens.puzzle.ui.designsystem.theme.QueensTheme
 import kotlinx.coroutines.coroutineScope
@@ -524,21 +525,6 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
     }
 }
 
-/** The screen it is built for: a new best, with the improvement spelled out. */
-@PreviewLightDark
-@Composable
-private fun WinScreenNewBestPreview() {
-    QueensPreviewScreen {
-        WinScreen(
-            uiState = WinUiState.Solved(previewWinSummary()),
-            onPlay = {},
-            onSeeBestTimes = {},
-            onClose = {},
-        )
-    }
-}
-
-/** Rotated: the summary scrolls, the buttons stay put. */
 @Preview(widthDp = 740, heightDp = 360)
 @Composable
 private fun WinScreenLandscapePreview() {
@@ -552,45 +538,14 @@ private fun WinScreenLandscapePreview() {
     }
 }
 
-/** A first solve of a size: a best, but with nothing to have beaten. */
-@Preview
+@PreviewLightDark
 @Composable
-private fun WinScreenFirstSolvePreview() {
+private fun WinScreenPreview(
+    @PreviewParameter(WinScreenPreviewProvider::class) preview: PreviewState<WinUiState>,
+) {
     QueensPreviewScreen {
         WinScreen(
-            uiState = WinUiState.Solved(
-                previewWinSummary(improvementMillis = null, solveCountForSize = 1),
-            ),
-            onPlay = {},
-            onSeeBestTimes = {},
-            onClose = {},
-        )
-    }
-}
-
-/** Slower than the best — the badge has to congratulate without celebrating. */
-@Preview
-@Composable
-private fun WinScreenSlowerPreview() {
-    QueensPreviewScreen {
-        WinScreen(
-            uiState = WinUiState.Solved(
-                previewWinSummary(isNewBest = false, improvementMillis = -54_000),
-            ),
-            onPlay = {},
-            onSeeBestTimes = {},
-            onClose = {},
-        )
-    }
-}
-
-/** The solve is gone — the history was cleared while this screen was open. */
-@Preview
-@Composable
-private fun WinScreenMissingPreview() {
-    QueensPreviewScreen {
-        WinScreen(
-            uiState = WinUiState.Missing,
+            uiState = preview.state,
             onPlay = {},
             onSeeBestTimes = {},
             onClose = {},

@@ -136,10 +136,6 @@ private fun BoardSquareState.describe(): String {
     )
 }
 
-/**
- * The board carries no game state of its own, so it previews at any size from sample squares
- * alone — the reason it is a standalone widget rather than part of the game screen.
- */
 @Preview(widthDp = 340)
 @Composable
 private fun BoardGridEmptyPreview() {
@@ -152,7 +148,6 @@ private fun BoardGridEmptyPreview() {
     }
 }
 
-/** Mid-game: five queens down, two of them sharing a diagonal, attack lines on. */
 @PreviewLightDark
 @Composable
 private fun BoardGridInPlayPreview() {
@@ -165,7 +160,6 @@ private fun BoardGridInPlayPreview() {
     }
 }
 
-/** The smallest board there is, solved. */
 @PreviewLightDark
 @Composable
 private fun BoardGridSolvedPreview() {
@@ -178,7 +172,6 @@ private fun BoardGridSolvedPreview() {
     }
 }
 
-/** The largest board, where the squares are at their smallest. */
 @Preview(widthDp = 340)
 @Composable
 private fun BoardGridLargestPreview() {

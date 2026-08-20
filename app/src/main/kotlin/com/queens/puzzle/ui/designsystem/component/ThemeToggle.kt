@@ -131,10 +131,6 @@ private fun Moon(lit: Boolean, onThumb: Boolean) {
     }
 }
 
-/**
- * Worth previewing in both schemes for a reason the other components do not have: this control
- * is how the player *changes* scheme, so its two states have to read correctly in each one.
- */
 @PreviewLightDark
 @Composable
 private fun ThemeTogglePreview() {

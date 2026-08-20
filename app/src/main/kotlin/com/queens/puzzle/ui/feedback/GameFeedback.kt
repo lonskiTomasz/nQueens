@@ -6,12 +6,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 
-/**
- * Physical feedback for the three moments that deserve it.
- *
- * An interface so a test can bind a recording implementation and assert *that* feedback was
- * requested, with no device involved.
- */
 interface GameFeedback {
 
     fun place()
@@ -32,13 +26,11 @@ private class HapticGameFeedback(private val haptics: HapticFeedback) : GameFeed
 
     override fun place() = haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
 
-    /** Heavier than a placement, so a conflict is felt as different rather than just louder. */
     override fun conflict() = haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 
     override fun win() = haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 }
 
-/** Honours the player's haptics setting by binding [SilentGameFeedback] when it is off. */
 @Composable
 fun rememberGameFeedback(enabled: Boolean): GameFeedback {
     val haptics = LocalHapticFeedback.current

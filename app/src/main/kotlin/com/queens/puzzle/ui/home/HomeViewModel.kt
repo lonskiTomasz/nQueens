@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appSettingsRepository: AppSettingsRepository,
-    private val sessionRepository: SessionRepository,
+    sessionRepository: SessionRepository,
     observeBestTimes: ObserveBestTimesUseCase,
 ) : ViewModel() {
 

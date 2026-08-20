@@ -1,6 +1,7 @@
 package com.queens.puzzle.ui.designsystem.preview
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,3 +29,18 @@ fun QueensPreviewScreen(content: @Composable () -> Unit) {
         Surface(color = MaterialTheme.colorScheme.background) { content() }
     }
 }
+
+@Composable
+fun QueensPreviewDialog(content: @Composable () -> Unit) {
+    QueensTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background,
+        ) { content() }
+    }
+}
+
+data class PreviewState<T>(
+    val state: T,
+    val testName: String,
+)

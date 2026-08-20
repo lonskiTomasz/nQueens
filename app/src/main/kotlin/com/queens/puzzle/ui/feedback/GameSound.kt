@@ -9,12 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.queens.puzzle.R
 
-/**
- * The click a queen makes landing on the board.
- *
- * An interface so a test can bind a recording implementation and assert *that* a sound was
- * requested, with no device involved.
- */
 interface GameSound {
 
     fun place()
@@ -41,10 +35,6 @@ private class SoundPoolGameSound(private val soundPool: SoundPool, private val s
     }
 }
 
-/**
- * Honours the player's sound setting by only decoding and loading the clip once it is on,
- * and releasing the pool the moment it is switched off.
- */
 @Composable
 fun rememberGameSound(enabled: Boolean): GameSound {
     val context = LocalContext.current

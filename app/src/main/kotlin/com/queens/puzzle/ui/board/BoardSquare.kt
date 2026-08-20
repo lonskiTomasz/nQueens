@@ -119,10 +119,6 @@ fun BoardSquare(
     }
 }
 
-/**
- * The four states of a square, as the design lays them out: empty, empty under attack, a
- * placed queen, and a queen in conflict.
- */
 @PreviewLightDark
 @Composable
 private fun BoardSquareStatesPreview() {
@@ -146,7 +142,6 @@ private fun BoardSquareStatesPreview() {
     }
 }
 
-/** The same states on a dark square, where the glyph takes its other colour. */
 @PreviewLightDark
 @Composable
 private fun BoardSquareOnDarkSquarePreview() {

@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -41,8 +42,8 @@ import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ThemePreference
 import com.queens.puzzle.ui.designsystem.component.QueenGlyph
+import com.queens.puzzle.ui.designsystem.preview.PreviewState
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
-import com.queens.puzzle.ui.designsystem.preview.previewHomeUiState
 import com.queens.puzzle.ui.designsystem.component.SizeChip
 import com.queens.puzzle.ui.designsystem.component.ThemeToggle
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
@@ -278,13 +279,14 @@ private fun BestTimesCard(
     }
 }
 
-/** First run: no history, nothing to resume. */
 @PreviewLightDark
 @Composable
-private fun HomeScreenFirstRunPreview() {
+private fun HomeScreenThemePreview(
+    @PreviewParameter(HomeScreenPreviewProvider::class) preview: PreviewState<HomeUiState>,
+) {
     QueensPreviewScreen {
         HomeScreen(
-            uiState = previewHomeUiState(bestTimes = emptyList()),
+            uiState = preview.state,
             onSizeSelected = {},
             onThemeSelected = {},
             onStartGame = {},
@@ -294,28 +296,6 @@ private fun HomeScreenFirstRunPreview() {
     }
 }
 
-/** A player who has been here before: history to show, and a board part-finished. */
-@PreviewLightDark
-@Composable
-private fun HomeScreenReturningPreview() {
-    QueensPreviewScreen {
-        HomeScreen(
-            uiState = previewHomeUiState(selectedSize = 10, resumableSize = 6),
-            onSizeSelected = {},
-            onThemeSelected = {},
-            onStartGame = {},
-            onResumeGame = {},
-            onSeeAllBestTimes = {},
-        )
-    }
-}
-
-/**
- * The screen at its most cramped.
- *
- * The design is drawn at 412x892; a weighted layout collapsed here, which is what made this
- * screen scroll.
- */
 @Preview(widthDp = 320, heightDp = 560)
 @Composable
 private fun HomeScreenSmallScreenPreview() {
