@@ -18,4 +18,7 @@ class DefaultGameSettingsRepository @Inject constructor(
 
     override suspend fun setHapticsEnabled(enabled: Boolean) =
         settingsDataSource.setHapticsEnabled(enabled)
+
+    override suspend fun setSoundEnabled(enabled: Boolean) =
+        settingsDataSource.setSoundEnabled(enabled)
 }

@@ -68,7 +68,7 @@ class GameViewModelTest {
 
         viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
 
-        assertEquals(listOf(GameEffect.HapticPlace), effects)
+        assertEquals(listOf(GameEffect.HapticPlace, GameEffect.SoundPlace), effects)
     }
 
     @Test
@@ -80,7 +80,10 @@ class GameViewModelTest {
         viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
         viewModel.onAction(GameAction.TapSquare(Position(1, 1)))
 
-        assertEquals(listOf(GameEffect.HapticPlace, GameEffect.HapticConflict), effects)
+        assertEquals(
+            listOf(GameEffect.HapticPlace, GameEffect.SoundPlace, GameEffect.HapticConflict, GameEffect.SoundPlace),
+            effects,
+        )
         assertEquals(setOf(ConflictKind.Diagonal), viewModel.uiState.value.conflictKinds)
         assertTrue(viewModel.uiState.value.hasConflicts)
     }
@@ -311,6 +314,17 @@ class GameViewModelTest {
 
         assertEquals(true, gameSettingsRepository.current.hapticsEnabled)
         assertEquals(GameSettings(hapticsEnabled = true), viewModel.uiState.value.settings)
+    }
+
+    @Test
+    fun `the sound toggle round-trips through the repository`() = runTest {
+        val viewModel = viewModel()
+        observe(viewModel)
+
+        viewModel.onSoundChanged(true)
+
+        assertEquals(true, gameSettingsRepository.current.soundEnabled)
+        assertEquals(GameSettings(soundEnabled = true), viewModel.uiState.value.settings)
     }
 
     @Test

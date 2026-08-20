@@ -10,4 +10,6 @@ interface GameSettingsRepository {
     suspend fun setShowAttackLines(enabled: Boolean)
 
     suspend fun setHapticsEnabled(enabled: Boolean)
+
+    suspend fun setSoundEnabled(enabled: Boolean)
 }

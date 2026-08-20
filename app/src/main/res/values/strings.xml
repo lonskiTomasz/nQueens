@@ -43,6 +43,8 @@
     <string name="settings_attack_lines_detail">Cross out squares a queen covers</string>
     <string name="settings_haptics">Haptic on place</string>
     <string name="settings_haptics_detail">Light tick, double tick on conflict</string>
+    <string name="settings_sound">Sound on place</string>
+    <string name="settings_sound_detail">Play a click when a queen lands</string>
     <string name="settings_done">Done</string>
 
     <!-- Reset confirmation -->

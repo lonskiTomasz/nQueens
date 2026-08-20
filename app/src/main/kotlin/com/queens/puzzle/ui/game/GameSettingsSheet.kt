@@ -41,6 +41,7 @@ fun GameSettingsSheet(
     settings: GameSettings,
     onShowAttackLinesChanged: (Boolean) -> Unit,
     onHapticsChanged: (Boolean) -> Unit,
+    onSoundChanged: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(
@@ -51,6 +52,7 @@ fun GameSettingsSheet(
             settings = settings,
             onShowAttackLinesChanged = onShowAttackLinesChanged,
             onHapticsChanged = onHapticsChanged,
+            onSoundChanged = onSoundChanged,
             onDone = onDismiss,
         )
     }
@@ -61,6 +63,7 @@ private fun GameSettingsContent(
     settings: GameSettings,
     onShowAttackLinesChanged: (Boolean) -> Unit,
     onHapticsChanged: (Boolean) -> Unit,
+    onSoundChanged: (Boolean) -> Unit,
     onDone: () -> Unit,
 ) {
     Column(
@@ -87,6 +90,13 @@ private fun GameSettingsContent(
                 detail = stringResource(R.string.settings_haptics_detail),
                 checked = settings.hapticsEnabled,
                 onCheckedChange = onHapticsChanged,
+            )
+            HorizontalDivider()
+            SettingRow(
+                title = stringResource(R.string.settings_sound),
+                detail = stringResource(R.string.settings_sound_detail),
+                checked = settings.soundEnabled,
+                onCheckedChange = onSoundChanged,
             )
         }
 
@@ -147,9 +157,10 @@ private fun SettingRow(
 private fun GameSettingsContentPreview() {
     QueensPreviewSurface(padding = 0.dp) {
         GameSettingsContent(
-            settings = GameSettings(showAttackLines = true, hapticsEnabled = false),
+            settings = GameSettings(showAttackLines = true, hapticsEnabled = false, soundEnabled = false),
             onShowAttackLinesChanged = {},
             onHapticsChanged = {},
+            onSoundChanged = {},
             onDone = {},
         )
     }
@@ -160,9 +171,10 @@ private fun GameSettingsContentPreview() {
 private fun GameSettingsContentBothOnPreview() {
     QueensPreviewSurface(padding = 0.dp) {
         GameSettingsContent(
-            settings = GameSettings(showAttackLines = true, hapticsEnabled = true),
+            settings = GameSettings(showAttackLines = true, hapticsEnabled = true, soundEnabled = true),
             onShowAttackLinesChanged = {},
             onHapticsChanged = {},
+            onSoundChanged = {},
             onDone = {},
         )
     }

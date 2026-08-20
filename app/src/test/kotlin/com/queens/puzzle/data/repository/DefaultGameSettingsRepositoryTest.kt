@@ -43,6 +43,15 @@ class DefaultGameSettingsRepositoryTest {
     }
 
     @Test
+    fun `sound round-trip`() = runTest {
+        val repository = repositoryOver(emptyPreferences())
+
+        repository.setSoundEnabled(true)
+
+        assertEquals(true, repository.observeGameSettings().first().soundEnabled)
+    }
+
+    @Test
     fun `writing one option leaves the other alone`() = runTest {
         val repository = repositoryOver(emptyPreferences())
 

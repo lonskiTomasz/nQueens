@@ -61,6 +61,7 @@ import com.queens.puzzle.ui.designsystem.preview.PreviewSolvedQueens
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
 import com.queens.puzzle.ui.designsystem.preview.previewGameUiState
 import com.queens.puzzle.ui.feedback.rememberGameFeedback
+import com.queens.puzzle.ui.feedback.rememberGameSound
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -77,15 +78,17 @@ fun GameScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val feedback = rememberGameFeedback(enabled = uiState.settings.hapticsEnabled)
+    val sound = rememberGameSound(enabled = uiState.settings.soundEnabled)
     val snackbarHostState = remember { SnackbarHostState() }
     val boardFullMessage = stringResource(R.string.game_board_full)
 
-    LaunchedEffect(viewModel, feedback) {
+    LaunchedEffect(viewModel, feedback, sound) {
         var snackbarJob: Job? = null
         viewModel.effects.collect { effect ->
             when (effect) {
                 GameEffect.HapticPlace -> feedback.place()
                 GameEffect.HapticConflict -> feedback.conflict()
+                GameEffect.SoundPlace -> sound.place()
                 GameEffect.BoardFull -> {
                     feedback.conflict()
                     snackbarJob?.cancel()
@@ -108,6 +111,7 @@ fun GameScreen(
         onSettingsDismissed = viewModel::onSettingsDismissed,
         onShowAttackLinesChanged = viewModel::onShowAttackLinesChanged,
         onHapticsChanged = viewModel::onHapticsChanged,
+        onSoundChanged = viewModel::onSoundChanged,
         modifier = modifier,
         snackbarHostState = snackbarHostState,
     )
@@ -134,6 +138,7 @@ fun GameScreen(
     onSettingsDismissed: () -> Unit,
     onShowAttackLinesChanged: (Boolean) -> Unit,
     onHapticsChanged: (Boolean) -> Unit,
+    onSoundChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
@@ -182,6 +187,7 @@ fun GameScreen(
             settings = uiState.settings,
             onShowAttackLinesChanged = onShowAttackLinesChanged,
             onHapticsChanged = onHapticsChanged,
+            onSoundChanged = onSoundChanged,
             onDismiss = onSettingsDismissed,
         )
     }
@@ -509,5 +515,6 @@ private fun PreviewGameScreen(uiState: GameUiState) {
         onSettingsDismissed = {},
         onShowAttackLinesChanged = {},
         onHapticsChanged = {},
+        onSoundChanged = {},
     )
 }

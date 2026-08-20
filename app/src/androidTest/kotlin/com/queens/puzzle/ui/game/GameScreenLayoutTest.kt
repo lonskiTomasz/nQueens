@@ -90,6 +90,7 @@ class GameScreenLayoutTest {
                     onSettingsDismissed = {},
                     onShowAttackLinesChanged = {},
                     onHapticsChanged = {},
+                    onSoundChanged = {},
                 )
             }
         }

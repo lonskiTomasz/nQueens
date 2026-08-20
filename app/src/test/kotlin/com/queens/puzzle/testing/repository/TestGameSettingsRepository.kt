@@ -22,4 +22,8 @@ class TestGameSettingsRepository(
     override suspend fun setHapticsEnabled(enabled: Boolean) {
         settings.value = settings.value.copy(hapticsEnabled = enabled)
     }
+
+    override suspend fun setSoundEnabled(enabled: Boolean) {
+        settings.value = settings.value.copy(soundEnabled = enabled)
+    }
 }

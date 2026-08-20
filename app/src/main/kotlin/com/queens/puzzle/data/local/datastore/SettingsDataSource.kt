@@ -39,6 +39,7 @@ class SettingsDataSource @Inject constructor(
         GameSettings(
             showAttackLines = stored[Keys.SHOW_ATTACK_LINES] ?: DEFAULT_GAME.showAttackLines,
             hapticsEnabled = stored[Keys.HAPTICS_ENABLED] ?: DEFAULT_GAME.hapticsEnabled,
+            soundEnabled = stored[Keys.SOUND_ENABLED] ?: DEFAULT_GAME.soundEnabled,
         )
     }
 
@@ -53,6 +54,8 @@ class SettingsDataSource @Inject constructor(
     suspend fun setShowAttackLines(enabled: Boolean) = edit(Keys.SHOW_ATTACK_LINES, enabled)
 
     suspend fun setHapticsEnabled(enabled: Boolean) = edit(Keys.HAPTICS_ENABLED, enabled)
+
+    suspend fun setSoundEnabled(enabled: Boolean) = edit(Keys.SOUND_ENABLED, enabled)
 
     suspend fun setTheme(theme: ThemePreference) = edit(Keys.THEME, theme.name)
 
@@ -79,6 +82,7 @@ class SettingsDataSource @Inject constructor(
     private object Keys {
         val SHOW_ATTACK_LINES = booleanPreferencesKey("show_attack_lines")
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
+        val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
         val THEME = stringPreferencesKey("theme")
         val LAST_BOARD_SIZE = intPreferencesKey("last_board_size")
     }

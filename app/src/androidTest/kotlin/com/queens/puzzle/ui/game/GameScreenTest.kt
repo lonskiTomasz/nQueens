@@ -182,6 +182,7 @@ class GameScreenTest {
                     onSettingsDismissed = {},
                     onShowAttackLinesChanged = {},
                     onHapticsChanged = {},
+                    onSoundChanged = {},
                 )
             }
         }

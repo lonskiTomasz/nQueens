@@ -105,6 +105,7 @@ class GameViewModel @AssistedInject constructor(
                     GameEffect.HapticPlace
                 }
             )
+            emit(GameEffect.SoundPlace)
         }
 
         if (evaluation.isSolved) {
@@ -136,6 +137,10 @@ class GameViewModel @AssistedInject constructor(
 
     fun onHapticsChanged(enabled: Boolean) {
         viewModelScope.launch { gameSettingsRepository.setHapticsEnabled(enabled) }
+    }
+
+    fun onSoundChanged(enabled: Boolean) {
+        viewModelScope.launch { gameSettingsRepository.setSoundEnabled(enabled) }
     }
 
     /** Resumes the stored board when asked, and only when it is the same size. */
