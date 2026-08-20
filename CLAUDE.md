@@ -33,28 +33,6 @@ This is deliberately not Clean Architecture; see §2 and decision log rows 2, 13
 `docs/Architecture.md`. There is no architecture-enforcement test — the layering is held by
 convention and review.
 
-## Design source
-
-The UI spec is not in this repo. It lives in a Claude Design project:
-
-<https://claude.ai/design/p/be69d229-833b-4d13-8e28-4e23109364ca>
-
-Read it with the design MCP (`https://api.anthropic.com/v1/design/mcp`, authenticate via
-`/design-login`) — `DesignSync` `get_file` against project
-`be69d229-833b-4d13-8e28-4e23109364ca`, path `N-Queens Design.dc.html`.
-
-That one file is the entire spec, and it is the design's source rather than a picture of
-it: colour and type tokens for both schemes (with the Kotlin for `Color.kt`, `Type.kt` and
-`Theme.kt` spelled out), all five screens as markup with exact sizes, spacing and copy,
-plus animation timings and touch-target rules. Every value is stated, so nothing needs to
-be measured or eyedropped — no exported images are required to build the UI.
-
-Each screen is an `<x-import>` block; `sc-for` / `sc-if` are template directives whose
-sample data sits in the `<script type="text/x-dc">` block at the end of the file. The
-project's two other files, `android-frame.jsx` and `support.js`, are canvas scaffolding —
-a device bezel and the template renderer. They contain no app design; the bezel only draws
-system chrome that Android provides at runtime.
-
 ## Build and test
 
 ```bash
@@ -71,14 +49,12 @@ the plan to move those tests onto the JVM.
 
 ## Conventions
 
-* Root package `com.queens.puzzle`.
 * Declare dependencies in `gradle/libs.versions.toml`; never inline coordinates in
   `build.gradle.kts`.
 * User-facing text goes in `res/values/strings.xml`, not in composables.
 * Spacing and sizes shared across screens come from `Spacing` / `Dimens` in
   `ui/designsystem/theme`. A value one composable owns stays with it — a named `val` if it is
   reused or needs explaining, an inline `.dp` literal if the call site already reads clearly.
-* Sources live in `src/main/kotlin` (and `src/test/kotlin`), not `src/main/java`.
 * Tests use hand-written doubles named `Test*` after the interface they stand in for, under
   `src/test/kotlin/com/queens/puzzle/testing/` — no mocking framework.
 * Conventional Commits, linear history, every commit builds green.
