@@ -61,6 +61,8 @@ import com.queens.puzzle.ui.designsystem.preview.PreviewSolvedQueens
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
 import com.queens.puzzle.ui.designsystem.preview.previewGameUiState
 import com.queens.puzzle.ui.feedback.rememberGameFeedback
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 @Composable
 fun GameScreen(
@@ -79,15 +81,15 @@ fun GameScreen(
     val boardFullMessage = stringResource(R.string.game_board_full)
 
     LaunchedEffect(viewModel, feedback) {
+        var snackbarJob: Job? = null
         viewModel.effects.collect { effect ->
             when (effect) {
                 GameEffect.HapticPlace -> feedback.place()
                 GameEffect.HapticConflict -> feedback.conflict()
                 GameEffect.BoardFull -> {
                     feedback.conflict()
-                    // The reducer refuses silently; say why rather than looking broken.
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                    snackbarHostState.showSnackbar(boardFullMessage)
+                    snackbarJob?.cancel()
+                    snackbarJob = launch { snackbarHostState.showSnackbar(boardFullMessage) }
                 }
                 GameEffect.CelebrateWin -> feedback.win()
                 is GameEffect.NavigateToWin -> onNavigateToWin(effect.solveId)
