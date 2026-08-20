@@ -6,6 +6,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -54,8 +58,10 @@ import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.ui.designsystem.component.SizeChip
 import com.queens.puzzle.ui.designsystem.preview.PreviewState
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
+import com.queens.puzzle.ui.designsystem.theme.Dimens
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
 import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import com.queens.puzzle.ui.designsystem.theme.Spacing
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -96,9 +102,9 @@ fun BestTimesScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                    .padding(bottom = Spacing.ContentGap)
                     .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = Spacing.ScreenPaddingHorizontal),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 SizeChip(
@@ -128,10 +134,7 @@ fun BestTimesScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                        horizontal = 8.dp,
-                        vertical = 4.dp,
-                    ),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     items(uiState.rows, key = { it.solve.id }) { row -> SolveRowItem(row) }
@@ -142,14 +145,17 @@ fun BestTimesScreen(
 }
 
 @Composable
-private fun TopBar(onNavigateBack: () -> Unit, onClearHistory: () -> Unit) {
+private fun TopBar(
+    onNavigateBack: () -> Unit,
+    onClearHistory: () -> Unit
+) {
     var menuOpen by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
-            .padding(horizontal = 4.dp),
+            .height(Dimens.TopBarHeight)
+            .padding(horizontal = Spacing.IconButtonInset),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onNavigateBack) {
@@ -196,12 +202,12 @@ private fun SolveRowItem(row: SolveRow) {
                 if (row.isBestForSize) {
                     MaterialTheme.colorScheme.surface
                 } else {
-                    androidx.compose.ui.graphics.Color.Transparent
+                    Color.Transparent
                 }
             )
-            .padding(12.dp),
+            .padding(Spacing.CardPadding),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.ListItemGap),
     ) {
         MiniBoard(boardSize = row.solve.boardSize)
 
@@ -257,8 +263,8 @@ private fun MiniBoard(boardSize: BoardSize) {
             repeat(boardSize.value) { column ->
                 drawRect(
                     color = if ((row + column) % 2 == 1) dark else light,
-                    topLeft = androidx.compose.ui.geometry.Offset(column * side, row * side),
-                    size = androidx.compose.ui.geometry.Size(side, side),
+                    topLeft = Offset(column * side, row * side),
+                    size = Size(side, side),
                 )
             }
         }

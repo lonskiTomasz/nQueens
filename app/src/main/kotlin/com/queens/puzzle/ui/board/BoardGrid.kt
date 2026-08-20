@@ -29,6 +29,7 @@ import com.queens.puzzle.ui.designsystem.preview.PreviewQueens
 import com.queens.puzzle.ui.designsystem.preview.PreviewSolvedQueens
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.ui.designsystem.preview.previewSquares
+import com.queens.puzzle.ui.designsystem.theme.Dimens
 
 /** The glyph fills about two thirds of its square */
 private const val GLYPH_SIZE_RATIO = 0.66f
@@ -63,7 +64,7 @@ fun BoardGrid(
                 .size(DpSize(side, side))
                 .clip(RoundedCornerShape(16.dp))
                 .border(
-                    BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                    BorderStroke(Dimens.BorderWidth, MaterialTheme.colorScheme.surfaceVariant),
                     RoundedCornerShape(16.dp),
                 ),
         ) {

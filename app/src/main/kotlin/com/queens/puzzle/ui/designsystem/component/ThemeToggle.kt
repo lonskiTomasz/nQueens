@@ -28,10 +28,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.model.ThemePreference
+import com.queens.puzzle.ui.designsystem.theme.Dimens
 
 /** The lit half of the track, and the distance it travels between the two segments. */
 private val SegmentWidth = 52.dp
 private val SegmentHeight = 40.dp
+
 private const val THUMB_SLIDE_MILLIS = 180
 
 @Composable
@@ -50,10 +52,10 @@ fun ThemeToggle(
 
     Row(
         modifier = modifier
-            .height(48.dp)
+            .height(Dimens.MinTouchTarget)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+            .border(Dimens.BorderWidth, MaterialTheme.colorScheme.outlineVariant, CircleShape)
             .toggleable(
                 value = isDark,
                 role = Role.Switch,

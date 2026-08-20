@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.sp
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
+import com.queens.puzzle.ui.designsystem.theme.Spacing
 
 @Composable
 fun TimerChip(
@@ -35,10 +36,10 @@ fun TimerChip(
             .height(40.dp)
             .clip(RoundedCornerShape(percent = 50))
             .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = Spacing.ContainerPaddingHorizontal)
             .semantics { if (contentDescription != null) this.contentDescription = "$contentDescription $time" },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.IconTextGap),
     ) {
         Box(
             modifier = Modifier

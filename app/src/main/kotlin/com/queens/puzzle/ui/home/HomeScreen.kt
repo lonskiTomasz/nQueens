@@ -46,7 +46,9 @@ import com.queens.puzzle.ui.designsystem.preview.PreviewState
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
 import com.queens.puzzle.ui.designsystem.component.SizeChip
 import com.queens.puzzle.ui.designsystem.component.ThemeToggle
+import com.queens.puzzle.ui.designsystem.theme.Dimens
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
+import com.queens.puzzle.ui.designsystem.theme.Spacing
 
 @Composable
 fun HomeScreen(
@@ -91,29 +93,29 @@ fun HomeScreen(
                 onThemeSelected = onThemeSelected,
             )
 
-            Column(Modifier.padding(horizontal = 20.dp)) {
-                Spacer(Modifier.height(12.dp))
+            Column(Modifier.padding(horizontal = Spacing.ScreenPaddingHorizontal)) {
+                Spacer(Modifier.height(Spacing.ContentGap))
                 Text(
                     text = stringResource(R.string.home_headline),
                     style = MaterialTheme.typography.headlineLarge,
                 )
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(Spacing.TextGap))
                 Text(
                     text = stringResource(R.string.home_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(Spacing.SectionGap))
                 Text(
                     text = stringResource(R.string.home_board_size),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(Spacing.LabelGap))
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.ChipGap),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.ChipGap),
                 ) {
                     uiState.sizes.forEach { size ->
                         SizeChip(
@@ -128,12 +130,12 @@ fun HomeScreen(
                     }
                 }
 
-                Spacer(Modifier.height(28.dp))
+                Spacer(Modifier.height(Spacing.ActionGap))
                 Button(
                     onClick = { onStartGame(uiState.selectedSize) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(Dimens.PrimaryButtonHeight),
                     shape = RoundedCornerShape(percent = 50),
                 ) {
                     Text(
@@ -150,7 +152,7 @@ fun HomeScreen(
                         onClick = { onResumeGame(uiState.resumableSize) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp),
+                            .height(Dimens.SecondaryButtonHeight),
                     ) {
                         Text(
                             text = stringResource(R.string.home_resume),
@@ -158,7 +160,7 @@ fun HomeScreen(
                         )
                     }
                 } else {
-                    Spacer(Modifier.height(52.dp))
+                    Spacer(Modifier.height(Spacing.SectionGap))
                 }
             }
 
@@ -166,7 +168,12 @@ fun HomeScreen(
                 bestTimes = uiState.bestTimes,
                 onSeeAll = onSeeAllBestTimes,
                 modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp),
+                    .padding(
+                        start = Spacing.ScreenPaddingHorizontal,
+                        end = Spacing.ScreenPaddingHorizontal,
+                        top = Spacing.ContentGap,
+                        bottom = Spacing.ScreenPaddingVertical,
+                    ),
             )
         }
     }
@@ -180,14 +187,14 @@ private fun HomeTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
-            .padding(start = 20.dp, end = 16.dp),
+            .height(Dimens.TopBarHeight)
+            .padding(horizontal = Spacing.ScreenPaddingHorizontal),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.ContentGap),
         ) {
             Box(
                 modifier = Modifier
@@ -224,7 +231,7 @@ private fun BestTimesCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 8.dp, top = 8.dp),
+                .padding(start = Spacing.ScreenPaddingHorizontal, end = Spacing.TightPadding, top = Spacing.TightPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -241,14 +248,17 @@ private fun BestTimesCard(
             }
         }
 
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 20.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = Spacing.ScreenPaddingHorizontal))
 
         if (bestTimes.isEmpty()) {
             Text(
                 text = stringResource(R.string.home_no_best_times),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                modifier = Modifier.padding(
+                    horizontal = Spacing.ScreenPaddingHorizontal,
+                    vertical = Spacing.ContentGap,
+                ),
             )
         } else {
             bestTimes.forEach { best ->
@@ -256,7 +266,7 @@ private fun BestTimesCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
-                        .padding(horizontal = 20.dp),
+                        .padding(horizontal = Spacing.ScreenPaddingHorizontal),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {

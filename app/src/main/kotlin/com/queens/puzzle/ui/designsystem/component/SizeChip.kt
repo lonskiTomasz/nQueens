@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
+import com.queens.puzzle.ui.designsystem.theme.Dimens
 
 @Composable
 fun SizeChip(
@@ -35,7 +36,7 @@ fun SizeChip(
     Surface(
         onClick = onClick,
         modifier = modifier
-            .height(48.dp)
+            .height(Dimens.MinTouchTarget)
             .defaultMinSize(minWidth = 56.dp)
             .semantics {
                 role = Role.RadioButton
@@ -45,7 +46,7 @@ fun SizeChip(
         shape = RoundedCornerShape(percent = 50),
         color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
         contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-        border = if (selected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = if (selected) null else BorderStroke(Dimens.BorderWidth, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Box(
             modifier = Modifier.padding(horizontal = 20.dp),

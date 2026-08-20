@@ -69,8 +69,10 @@ import com.queens.puzzle.model.WinSummary
 import com.queens.puzzle.ui.designsystem.component.QueenGlyph
 import com.queens.puzzle.ui.designsystem.preview.PreviewState
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
+import com.queens.puzzle.ui.designsystem.theme.Dimens
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
 import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import com.queens.puzzle.ui.designsystem.theme.Spacing
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -133,7 +135,7 @@ fun WinScreen(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .statusBarsPadding()
-                .padding(4.dp),
+                .padding(Spacing.IconButtonInset),
         ) {
             Icon(
                 imageVector = Icons.Filled.Close,
@@ -142,9 +144,6 @@ fun WinScreen(
         }
     }
 }
-
-/** A window shorter than this cannot show the whole celebration at once. */
-private val CompactHeight = 480.dp
 
 /** How far the queen glyph rises during its post-badge flip, before easing back to center. */
 private val QueenFlipLift = 10.dp
@@ -201,7 +200,7 @@ private fun MissingSolve(onClose: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(Spacing.ScreenPaddingHorizontal),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -210,7 +209,7 @@ private fun MissingSolve(onClose: () -> Unit) {
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(Spacing.BlockGap))
         Button(onClick = onClose, shape = RoundedCornerShape(percent = 50)) {
             Text(stringResource(R.string.win_home))
         }
@@ -225,7 +224,7 @@ private fun SolvedContent(
     viewportHeight: Dp,
 ) {
     val scrollState = rememberScrollState()
-    val compact = viewportHeight < CompactHeight
+    val compact = viewportHeight < Dimens.CompactHeight
     val metrics = if (compact) WinMetrics.Compact else WinMetrics.Regular
 
     if (compact) {
@@ -279,7 +278,7 @@ private fun Summary(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = Spacing.ScreenPaddingHorizontal),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         WinBadge(size = metrics.badgeSize, glyphSize = metrics.badgeGlyph)
@@ -292,7 +291,7 @@ private fun Summary(
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
 
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(Spacing.TightTextGap))
         Text(
             text = stringResource(R.string.win_subtitle, solve.boardSize.value, solve.taps),
             style = MaterialTheme.typography.bodyLarge,
@@ -308,7 +307,7 @@ private fun Summary(
             letterSpacing = 1.sp,
         )
 
-        BestBadge(summary = summary, modifier = Modifier.padding(top = 14.dp))
+        BestBadge(summary = summary, modifier = Modifier.padding(top = Spacing.LabelGap))
 
         Spacer(Modifier.height(metrics.beforeStats))
         Row(
@@ -418,10 +417,10 @@ private fun WinActions(
             // the actions have to hold themselves clear of the navigation bar.
             .navigationBarsPadding()
             .padding(
-                start = 24.dp,
-                end = 24.dp,
-                top = 24.dp,
-                bottom = if (compact) 12.dp else 24.dp,
+                start = Spacing.ScreenPaddingHorizontal,
+                end = Spacing.ScreenPaddingHorizontal,
+                top = Spacing.ScreenPaddingVertical,
+                bottom = if (compact) Spacing.ContentGap else Spacing.ScreenPaddingVertical,
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -429,7 +428,7 @@ private fun WinActions(
             onClick = { onPlay((next ?: boardSize).value) },
             modifier = Modifier
                 .fillMaxWidth(buttonWidthFraction)
-                .height(56.dp),
+                .height(Dimens.PrimaryButtonHeight),
             shape = RoundedCornerShape(percent = 50),
         ) {
             Text(
@@ -445,7 +444,7 @@ private fun WinActions(
             onClick = onSeeBestTimes,
             modifier = Modifier
                 .fillMaxWidth(buttonWidthFraction)
-                .height(52.dp),
+                .height(Dimens.SecondaryButtonHeight),
         ) {
             Text(
                 text = stringResource(R.string.win_best_times),
@@ -487,6 +486,7 @@ private fun BestBadge(summary: WinSummary, modifier: Modifier = Modifier) {
         modifier = modifier
             .height(32.dp)
             .background(background, RoundedCornerShape(percent = 50))
+            // The pill sizes itself to its text; this is the air either side of it.
             .padding(horizontal = 18.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -506,7 +506,10 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 14.dp),
+                .padding(
+                    horizontal = Spacing.TightPadding,
+                    vertical = Spacing.RowPaddingVertical,
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -515,7 +518,7 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
             )
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(Spacing.CaptionGap))
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge.copy(fontSize = 12.sp),

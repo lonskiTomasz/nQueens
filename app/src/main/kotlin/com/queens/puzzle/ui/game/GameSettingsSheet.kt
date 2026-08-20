@@ -27,13 +27,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.queens.puzzle.R
 import com.queens.puzzle.model.GameSettings
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
+import com.queens.puzzle.ui.designsystem.theme.Dimens
+import com.queens.puzzle.ui.designsystem.theme.Spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +70,11 @@ private fun GameSettingsContent(
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(start = 20.dp, end = 20.dp, bottom = 28.dp),
+            .padding(
+                start = Spacing.ScreenPaddingHorizontal,
+                end = Spacing.ScreenPaddingHorizontal,
+                bottom = Spacing.ActionGap,
+            ),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
@@ -104,7 +109,7 @@ private fun GameSettingsContent(
             onClick = onDone,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(Dimens.PrimaryButtonHeight),
             shape = RoundedCornerShape(percent = 50),
         ) {
             Text(
@@ -125,10 +130,13 @@ private fun SettingRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 14.dp)
+            .padding(
+                horizontal = Spacing.RowPaddingHorizontal,
+                vertical = Spacing.RowPaddingVertical,
+            )
             .semantics(mergeDescendants = true) { role = Role.Switch },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.RowControlGap),
     ) {
         Column(Modifier.weight(1f)) {
             Text(text = title, style = MaterialTheme.typography.labelLarge)

@@ -75,6 +75,9 @@ the plan to move those tests onto the JVM.
 * Declare dependencies in `gradle/libs.versions.toml`; never inline coordinates in
   `build.gradle.kts`.
 * User-facing text goes in `res/values/strings.xml`, not in composables.
+* Spacing and sizes shared across screens come from `Spacing` / `Dimens` in
+  `ui/designsystem/theme`. A value one composable owns stays with it — a named `val` if it is
+  reused or needs explaining, an inline `.dp` literal if the call site already reads clearly.
 * Sources live in `src/main/kotlin` (and `src/test/kotlin`), not `src/main/java`.
 * Tests use hand-written doubles named `Test*` after the interface they stand in for, under
   `src/test/kotlin/com/queens/puzzle/testing/` — no mocking framework.

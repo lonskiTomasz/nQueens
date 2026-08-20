@@ -58,6 +58,8 @@ import com.queens.puzzle.ui.designsystem.component.QueenPips
 import com.queens.puzzle.ui.designsystem.component.TimerChip
 import com.queens.puzzle.ui.designsystem.preview.PreviewState
 import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
+import com.queens.puzzle.ui.designsystem.theme.Dimens
+import com.queens.puzzle.ui.designsystem.theme.Spacing
 import com.queens.puzzle.ui.feedback.rememberGameFeedback
 import com.queens.puzzle.ui.feedback.rememberGameSound
 import kotlinx.coroutines.Job
@@ -115,12 +117,6 @@ fun GameScreen(
     )
 }
 
-/**
- * Below this the window is too short to stack the board between the header and the buttons —
- * a rotated phone, mostly.
- */
-private val CompactHeight = 480.dp
-
 /** A controls column narrower than this is not worth the width it takes off the board. */
 private val MinControlsWidth = 220.dp
 
@@ -153,7 +149,7 @@ fun GameScreen(
             // conditions matter: a nearly square window is wider than it is tall and would
             // still leave the controls a sliver.
             val sideBySide =
-                maxHeight < CompactHeight && maxWidth >= maxHeight + MinControlsWidth
+                maxHeight < Dimens.CompactHeight && maxWidth >= maxHeight + MinControlsWidth
 
             Column(Modifier.fillMaxSize()) {
                 GameTopBar(
@@ -206,10 +202,10 @@ private fun ColumnScope.GameContentStacked(
             uiState = uiState,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = Spacing.ScreenPaddingHorizontal),
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(Spacing.BlockGap))
 
         Column(
             modifier = Modifier.weight(1f),
@@ -222,12 +218,16 @@ private fun ColumnScope.GameContentStacked(
                 enabled = !uiState.isSolved,
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = Spacing.ScreenPaddingHorizontal),
             )
 
             ConflictBannerSlot(
                 hasConflicts = uiState.hasConflicts,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp),
+                modifier = Modifier.padding(
+                    start = Spacing.ScreenPaddingHorizontal,
+                    end = Spacing.ScreenPaddingHorizontal,
+                    top = Spacing.ContentGap,
+                ),
             )
         }
     }
@@ -238,7 +238,11 @@ private fun ColumnScope.GameContentStacked(
         onResetRequested = onResetRequested,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+            .padding(
+                start = Spacing.ScreenPaddingHorizontal,
+                end = Spacing.ScreenPaddingHorizontal,
+                bottom = Spacing.ScreenPaddingVertical,
+            ),
     )
 }
 
@@ -252,8 +256,12 @@ private fun ColumnScope.GameContentSideBySide(
         modifier = Modifier
             .weight(1f)
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 20.dp, bottom = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp),
+            .padding(
+                start = Spacing.ScreenPaddingHorizontal,
+                end = Spacing.ScreenPaddingHorizontal,
+                bottom = Spacing.BlockGap,
+            ),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.BlockGap),
     ) {
         BoardGrid(
             boardSize = uiState.boardSize,
@@ -275,7 +283,7 @@ private fun ColumnScope.GameContentSideBySide(
 
             ConflictBannerSlot(
                 hasConflicts = uiState.hasConflicts,
-                modifier = Modifier.padding(top = 12.dp),
+                modifier = Modifier.padding(top = Spacing.ContentGap),
             )
 
             Spacer(Modifier.weight(1f))
@@ -320,14 +328,14 @@ private fun GameActions(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.ButtonGap),
     ) {
         OutlinedButton(
             onClick = { onAction(GameAction.Undo) },
             enabled = uiState.canUndo,
             modifier = Modifier
                 .weight(1f)
-                .height(52.dp),
+                .height(Dimens.SecondaryButtonHeight),
             shape = RoundedCornerShape(percent = 50),
         ) {
             Text(stringResource(R.string.game_undo))
@@ -337,7 +345,7 @@ private fun GameActions(
             enabled = uiState.canReset,
             modifier = Modifier
                 .weight(1f)
-                .height(52.dp),
+                .height(Dimens.SecondaryButtonHeight),
             shape = RoundedCornerShape(percent = 50),
         ) {
             Text(stringResource(R.string.game_reset))
@@ -355,8 +363,8 @@ private fun GameTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
-            .padding(horizontal = 8.dp),
+            .height(Dimens.TopBarHeight)
+            .padding(horizontal = Spacing.TopBarIconInset),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onNavigateBack) {
@@ -373,8 +381,8 @@ private fun GameTopBar(
         TimerChip(time = elapsed, contentDescription = stringResource(R.string.game_elapsed))
         Box(
             modifier = Modifier
-                .padding(start = 4.dp)
-                .size(48.dp)
+                .padding(start = Spacing.IconButtonInset)
+                .size(Dimens.MinTouchTarget)
                 .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
@@ -388,8 +396,6 @@ private fun GameTopBar(
     }
 }
 
-private const val BANNER_FADE_MILLIS = 120
-
 @Composable
 private fun ConflictBannerSlot(
     hasConflicts: Boolean,
@@ -397,7 +403,7 @@ private fun ConflictBannerSlot(
 ) {
     val alpha by animateFloatAsState(
         targetValue = if (hasConflicts) 1f else 0f,
-        animationSpec = tween(durationMillis = BANNER_FADE_MILLIS),
+        animationSpec = tween(durationMillis = 120),
         label = "conflictBanner",
     )
 
@@ -410,21 +416,22 @@ private fun ConflictBannerSlot(
     )
 }
 
-private val BannerBadgeSize = 24.dp
-
 @Composable
 private fun ConflictBanner(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(12.dp))
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(
+                horizontal = Spacing.ContainerPaddingHorizontal,
+                vertical = Spacing.ContainerPaddingVertical,
+            )
             .semantics { liveRegion = LiveRegionMode.Polite },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.IconTextGap),
     ) {
         AlertBadge(
-            size = BannerBadgeSize,
+            size = 24.dp,
             containerColor = MaterialTheme.colorScheme.error,
             contentColor = MaterialTheme.colorScheme.onError,
             textStyle = MaterialTheme.typography.labelLarge,
