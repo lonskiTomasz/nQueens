@@ -130,17 +130,20 @@ fun WinScreen(
             )
         }
 
-        IconButton(
-            onClick = onClose,
+        Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .statusBarsPadding()
-                .padding(Spacing.IconButtonInset),
+                .height(Dimens.TopBarHeight)
+                .padding(horizontal = Spacing.TopBarIconInset),
+            contentAlignment = Alignment.CenterStart,
         ) {
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = stringResource(R.string.win_close),
-            )
+            IconButton(onClick = onClose) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = stringResource(R.string.win_close),
+                )
+            }
         }
     }
 }
@@ -389,7 +392,7 @@ private fun WinBadge(size: Dp, glyphSize: TextUnit, modifier: Modifier = Modifie
         contentAlignment = Alignment.Center,
     ) {
         QueenGlyph(
-            color = QueensTheme.extendedColors.queen,
+            color = QueensTheme.extendedColors.queenOnDarkSquare,
             fontSize = glyphSize,
             modifier = Modifier.graphicsLayer {
                 rotationY = queenFlip.value

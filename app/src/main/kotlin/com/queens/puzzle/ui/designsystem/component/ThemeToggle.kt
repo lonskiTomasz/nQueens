@@ -26,8 +26,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.model.ThemePreference
+import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.ui.designsystem.theme.Dimens
 
 /** The lit half of the track, and the distance it travels between the two segments. */

@@ -76,27 +76,19 @@ val InverseOnSurfaceDark = Color(0xFF1F1E1B)
 val InversePrimaryDark = Color(0xFF2E7D32)
 val ScrimDark = Color(0xFF171614)
 
-// Extended roles — no standard M3 slot fits these
+// Extended roles
 val SuccessGreen = Color(0xFF4C8C6B)
 val SuccessGreenDark = Color(0xFF7FB899)
 val BoardSquareLight = Color(0xFFEEEED2)
 val BoardSquareDark = Color(0xFF769656)
-
-// The queen glyph is always this dark tone, regardless of square shade or app theme.
-val QueenColor = Color(0xFF3D3226)
+val QueenOnLightSquare = Color(0xFF3D3226)
+val QueenOnDarkSquare = Color(0xFF18130F)
 val QueenConflictLight = Color(0xFF8A4E12)
 val QueenConflictDark = Color(0xFFF0A868)
-
-// Board overlays. The conflict tint is the error role at the spec's alpha.
 val ConflictTintLight = Color(0x66E08E45)
 val ConflictTintDark = Color(0x59F0A868)
-
-// The cross on a square a queen covers. Semi-transparent so it stays behind the queens in the
-// reading order, and per square shade because one colour cannot carry both.
 val AttackMarkOnLightSquare = Color(0x8C3D3226)
 val AttackMarkOnDarkSquare = Color(0x99F5EFE4)
-
-// Win screen: the celebration headline sits on a pale gradient, so it needs its own darker gold
 val WinHeadlineLight = Color(0xFF8A6A0E)
 val WinGradientTopLight = Color(0xFFFBF3DE)
 val WinGradientTopDark = Color(0xFF2A2410)

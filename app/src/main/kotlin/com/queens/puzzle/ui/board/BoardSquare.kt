@@ -109,7 +109,11 @@ fun BoardSquare(
 
         if (glyphScale > 0f) {
             QueenGlyph(
-                color = if (state.isConflicting) extended.queenConflict else extended.queen,
+                color = when {
+                    state.isConflicting -> extended.queenConflict
+                    state.isDarkSquare -> extended.queenOnDarkSquare
+                    else -> extended.queenOnLightSquare
+                },
                 fontSize = glyphSize,
                 modifier = Modifier
                     .fillMaxSize()

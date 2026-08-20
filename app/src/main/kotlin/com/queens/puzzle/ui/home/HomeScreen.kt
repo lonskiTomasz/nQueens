@@ -231,7 +231,8 @@ private fun BestTimesCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = Spacing.ScreenPaddingHorizontal, end = Spacing.TightPadding, top = Spacing.TightPadding),
+                .height(40.dp)
+                .padding(start = Spacing.ScreenPaddingHorizontal, end = Spacing.TightPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -240,11 +241,13 @@ private fun BestTimesCard(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            TextButton(onClick = onSeeAll) {
-                Text(
-                    text = stringResource(R.string.home_see_all),
-                    style = MaterialTheme.typography.labelLarge,
-                )
+            if (bestTimes.isNotEmpty()) {
+                TextButton(onClick = onSeeAll) {
+                    Text(
+                        text = stringResource(R.string.home_see_all),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
             }
         }
 

@@ -210,6 +210,7 @@ private fun ColumnScope.GameContentStacked(
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             BoardGrid(
                 boardSize = uiState.boardSize,
@@ -231,6 +232,8 @@ private fun ColumnScope.GameContentStacked(
             )
         }
     }
+
+    Spacer(Modifier.height(Spacing.BlockGap))
 
     GameActions(
         uiState = uiState,

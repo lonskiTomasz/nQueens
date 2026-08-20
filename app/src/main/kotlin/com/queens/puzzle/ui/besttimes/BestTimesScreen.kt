@@ -155,7 +155,7 @@ private fun TopBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(Dimens.TopBarHeight)
-            .padding(horizontal = Spacing.IconButtonInset),
+            .padding(horizontal = Spacing.TopBarIconInset),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onNavigateBack) {
