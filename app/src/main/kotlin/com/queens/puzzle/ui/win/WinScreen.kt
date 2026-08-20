@@ -1,8 +1,11 @@
 package com.queens.puzzle.ui.win
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,11 +39,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -64,6 +70,9 @@ import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
 import com.queens.puzzle.ui.designsystem.preview.previewWinSummary
 import com.queens.puzzle.ui.designsystem.theme.NumericFont
 import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun WinScreen(
@@ -136,6 +145,15 @@ fun WinScreen(
 /** A window shorter than this cannot show the whole celebration at once. */
 private val CompactHeight = 480.dp
 
+/** How far the queen glyph rises during its post-badge flip, before easing back to center. */
+private val QueenFlipLift = 10.dp
+
+/** Roughly how long the badge's entrance spring takes to visually settle. */
+private const val BadgeSettleDelayMillis = 350L
+
+/** Duration of the queen's 3D flip; the lift-up half runs at [QueenFlipDurationMillis] / 2. */
+private const val QueenFlipDurationMillis = 1300
+
 /**
  * The celebration at two scales.
  *
@@ -155,8 +173,8 @@ private data class WinMetrics(
     companion object {
         val Regular = WinMetrics(
             topPadding = 72.dp,
-            badgeSize = 88.dp,
-            badgeGlyph = 42.sp,
+            badgeSize = 104.dp,
+            badgeGlyph = 56.sp,
             headline = 36.sp,
             time = 56.sp,
             afterBadge = 24.dp,
@@ -166,8 +184,8 @@ private data class WinMetrics(
 
         val Compact = WinMetrics(
             topPadding = 20.dp,
-            badgeSize = 56.dp,
-            badgeGlyph = 28.sp,
+            badgeSize = 64.dp,
+            badgeGlyph = 36.sp,
             headline = 28.sp,
             time = 40.sp,
             afterBadge = 12.dp,
@@ -209,7 +227,7 @@ private fun SolvedContent(
     val compact = viewportHeight < CompactHeight
     val metrics = if (compact) WinMetrics.Compact else WinMetrics.Regular
 
-    if (compact) { // too short to show the whole celebration
+    if (compact) {
         Column(modifier = Modifier.fillMaxSize()) {
             Summary(
                 summary = summary,
@@ -223,6 +241,7 @@ private fun SolvedContent(
                 boardSize = summary.solve.boardSize,
                 onPlay = onPlay,
                 onSeeBestTimes = onSeeBestTimes,
+                compact = true,
             )
         }
     } else {
@@ -242,6 +261,7 @@ private fun SolvedContent(
                 boardSize = summary.solve.boardSize,
                 onPlay = onPlay,
                 onSeeBestTimes = onSeeBestTimes,
+                compact = false,
             )
         }
     }
@@ -253,20 +273,7 @@ private fun Summary(
     metrics: WinMetrics,
     modifier: Modifier = Modifier,
 ) {
-    val extended = QueensTheme.extendedColors
     val solve = summary.solve
-
-    // The badge springs in once, so arriving on the screen reads as an arrival.
-    var badgeVisible by remember { mutableStateOf(false) }
-    val badgeScale by animateFloatAsState(
-        targetValue = if (badgeVisible) 1f else 0.6f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow,
-        ),
-        label = "winBadge",
-    )
-    LaunchedEffect(Unit) { badgeVisible = true }
 
     Column(
         modifier = modifier
@@ -274,24 +281,13 @@ private fun Summary(
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(
-            modifier = Modifier
-                .size(metrics.badgeSize)
-                .scale(badgeScale)
-                .background(MaterialTheme.colorScheme.tertiary, CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
-            QueenGlyph(
-                color = MaterialTheme.colorScheme.onTertiary,
-                fontSize = metrics.badgeGlyph,
-            )
-        }
+        WinBadge(size = metrics.badgeSize, glyphSize = metrics.badgeGlyph)
 
         Spacer(Modifier.height(metrics.afterBadge))
         Text(
             text = stringResource(R.string.win_headline),
             style = MaterialTheme.typography.headlineLarge.copy(fontSize = metrics.headline),
-            color = extended.winHeadline,
+            color = QueensTheme.extendedColors.winHeadline,
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
 
@@ -337,13 +333,82 @@ private fun Summary(
     }
 }
 
+/**
+ * The circled queen glyph on the win screen: springs in, then flips into place once settled.
+ */
+@Composable
+private fun WinBadge(size: Dp, glyphSize: TextUnit, modifier: Modifier = Modifier) {
+    var badgeVisible by rememberSaveable { mutableStateOf(false) }
+    val badgeScale by animateFloatAsState(
+        targetValue = if (badgeVisible) 1f else 0.6f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow,
+        ),
+        label = "winBadge",
+    )
+
+    var flourishPlayed by rememberSaveable { mutableStateOf(false) }
+    val queenFlip = remember { Animatable(0f) }
+    val queenLift = remember { Animatable(0f) }
+    val localDensity = LocalDensity.current
+    LaunchedEffect(Unit) {
+        badgeVisible = true
+        if (flourishPlayed) return@LaunchedEffect
+        delay(BadgeSettleDelayMillis)
+        val liftPx = with(localDensity) { QueenFlipLift.toPx() }
+        coroutineScope {
+            launch {
+                queenFlip.animateTo(
+                    targetValue = 360f,
+                    animationSpec = tween(QueenFlipDurationMillis, easing = FastOutSlowInEasing),
+                )
+            }
+            launch {
+                queenLift.animateTo(
+                    targetValue = -liftPx,
+                    animationSpec = tween(QueenFlipDurationMillis / 2, easing = FastOutSlowInEasing),
+                )
+                queenLift.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow,
+                    ),
+                )
+            }
+        }
+        flourishPlayed = true
+    }
+
+    Box(
+        modifier = modifier
+            .size(size)
+            .scale(badgeScale)
+            .background(MaterialTheme.colorScheme.tertiary, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        QueenGlyph(
+            color = QueensTheme.extendedColors.queen,
+            fontSize = glyphSize,
+            modifier = Modifier.graphicsLayer {
+                rotationY = queenFlip.value
+                translationY = queenLift.value
+                cameraDistance = 12f * density
+            },
+        )
+    }
+}
+
 @Composable
 private fun WinActions(
     boardSize: BoardSize,
     onPlay: (Int) -> Unit,
     onSeeBestTimes: () -> Unit,
+    compact: Boolean,
 ) {
     val next = boardSize.next
+    val buttonWidthFraction = if (compact) 2f / 3f else 1f
 
     Column(
         modifier = Modifier
@@ -351,13 +416,18 @@ private fun WinActions(
             // The screen is edge-to-edge and draws its own gradient behind the system bars, so
             // the actions have to hold themselves clear of the navigation bar.
             .navigationBarsPadding()
-            .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 24.dp),
+            .padding(
+                start = 24.dp,
+                end = 24.dp,
+                top = 24.dp,
+                bottom = if (compact) 12.dp else 24.dp,
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Button(
             onClick = { onPlay((next ?: boardSize).value) },
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(buttonWidthFraction)
                 .height(56.dp),
             shape = RoundedCornerShape(percent = 50),
         ) {
@@ -373,7 +443,7 @@ private fun WinActions(
         TextButton(
             onClick = onSeeBestTimes,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(buttonWidthFraction)
                 .height(52.dp),
         ) {
             Text(
