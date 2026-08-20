@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.queens.puzzle.model.ThemePreference
-import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import com.queens.puzzle.core.designsystem.theme.QueensTheme
 import com.queens.puzzle.ui.navigation.QueensNavHost
 import dagger.hilt.android.AndroidEntryPoint
 

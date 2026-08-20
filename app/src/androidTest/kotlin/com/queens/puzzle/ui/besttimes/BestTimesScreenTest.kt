@@ -7,7 +7,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.queens.puzzle.common.time.RelativeDay
+import com.queens.puzzle.core.util.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.ForcedWindow

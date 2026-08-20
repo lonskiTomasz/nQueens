@@ -2,8 +2,8 @@ package com.queens.puzzle.ui.win
 
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
 import com.queens.puzzle.model.WinSummary
-import com.queens.puzzle.ui.designsystem.preview.PreviewState
-import com.queens.puzzle.ui.designsystem.preview.previewSolve
+import com.queens.puzzle.core.designsystem.preview.PreviewState
+import com.queens.puzzle.core.designsystem.preview.previewSolve
 
 fun previewWinSummary(
     isNewBest: Boolean = true,

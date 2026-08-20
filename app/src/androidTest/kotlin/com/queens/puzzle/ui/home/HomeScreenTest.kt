@@ -12,7 +12,7 @@ import androidx.compose.ui.test.performScrollTo
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ThemePreference
-import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import com.queens.puzzle.core.designsystem.theme.QueensTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

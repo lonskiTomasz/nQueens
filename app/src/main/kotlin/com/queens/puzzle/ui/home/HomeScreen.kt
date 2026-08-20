@@ -37,18 +37,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.queens.puzzle.R
-import com.queens.puzzle.common.time.DurationFormatter
+import com.queens.puzzle.core.util.time.DurationFormatter
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ThemePreference
-import com.queens.puzzle.ui.designsystem.component.QueenGlyph
-import com.queens.puzzle.ui.designsystem.preview.PreviewState
-import com.queens.puzzle.ui.designsystem.preview.QueensPreviewScreen
-import com.queens.puzzle.ui.designsystem.component.SizeChip
-import com.queens.puzzle.ui.designsystem.component.ThemeToggle
-import com.queens.puzzle.ui.designsystem.theme.Dimens
-import com.queens.puzzle.ui.designsystem.theme.NumericFont
-import com.queens.puzzle.ui.designsystem.theme.Spacing
+import com.queens.puzzle.core.designsystem.component.QueenGlyph
+import com.queens.puzzle.core.designsystem.preview.PreviewState
+import com.queens.puzzle.core.designsystem.preview.QueensPreviewScreen
+import com.queens.puzzle.core.designsystem.component.SizeChip
+import com.queens.puzzle.core.designsystem.component.ThemeToggle
+import com.queens.puzzle.core.designsystem.theme.Dimens
+import com.queens.puzzle.core.designsystem.theme.NumericFont
+import com.queens.puzzle.core.designsystem.theme.Spacing
 
 @Composable
 fun HomeScreen(

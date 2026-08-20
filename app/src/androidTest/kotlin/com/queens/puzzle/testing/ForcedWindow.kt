@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.DeviceConfigurationOverride
 import androidx.compose.ui.test.ForcedSize
 import androidx.compose.ui.unit.DpSize
-import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import com.queens.puzzle.core.designsystem.theme.QueensTheme
 
 /**
  * Themes [content] and scales a window of [size] into the test device, so one device covers

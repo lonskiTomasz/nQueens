@@ -1,6 +1,6 @@
 package com.queens.puzzle.ui.besttimes
 
-import com.queens.puzzle.common.time.RelativeDay
+import com.queens.puzzle.core.util.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.MainDispatcherRule

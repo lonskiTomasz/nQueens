@@ -11,7 +11,7 @@ import com.queens.puzzle.domain.rules.BoardEvaluator
 import com.queens.puzzle.domain.usecase.RecordSolveUseCase
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSession
-import com.queens.puzzle.ui.board.BoardSquareState
+import com.queens.puzzle.ui.game.board.BoardSquareState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

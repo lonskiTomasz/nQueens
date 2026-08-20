@@ -3,7 +3,7 @@ package com.queens.puzzle.ui.home
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
-import com.queens.puzzle.ui.designsystem.preview.PreviewState
+import com.queens.puzzle.core.designsystem.preview.PreviewState
 
 fun previewHomeUiState(
     selectedSize: Int = 8,

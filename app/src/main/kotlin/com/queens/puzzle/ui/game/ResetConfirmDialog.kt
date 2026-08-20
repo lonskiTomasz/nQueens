@@ -9,8 +9,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.queens.puzzle.R
-import com.queens.puzzle.ui.designsystem.component.AlertBadge
-import com.queens.puzzle.ui.designsystem.preview.QueensPreviewDialog
+import com.queens.puzzle.core.designsystem.component.AlertBadge
+import com.queens.puzzle.core.designsystem.preview.QueensPreviewDialog
 
 @Composable
 fun ResetConfirmDialog(

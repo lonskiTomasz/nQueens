@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.queens.puzzle.R
 import com.queens.puzzle.model.GameSettings
-import com.queens.puzzle.ui.designsystem.preview.QueensPreviewSurface
-import com.queens.puzzle.ui.designsystem.theme.Dimens
-import com.queens.puzzle.ui.designsystem.theme.Spacing
+import com.queens.puzzle.core.designsystem.preview.QueensPreviewSurface
+import com.queens.puzzle.core.designsystem.theme.Dimens
+import com.queens.puzzle.core.designsystem.theme.Spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

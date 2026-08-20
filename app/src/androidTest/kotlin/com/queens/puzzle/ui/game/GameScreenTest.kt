@@ -16,8 +16,8 @@ import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ConflictKind
 import com.queens.puzzle.model.GameSettings
 import com.queens.puzzle.model.Position
-import com.queens.puzzle.ui.board.BoardSquareState
-import com.queens.puzzle.ui.designsystem.theme.QueensTheme
+import com.queens.puzzle.ui.game.board.BoardSquareState
+import com.queens.puzzle.core.designsystem.theme.QueensTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

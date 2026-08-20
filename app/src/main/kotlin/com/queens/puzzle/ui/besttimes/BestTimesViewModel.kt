@@ -2,7 +2,7 @@ package com.queens.puzzle.ui.besttimes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.queens.puzzle.common.time.RelativeDayCalculator
+import com.queens.puzzle.core.util.time.RelativeDayCalculator
 import com.queens.puzzle.data.repository.SolveRepository
 import com.queens.puzzle.data.util.TimeProvider
 import com.queens.puzzle.model.BoardSize

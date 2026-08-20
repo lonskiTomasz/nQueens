@@ -5,10 +5,10 @@ import com.queens.puzzle.domain.rules.BoardEvaluator
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSettings
 import com.queens.puzzle.model.Position
-import com.queens.puzzle.ui.designsystem.preview.PreviewQueens
-import com.queens.puzzle.ui.designsystem.preview.PreviewSolvedQueens
-import com.queens.puzzle.ui.designsystem.preview.PreviewState
-import com.queens.puzzle.ui.designsystem.preview.previewSquares
+import com.queens.puzzle.core.designsystem.preview.PreviewState
+import com.queens.puzzle.ui.game.board.PreviewQueens
+import com.queens.puzzle.ui.game.board.PreviewSolvedQueens
+import com.queens.puzzle.ui.game.board.previewSquares
 
 fun previewGameUiState(
     boardSize: Int = 8,

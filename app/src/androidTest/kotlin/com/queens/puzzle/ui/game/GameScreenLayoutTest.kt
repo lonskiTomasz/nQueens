@@ -11,7 +11,7 @@ import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Position
 import com.queens.puzzle.testing.ForcedWindow
-import com.queens.puzzle.ui.board.BoardSquareState
+import com.queens.puzzle.ui.game.board.BoardSquareState
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

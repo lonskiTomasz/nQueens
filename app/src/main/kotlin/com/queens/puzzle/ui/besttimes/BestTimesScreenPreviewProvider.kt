@@ -1,10 +1,10 @@
 package com.queens.puzzle.ui.besttimes
 
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
-import com.queens.puzzle.common.time.RelativeDay
+import com.queens.puzzle.core.util.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
-import com.queens.puzzle.ui.designsystem.preview.PreviewState
-import com.queens.puzzle.ui.designsystem.preview.previewSolve
+import com.queens.puzzle.core.designsystem.preview.PreviewState
+import com.queens.puzzle.core.designsystem.preview.previewSolve
 
 fun previewBestTimesUiState(
     selectedFilter: Int? = null,
