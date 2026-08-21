@@ -152,8 +152,9 @@ class GameViewModelTest {
 
         viewModel.onResetRequested()
         viewModel.onResetConfirmed()
+        advanceTimeBy(TICK)
 
-        assertEquals(0L, viewModel.uiState.value.elapsedMillis)
+        assertEquals(0L, viewModel.elapsedMillis.value)
     }
 
     @Test
@@ -196,9 +197,9 @@ class GameViewModelTest {
 
         SOLUTION_4x4.forEach { viewModel.onAction(GameAction.TapSquare(it)) }
         timeProvider.advanceBy(60_000)
-        advanceTimeBy(1_000)
+        advanceTimeBy(TICK)
 
-        assertEquals(30_000L, viewModel.uiState.value.elapsedMillis)
+        assertEquals(30_000L, viewModel.elapsedMillis.value)
     }
 
     @Test
@@ -219,9 +220,24 @@ class GameViewModelTest {
         observe(viewModel)
 
         timeProvider.advanceBy(2_000)
-        advanceTimeBy(1_000)
+        advanceTimeBy(TICK)
 
-        assertEquals(2_000L, viewModel.uiState.value.elapsedMillis)
+        assertEquals(2_000L, viewModel.elapsedMillis.value)
+    }
+
+    @Test
+    fun `the clock does not advance while the screen is stopped`() = runTest {
+        val viewModel = viewModel()
+        observe(viewModel)
+
+        timeProvider.advanceBy(10_000)
+        viewModel.onScreenStopped()
+        timeProvider.advanceBy(600_000)
+        viewModel.onScreenStarted()
+        timeProvider.advanceBy(5_000)
+        advanceTimeBy(TICK)
+
+        assertEquals(15_000L, viewModel.elapsedMillis.value)
     }
 
     @Test
@@ -245,11 +261,10 @@ class GameViewModelTest {
 
         val viewModel = viewModel(gameId = GAME_ID)
         observe(viewModel)
-        advanceTimeBy(1_000)
+        advanceTimeBy(TICK)
 
-        val state = viewModel.uiState.value
-        assertEquals(1, state.queensPlaced)
-        assertEquals(45_000L, state.elapsedMillis)
+        assertEquals(1, viewModel.uiState.value.queensPlaced)
+        assertEquals(45_000L, viewModel.elapsedMillis.value)
     }
 
     @Test
@@ -352,6 +367,9 @@ class GameViewModelTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect { }
         }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.elapsedMillis.collect { }
+        }
     }
 
     private fun TestScope.observeEffects(viewModel: GameViewModel): MutableList<GameEffect> {
@@ -364,5 +382,8 @@ class GameViewModelTest {
 }
 
 private const val GAME_ID = 1_700_000_000_000L
+
+/** Just past the clock's one-second tick, so a redraw has certainly happened. */
+private const val TICK = 1_001L
 
 private val SOLUTION_4x4 = listOf(Position(0, 1), Position(1, 3), Position(2, 0), Position(3, 2))

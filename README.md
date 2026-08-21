@@ -15,7 +15,7 @@ board, a history of solve times with bests per size, and a light/dark theme togg
 ## Build, test, run
 
 ```bash
-./gradlew :app:testDebugUnitTest         # 164 JVM unit tests — the primary gate
+./gradlew :app:testDebugUnitTest         # 165 JVM unit tests — the primary gate
 ./gradlew :app:assembleDebug             # build the debug APK
 ./gradlew :app:installDebug              # install on a connected device or emulator
 ./gradlew :app:lintDebug                 # Android Lint
@@ -80,13 +80,13 @@ tap ─→ GameViewModel ─→ GameSession.reduce(TapSquare)   pure, no Android
 ## Testing
 
 Deliberately bottom-heavy — the interesting logic is in pure functions, so most of the value
-comes from fast JVM tests. **210 tests, 164 of which run without a device.**
+comes from fast JVM tests. **211 tests, 165 of which run without a device.**
 
 | Scope | Tests |
 |---|---|
 | Models, rules, reducer, formatters | 66 |
 | Use cases, repositories, serializer | 53 |
-| ViewModels — state, effects, virtual-time clock | 45 |
+| ViewModels — state, effects, virtual-time clock | 46 |
 | Compose UI, incl. forced window sizes | 45 |
 | End-to-end over a real database and stores | 1 |
 

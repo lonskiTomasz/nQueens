@@ -48,6 +48,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.queens.puzzle.R
 import com.queens.puzzle.core.util.time.DurationFormatter
@@ -77,10 +78,16 @@ fun GameScreen(
     ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val elapsedMillis = viewModel.elapsedMillis.collectAsStateWithLifecycle()
     val feedback = rememberGameFeedback(enabled = uiState.settings.hapticsEnabled)
     val sound = rememberGameSound(enabled = uiState.settings.soundEnabled)
     val snackbarHostState = remember { SnackbarHostState() }
     val boardFullMessage = stringResource(R.string.game_board_full)
+
+    LifecycleStartEffect(viewModel) {
+        viewModel.onScreenStarted()
+        onStopOrDispose { viewModel.onScreenStopped() }
+    }
 
     LaunchedEffect(viewModel, feedback, sound) {
         var snackbarJob: Job? = null
@@ -102,6 +109,7 @@ fun GameScreen(
 
     GameScreen(
         uiState = uiState,
+        elapsedMillis = { elapsedMillis.value },
         onAction = viewModel::onAction,
         onNavigateBack = onNavigateBack,
         onResetRequested = viewModel::onResetRequested,
@@ -123,6 +131,7 @@ private val MinControlsWidth = 220.dp
 @Composable
 fun GameScreen(
     uiState: GameUiState,
+    elapsedMillis: () -> Long,
     onAction: (GameAction) -> Unit,
     onNavigateBack: () -> Unit,
     onResetRequested: () -> Unit,
@@ -154,7 +163,7 @@ fun GameScreen(
             Column(Modifier.fillMaxSize()) {
                 GameTopBar(
                     title = stringResource(R.string.game_board_label, uiState.boardSize.value),
-                    elapsed = DurationFormatter.format(uiState.elapsedMillis),
+                    elapsed = elapsedMillis,
                     onNavigateBack = onNavigateBack,
                     onSettingsOpened = onSettingsOpened,
                 )
@@ -359,7 +368,7 @@ private fun GameActions(
 @Composable
 private fun GameTopBar(
     title: String,
-    elapsed: String,
+    elapsed: () -> Long,
     onNavigateBack: () -> Unit,
     onSettingsOpened: () -> Unit,
 ) {
@@ -381,7 +390,10 @@ private fun GameTopBar(
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.weight(1f),
         )
-        TimerChip(time = elapsed, contentDescription = stringResource(R.string.game_elapsed))
+        TimerChip(
+            time = DurationFormatter.format(elapsed()),
+            contentDescription = stringResource(R.string.game_elapsed),
+        )
         Box(
             modifier = Modifier
                 .padding(start = Spacing.IconButtonInset)
@@ -466,9 +478,10 @@ private fun GameScreenLandscapePreview() {
 }
 
 @Composable
-private fun PreviewGameScreen(uiState: GameUiState) {
+private fun PreviewGameScreen(uiState: GameUiState, elapsedMillis: Long = 134_000L) {
     GameScreen(
         uiState = uiState,
+        elapsedMillis = { elapsedMillis },
         onAction = {},
         onNavigateBack = {},
         onResetRequested = {},

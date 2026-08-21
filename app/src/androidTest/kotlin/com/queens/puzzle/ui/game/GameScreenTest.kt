@@ -43,7 +43,7 @@ class GameScreenTest {
 
     @Test
     fun theClockIsShown() {
-        setScreen(state(boardSize = 4, elapsedMillis = 134_000))
+        setScreen(state(boardSize = 4), elapsedMillis = 134_000)
 
         composeRule.onNodeWithText("02:14").assertIsDisplayed()
     }
@@ -143,7 +143,6 @@ class GameScreenTest {
     private fun state(
         boardSize: Int,
         queensPlaced: Int = 0,
-        elapsedMillis: Long = 0L,
         conflictKinds: Set<ConflictKind> = emptySet(),
         canUndo: Boolean = false,
         isResetDialogVisible: Boolean = false,
@@ -154,7 +153,6 @@ class GameScreenTest {
             boardSize = size,
             squares = size.positions().map { BoardSquareState(it) },
             queensPlaced = queensPlaced,
-            elapsedMillis = elapsedMillis,
             conflictKinds = conflictKinds,
             canUndo = canUndo,
             settings = GameSettings(),
@@ -165,6 +163,7 @@ class GameScreenTest {
 
     private fun setScreen(
         uiState: GameUiState,
+        elapsedMillis: Long = 0L,
         onAction: (GameAction) -> Unit = {},
         onResetConfirmed: () -> Unit = {},
         onResetDismissed: () -> Unit = {},
@@ -173,6 +172,7 @@ class GameScreenTest {
             QueensTheme {
                 GameScreen(
                     uiState = uiState,
+                    elapsedMillis = { elapsedMillis },
                     onAction = onAction,
                     onNavigateBack = {},
                     onResetRequested = {},

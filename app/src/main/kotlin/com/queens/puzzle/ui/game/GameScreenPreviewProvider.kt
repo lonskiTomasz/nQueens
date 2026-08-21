@@ -13,7 +13,6 @@ import com.queens.puzzle.ui.game.board.previewSquares
 fun previewGameUiState(
     boardSize: Int = 8,
     queens: Set<Position> = PreviewQueens,
-    elapsedMillis: Long = 134_000,
     settings: GameSettings = GameSettings(),
     isResetDialogVisible: Boolean = false,
     isSettingsSheetVisible: Boolean = false,
@@ -25,7 +24,6 @@ fun previewGameUiState(
         boardSize = size,
         squares = previewSquares(size, queens, settings.showAttackLines),
         queensPlaced = queens.size,
-        elapsedMillis = elapsedMillis,
         conflictKinds = evaluation.conflictKinds,
         canUndo = queens.isNotEmpty(),
         isSolved = evaluation.isSolved,
@@ -39,7 +37,7 @@ class GameScreenPreviewProvider :
     CollectionPreviewParameterProvider<PreviewState<GameUiState>>(
         listOf(
             PreviewState(
-                previewGameUiState(queens = emptySet(), elapsedMillis = 0),
+                previewGameUiState(queens = emptySet()),
                 "fresh board, nothing placed",
             ),
             PreviewState(
@@ -58,7 +56,7 @@ class GameScreenPreviewProvider :
                 "largest board, 12x12",
             ),
             PreviewState(
-                previewGameUiState(boardSize = 4, queens = PreviewSolvedQueens, elapsedMillis = 12_000),
+                previewGameUiState(boardSize = 4, queens = PreviewSolvedQueens),
                 "solved, smallest board",
             ),
         ),

@@ -81,6 +81,7 @@ class GameScreenLayoutTest {
             ForcedWindow(size) {
                 GameScreen(
                     uiState = uiState(),
+                    elapsedMillis = { 0L },
                     onAction = onAction,
                     onNavigateBack = {},
                     onResetRequested = {},

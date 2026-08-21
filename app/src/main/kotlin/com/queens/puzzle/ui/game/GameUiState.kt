@@ -9,7 +9,6 @@ data class GameUiState(
     val boardSize: BoardSize = BoardSize.Default,
     val squares: List<BoardSquareState> = emptyList(),
     val queensPlaced: Int = 0,
-    val elapsedMillis: Long = 0L,
     val conflictKinds: Set<ConflictKind> = emptySet(),
     val canUndo: Boolean = false,
     val isSolved: Boolean = false,

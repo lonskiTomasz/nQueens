@@ -23,15 +23,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/** How often the clock redraws. Fine enough to look live, coarse enough to be cheap. */
-private const val TICK_MILLIS = 200L
+/**
+ * How often the clock redraws. The display is `mm:ss`, so anything finer would spend a
+ * recomposition to draw the string it is already showing.
+ */
+private const val TICK_MILLIS = 1_000L
 
 @HiltViewModel(assistedFactory = GameViewModel.Factory::class)
 class GameViewModel @AssistedInject constructor(
@@ -47,28 +51,31 @@ class GameViewModel @AssistedInject constructor(
 
     private val positions = boardSize.positions()
 
-    private val boardState = MutableStateFlow(GameUiState(boardSize = boardSize))
+    private var session = GameSession(boardSize)
 
-    val uiState: StateFlow<GameUiState> =
-        combine(boardState, elapsedTicks()) { state, elapsed -> state.copy(elapsedMillis = elapsed) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = GameUiState(boardSize = boardSize),
-            )
+    private var accumulatedMillis = 0L
+    private var runningSince: Long? = timeProvider.elapsedMillis()
+    private var finalElapsedMillis: Long? = null
+
+    private val _uiState = MutableStateFlow(GameUiState(boardSize = boardSize))
+
+    val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
+
+    val elapsedMillis: StateFlow<Long> = elapsedTicks().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        initialValue = 0L,
+    )
 
     private val _effects = Channel<GameEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
-    private var session = GameSession(boardSize)
-
-    private var startedAt = timeProvider.elapsedMillis()
-
-    private var finalElapsedMillis: Long? = null
+    private val pendingSave = MutableStateFlow<PendingSave?>(null)
 
     init {
         viewModelScope.launch { restore() }
         viewModelScope.launch { observeSettings() }
+        viewModelScope.launch { writePendingSaves() }
     }
 
     fun onAction(action: GameAction) {
@@ -88,7 +95,7 @@ class GameViewModel @AssistedInject constructor(
 
         session = after
         if (action is GameAction.Reset) {
-            startedAt = timeProvider.elapsedMillis()
+            setElapsed(0L)
         }
 
         val evaluation = BoardEvaluator.evaluate(after)
@@ -102,6 +109,18 @@ class GameViewModel @AssistedInject constructor(
             publish(evaluation)
             saveSession(session, elapsedSinceStart())
         }
+    }
+
+    fun onScreenStarted() {
+        if (finalElapsedMillis != null || runningSince != null) return
+        runningSince = timeProvider.elapsedMillis()
+    }
+
+    fun onScreenStopped() {
+        val startedAt = runningSince ?: return
+        accumulatedMillis += timeProvider.elapsedMillis() - startedAt
+        runningSince = null
+        if (finalElapsedMillis == null) saveSession(session, accumulatedMillis)
     }
 
     fun onResetRequested() = update { copy(isResetDialogVisible = true) }
@@ -134,7 +153,7 @@ class GameViewModel @AssistedInject constructor(
 
         if (saved != null && saved.gameId == gameId && saved.session.boardSize == boardSize) {
             session = saved.session
-            startedAt = timeProvider.elapsedMillis() - saved.elapsedMillis
+            setElapsed(saved.elapsedMillis)
         } else {
             sessionRepository.clear()
         }
@@ -148,15 +167,22 @@ class GameViewModel @AssistedInject constructor(
         }
     }
 
-    private fun saveSession(session: GameSession, elapsedMillis: Long) {
-        viewModelScope.launch {
-            sessionRepository.save(gameId, session, elapsedMillis)
+    private suspend fun writePendingSaves() {
+        pendingSave.collectLatest { pending ->
+            if (pending != null) {
+                sessionRepository.save(gameId, pending.session, pending.elapsedMillis)
+            }
         }
+    }
+
+    private fun saveSession(session: GameSession, elapsedMillis: Long) {
+        pendingSave.value = PendingSave(session, elapsedMillis)
     }
 
     private fun finish() {
         viewModelScope.launch {
             emit(GameEffect.CelebrateWin)
+            pendingSave.value = null
             sessionRepository.clear()
 
             val outcome = recordSolve(
@@ -193,15 +219,25 @@ class GameViewModel @AssistedInject constructor(
                 emit(finished)
                 return@flow
             }
-            emit(elapsedSinceStart())
-            delay(TICK_MILLIS)
+            val elapsed = elapsedSinceStart()
+            emit(elapsed)
+            // Wait to the next whole second rather than a whole second from this redraw
+            delay(TICK_MILLIS - elapsed % TICK_MILLIS)
         }
     }
 
-    private fun elapsedSinceStart(): Long = timeProvider.elapsedMillis() - startedAt
+    private fun elapsedSinceStart(): Long {
+        val startedAt = runningSince ?: return accumulatedMillis
+        return accumulatedMillis + (timeProvider.elapsedMillis() - startedAt)
+    }
+
+    private fun setElapsed(millis: Long) {
+        accumulatedMillis = millis
+        if (runningSince != null) runningSince = timeProvider.elapsedMillis()
+    }
 
     private fun publish(evaluation: BoardEvaluation) {
-        val showAttackLines = boardState.value.settings.showAttackLines
+        val showAttackLines = _uiState.value.settings.showAttackLines
 
         update {
             copy(
@@ -222,7 +258,7 @@ class GameViewModel @AssistedInject constructor(
     }
 
     private inline fun update(block: GameUiState.() -> GameUiState) {
-        boardState.value = boardState.value.block()
+        _uiState.value = _uiState.value.block()
     }
 
     private fun emit(effect: GameEffect) {
@@ -237,3 +273,5 @@ class GameViewModel @AssistedInject constructor(
         ): GameViewModel
     }
 }
+
+private data class PendingSave(val session: GameSession, val elapsedMillis: Long)
