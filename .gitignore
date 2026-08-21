@@ -14,6 +14,3 @@
 .externalNativeBuild
 .cxx
 local.properties
-
-# Local AI working notes
-.ai/
