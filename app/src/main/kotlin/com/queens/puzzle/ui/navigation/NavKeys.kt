@@ -6,9 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object HomeKey : NavKey
 
-/** [resume] distinguishes "carry on with the stored board" from "start this size fresh". */
 @Serializable
-data class GameKey(val boardSize: Int, val resume: Boolean = false) : NavKey
+data class GameKey(val boardSize: Int, val gameId: Long) : NavKey
 
 @Serializable
 data class WinKey(val solveId: Long) : NavKey

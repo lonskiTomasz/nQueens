@@ -34,10 +34,10 @@ class DefaultSessionRepositoryTest {
             undos = 1,
         )
 
-        repository.save(session, elapsedMillis = 42_000)
+        repository.save(gameId = 7L, session = session, elapsedMillis = 42_000)
 
         assertEquals(
-            SavedGame(session = session, elapsedMillis = 42_000),
+            SavedGame(gameId = 7L, session = session, elapsedMillis = 42_000),
             repository.observeSavedSession().first(),
         )
     }
@@ -52,7 +52,8 @@ class DefaultSessionRepositoryTest {
         )
 
         repository.save(
-            GameSession(BoardSize(6), queens = setOf(Position(0, 1)), moves = moves),
+            gameId = 7L,
+            session = GameSession(BoardSize(6), queens = setOf(Position(0, 1)), moves = moves),
             elapsedMillis = 0,
         )
 
@@ -65,8 +66,8 @@ class DefaultSessionRepositoryTest {
     fun `saving replaces the previous game rather than accumulating`() = runTest {
         val repository = repositoryOver(null)
 
-        repository.save(GameSession(BoardSize(4)), elapsedMillis = 1_000)
-        repository.save(GameSession(BoardSize(8)), elapsedMillis = 2_000)
+        repository.save(gameId = 1L, session = GameSession(BoardSize(4)), elapsedMillis = 1_000)
+        repository.save(gameId = 2L, session = GameSession(BoardSize(8)), elapsedMillis = 2_000)
 
         val saved = repository.observeSavedSession().first()!!
         assertEquals(BoardSize(8), saved.session.boardSize)
@@ -76,7 +77,7 @@ class DefaultSessionRepositoryTest {
     @Test
     fun `clearing leaves nothing to resume`() = runTest {
         val repository = repositoryOver(null)
-        repository.save(GameSession(BoardSize(8)), elapsedMillis = 1_000)
+        repository.save(gameId = 1L, session = GameSession(BoardSize(8)), elapsedMillis = 1_000)
 
         repository.clear()
 

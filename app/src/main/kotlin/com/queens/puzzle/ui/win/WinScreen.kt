@@ -80,7 +80,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun WinScreen(
     solveId: Long,
-    onPlay: (Int) -> Unit,
+    onPlay: (Int, Long) -> Unit,
     onSeeBestTimes: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -92,7 +92,7 @@ fun WinScreen(
 
     WinScreen(
         uiState = uiState,
-        onPlay = onPlay,
+        onPlay = { boardSize -> onPlay(boardSize, viewModel.newGameId()) },
         onSeeBestTimes = onSeeBestTimes,
         onClose = onClose,
         modifier = modifier,

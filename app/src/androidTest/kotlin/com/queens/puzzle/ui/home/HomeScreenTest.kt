@@ -58,22 +58,25 @@ class HomeScreenTest {
 
     @Test
     fun resumeIsHiddenWithoutAStoredBoard() {
-        setScreen(HomeUiState(resumableSize = null))
+        setScreen(HomeUiState(resumable = null))
 
         composeRule.onNodeWithText("Resume last board").assertDoesNotExist()
     }
 
     @Test
-    fun resumeReportsTheStoredSize() {
-        var resumed: BoardSize? = null
+    fun resumeReportsTheStoredGame() {
+        var resumed: ResumableGame? = null
         setScreen(
-            HomeUiState(selectedSize = BoardSize(8), resumableSize = BoardSize(6)),
+            HomeUiState(
+                selectedSize = BoardSize(8),
+                resumable = ResumableGame(gameId = 42L, boardSize = BoardSize(6)),
+            ),
             onResumeGame = { resumed = it },
         )
 
         composeRule.onNodeWithText("Resume last board").performClick()
 
-        assertEquals(BoardSize(6), resumed)
+        assertEquals(ResumableGame(gameId = 42L, boardSize = BoardSize(6)), resumed)
     }
 
     @Test
@@ -123,7 +126,7 @@ class HomeScreenTest {
         onSizeSelected: (BoardSize) -> Unit = {},
         onThemeSelected: (ThemePreference) -> Unit = {},
         onStartGame: (BoardSize) -> Unit = {},
-        onResumeGame: (BoardSize) -> Unit = {},
+        onResumeGame: (ResumableGame) -> Unit = {},
     ) {
         composeRule.setContent {
             QueensTheme {

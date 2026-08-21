@@ -5,6 +5,7 @@ import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.MainDispatcherRule
 import com.queens.puzzle.testing.repository.TestSolveRepository
+import com.queens.puzzle.testing.util.TestTimeProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -20,6 +21,7 @@ class WinViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val solveRepository = TestSolveRepository()
+    private val timeProvider = TestTimeProvider()
 
     @Test
     fun `the solve is loaded from its id alone`() = runTest {
@@ -50,7 +52,7 @@ class WinViewModelTest {
     }
 
     private fun viewModel(solveId: Long) =
-        WinViewModel(solveId, ObserveWinSummaryUseCase(solveRepository))
+        WinViewModel(solveId, timeProvider, ObserveWinSummaryUseCase(solveRepository))
 
     private fun TestScope.observe(viewModel: WinViewModel) {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {

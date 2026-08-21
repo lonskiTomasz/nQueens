@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SavedSession(
+    val gameId: Long = 0L,
     val boardSize: Int,
     val queens: List<SavedPosition>,
     val moves: List<SavedMove>,

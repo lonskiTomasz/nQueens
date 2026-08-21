@@ -68,12 +68,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun GameScreen(
     boardSize: Int,
-    resume: Boolean,
+    gameId: Long,
     onNavigateBack: () -> Unit,
     onNavigateToWin: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: GameViewModel = hiltViewModel<GameViewModel, GameViewModel.Factory>(
-        creationCallback = { factory -> factory.create(boardSize, resume) },
+        creationCallback = { factory -> factory.create(boardSize, gameId) },
     ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

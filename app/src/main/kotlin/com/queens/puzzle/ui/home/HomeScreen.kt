@@ -53,8 +53,8 @@ import com.queens.puzzle.core.designsystem.theme.Spacing
 
 @Composable
 fun HomeScreen(
-    onStartGame: (BoardSize) -> Unit,
-    onResumeGame: (BoardSize) -> Unit,
+    onStartGame: (BoardSize, Long) -> Unit,
+    onResumeGame: (ResumableGame) -> Unit,
     onSeeAllBestTimes: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -65,7 +65,7 @@ fun HomeScreen(
         uiState = uiState,
         onSizeSelected = viewModel::onSizeSelected,
         onThemeSelected = viewModel::onThemeSelected,
-        onStartGame = onStartGame,
+        onStartGame = { boardSize -> onStartGame(boardSize, viewModel.newGameId()) },
         onResumeGame = onResumeGame,
         onSeeAllBestTimes = onSeeAllBestTimes,
         modifier = modifier,
@@ -78,7 +78,7 @@ fun HomeScreen(
     onSizeSelected: (BoardSize) -> Unit,
     onThemeSelected: (ThemePreference) -> Unit,
     onStartGame: (BoardSize) -> Unit,
-    onResumeGame: (BoardSize) -> Unit,
+    onResumeGame: (ResumableGame) -> Unit,
     onSeeAllBestTimes: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -148,9 +148,9 @@ fun HomeScreen(
                     )
                 }
 
-                if (uiState.resumableSize != null) {
+                if (uiState.resumable != null) {
                     TextButton(
-                        onClick = { onResumeGame(uiState.resumableSize) },
+                        onClick = { onResumeGame(uiState.resumable) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(Dimens.SecondaryButtonHeight),

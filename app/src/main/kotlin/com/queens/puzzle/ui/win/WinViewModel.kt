@@ -2,6 +2,7 @@ package com.queens.puzzle.ui.win
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.queens.puzzle.data.util.TimeProvider
 import com.queens.puzzle.domain.usecase.ObserveWinSummaryUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -17,8 +18,11 @@ private const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
 @HiltViewModel(assistedFactory = WinViewModel.Factory::class)
 class WinViewModel @AssistedInject constructor(
     @Assisted private val solveId: Long,
+    private val timeProvider: TimeProvider,
     observeWinSummary: ObserveWinSummaryUseCase,
 ) : ViewModel() {
+
+    fun newGameId(): Long = timeProvider.nowMillis()
 
     val uiState: StateFlow<WinUiState> = observeWinSummary(solveId)
         .map { summary -> if (summary == null) WinUiState.Missing else WinUiState.Solved(summary) }

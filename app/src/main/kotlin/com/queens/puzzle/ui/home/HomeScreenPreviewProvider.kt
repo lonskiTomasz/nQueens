@@ -12,7 +12,7 @@ fun previewHomeUiState(
 ): HomeUiState = HomeUiState(
     selectedSize = BoardSize(selectedSize),
     bestTimes = bestTimes,
-    resumableSize = resumableSize?.let(::BoardSize),
+    resumable = resumableSize?.let { ResumableGame(gameId = 1L, boardSize = BoardSize(it)) },
 )
 
 val PreviewBestTimes: List<BestTime> = listOf(

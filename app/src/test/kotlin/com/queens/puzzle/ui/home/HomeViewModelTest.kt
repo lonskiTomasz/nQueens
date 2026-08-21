@@ -1,7 +1,6 @@
 package com.queens.puzzle.ui.home
 
 import com.queens.puzzle.domain.usecase.ObserveBestTimesUseCase
-import com.queens.puzzle.model.AppSettings
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSession
 import com.queens.puzzle.model.Solve
@@ -10,12 +9,14 @@ import com.queens.puzzle.testing.MainDispatcherRule
 import com.queens.puzzle.testing.repository.TestAppSettingsRepository
 import com.queens.puzzle.testing.repository.TestSessionRepository
 import com.queens.puzzle.testing.repository.TestSolveRepository
+import com.queens.puzzle.testing.util.TestTimeProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -29,6 +30,7 @@ class HomeViewModelTest {
     private val appSettingsRepository = TestAppSettingsRepository()
     private val sessionRepository = TestSessionRepository()
     private val solveRepository = TestSolveRepository()
+    private val timeProvider = TestTimeProvider()
 
     @Test
     fun `the last played size is preselected`() = runTest {
@@ -68,18 +70,18 @@ class HomeViewModelTest {
         observe(viewModel)
 
         assertFalse(viewModel.uiState.value.canResume)
-        assertNull(viewModel.uiState.value.resumableSize)
+        assertNull(viewModel.uiState.value.resumable)
     }
 
     @Test
     fun `a stored board offers a resume at its own size`() = runTest {
-        sessionRepository.save(GameSession(BoardSize(12)), elapsedMillis = 5_000)
+        sessionRepository.save(gameId = 1L, session = GameSession(BoardSize(12)), elapsedMillis = 5_000)
 
         val viewModel = viewModel()
         observe(viewModel)
 
         assertTrue(viewModel.uiState.value.canResume)
-        assertEquals(BoardSize(12), viewModel.uiState.value.resumableSize)
+        assertEquals(BoardSize(12), viewModel.uiState.value.resumable?.boardSize)
     }
 
     @Test
@@ -98,6 +100,19 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `a new game is identified apart from the board already stored`() = runTest {
+        sessionRepository.save(
+            gameId = 1L,
+            session = GameSession(BoardSize(8)),
+            elapsedMillis = 5_000,
+        )
+        val viewModel = viewModel()
+        observe(viewModel)
+
+        assertNotEquals(viewModel.uiState.value.resumable?.gameId, viewModel.newGameId())
+    }
+
+    @Test
     fun `every selectable size is offered`() = runTest {
         val viewModel = viewModel()
         observe(viewModel)
@@ -107,6 +122,7 @@ class HomeViewModelTest {
 
     private fun viewModel() = HomeViewModel(
         appSettingsRepository = appSettingsRepository,
+        timeProvider = timeProvider,
         sessionRepository = sessionRepository,
         observeBestTimes = ObserveBestTimesUseCase(solveRepository),
     )

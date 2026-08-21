@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.queens.puzzle.data.repository.AppSettingsRepository
 import com.queens.puzzle.data.repository.SessionRepository
+import com.queens.puzzle.data.util.TimeProvider
 import com.queens.puzzle.domain.usecase.ObserveBestTimesUseCase
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ThemePreference
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appSettingsRepository: AppSettingsRepository,
+    private val timeProvider: TimeProvider,
     sessionRepository: SessionRepository,
     observeBestTimes: ObserveBestTimesUseCase,
 ) : ViewModel() {
@@ -31,7 +33,7 @@ class HomeViewModel @Inject constructor(
             selectedSize = appSettings.lastBoardSize,
             theme = appSettings.theme,
             bestTimes = bestTimes,
-            resumableSize = savedGame?.session?.boardSize,
+            resumable = savedGame?.let { ResumableGame(it.gameId, it.session.boardSize) },
         )
     }.stateIn(
         scope = viewModelScope,
@@ -46,4 +48,6 @@ class HomeViewModel @Inject constructor(
     fun onThemeSelected(theme: ThemePreference) {
         viewModelScope.launch { appSettingsRepository.setTheme(theme) }
     }
+
+    fun newGameId(): Long = timeProvider.nowMillis()
 }

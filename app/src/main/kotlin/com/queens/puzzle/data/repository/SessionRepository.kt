@@ -12,13 +12,13 @@ interface SessionRepository {
 
     fun observeSavedSession(): Flow<SavedGame?>
 
-    suspend fun save(session: GameSession, elapsedMillis: Long)
+    suspend fun save(gameId: Long, session: GameSession, elapsedMillis: Long)
 
     suspend fun clear()
 }
 
-/** A game in progress, as stored. */
 data class SavedGame(
+    val gameId: Long,
     val session: GameSession,
     val elapsedMillis: Long,
 )

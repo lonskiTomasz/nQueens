@@ -24,9 +24,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
-/** The 4x4 board has exactly two solutions; this is one of them. */
-private val SOLUTION_4x4 = listOf(Position(0, 1), Position(1, 3), Position(2, 0), Position(3, 2))
-
 class GameViewModelTest {
 
     @get:Rule
@@ -241,11 +238,12 @@ class GameViewModelTest {
     @Test
     fun `resuming restores the queens and the elapsed time`() = runTest {
         sessionRepository.save(
-            GameSession(BoardSize(4), queens = setOf(Position(0, 0)), taps = 1),
+            gameId = GAME_ID,
+            session = GameSession(BoardSize(4), queens = setOf(Position(0, 0)), taps = 1),
             elapsedMillis = 45_000,
         )
 
-        val viewModel = viewModel(resume = true)
+        val viewModel = viewModel(gameId = GAME_ID)
         observe(viewModel)
         advanceTimeBy(1_000)
 
@@ -255,13 +253,14 @@ class GameViewModelTest {
     }
 
     @Test
-    fun `starting a fresh game discards any stored board`() = runTest {
+    fun `starting a fresh game discards the board another game stored`() = runTest {
         sessionRepository.save(
-            GameSession(BoardSize(4), queens = setOf(Position(0, 0))),
+            gameId = GAME_ID,
+            session = GameSession(BoardSize(4), queens = setOf(Position(0, 0))),
             elapsedMillis = 45_000,
         )
 
-        val viewModel = viewModel(resume = false)
+        val viewModel = viewModel(gameId = GAME_ID + 1)
         observe(viewModel)
 
         assertEquals(0, viewModel.uiState.value.queensPlaced)
@@ -271,11 +270,12 @@ class GameViewModelTest {
     @Test
     fun `a stored board of another size is not resumed`() = runTest {
         sessionRepository.save(
-            GameSession(BoardSize(8), queens = setOf(Position(0, 0))),
+            gameId = GAME_ID,
+            session = GameSession(BoardSize(8), queens = setOf(Position(0, 0))),
             elapsedMillis = 45_000,
         )
 
-        val viewModel = viewModel(boardSize = 4, resume = true)
+        val viewModel = viewModel(boardSize = 4, gameId = GAME_ID)
         observe(viewModel)
 
         assertEquals(0, viewModel.uiState.value.queensPlaced)
@@ -339,9 +339,9 @@ class GameViewModelTest {
         assertFalse(viewModel.uiState.value.isSettingsSheetVisible)
     }
 
-    private fun viewModel(boardSize: Int = 4, resume: Boolean = false) = GameViewModel(
+    private fun viewModel(boardSize: Int = 4, gameId: Long = GAME_ID) = GameViewModel(
         boardSizeValue = boardSize,
-        resume = resume,
+        gameId = gameId,
         sessionRepository = sessionRepository,
         gameSettingsRepository = gameSettingsRepository,
         recordSolve = RecordSolveUseCase(solveRepository, timeProvider),
@@ -362,3 +362,7 @@ class GameViewModelTest {
         return effects
     }
 }
+
+private const val GAME_ID = 1_700_000_000_000L
+
+private val SOLUTION_4x4 = listOf(Position(0, 1), Position(1, 3), Position(2, 0), Position(3, 2))

@@ -9,8 +9,13 @@ data class HomeUiState(
     val selectedSize: BoardSize = BoardSize.Default,
     val theme: ThemePreference = ThemePreference.Light,
     val bestTimes: List<BestTime> = emptyList(),
-    /** The size of the stored board, when there is one to carry on with. */
-    val resumableSize: BoardSize? = null,
+    /** The stored board, when there is one to carry on with. */
+    val resumable: ResumableGame? = null,
 ) {
-    val canResume: Boolean get() = resumableSize != null
+    val canResume: Boolean get() = resumable != null
 }
+
+data class ResumableGame(
+    val gameId: Long,
+    val boardSize: BoardSize,
+)

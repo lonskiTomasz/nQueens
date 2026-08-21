@@ -21,8 +21,12 @@ class TestSessionRepository(initial: SavedGame? = null) : SessionRepository {
 
     override fun observeSavedSession(): Flow<SavedGame?> = saved
 
-    override suspend fun save(session: GameSession, elapsedMillis: Long) {
-        val game = SavedGame(session, elapsedMillis)
+    override suspend fun save(
+        gameId: Long,
+        session: GameSession,
+        elapsedMillis: Long
+    ) {
+        val game = SavedGame(gameId, session, elapsedMillis)
         _writes += game
         saved.value = game
     }

@@ -10,7 +10,8 @@ import com.queens.puzzle.model.GameSession
 import com.queens.puzzle.model.Move
 import com.queens.puzzle.model.Position
 
-fun GameSession.toSavedSession(elapsedMillis: Long): SavedSession = SavedSession(
+fun GameSession.toSavedSession(gameId: Long, elapsedMillis: Long): SavedSession = SavedSession(
+    gameId = gameId,
     boardSize = boardSize.value,
     queens = queens.map { it.toSaved() },
     moves = moves.map { it.toSaved() },
@@ -30,6 +31,7 @@ fun SavedSession.toSavedGameOrNull(): SavedGame? {
     val size = BoardSize.ofOrNull(boardSize) ?: return null
     return runCatching {
         SavedGame(
+            gameId = gameId,
             session = GameSession(
                 boardSize = size,
                 queens = queens.map { it.toModel() }.toSet(),

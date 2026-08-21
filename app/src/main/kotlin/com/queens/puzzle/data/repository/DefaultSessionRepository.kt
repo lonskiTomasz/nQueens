@@ -23,8 +23,8 @@ class DefaultSessionRepository @Inject constructor(
     override fun observeSavedSession(): Flow<SavedGame?> =
         sessionDataSource.savedSession.map { it?.toSavedGameOrNull() }
 
-    override suspend fun save(session: GameSession, elapsedMillis: Long) =
-        sessionDataSource.save(session.toSavedSession(elapsedMillis))
+    override suspend fun save(gameId: Long, session: GameSession, elapsedMillis: Long) =
+        sessionDataSource.save(session.toSavedSession(gameId, elapsedMillis))
 
     override suspend fun clear() = sessionDataSource.clear()
 }

@@ -36,7 +36,7 @@ private const val TICK_MILLIS = 200L
 @HiltViewModel(assistedFactory = GameViewModel.Factory::class)
 class GameViewModel @AssistedInject constructor(
     @Assisted("boardSize") private val boardSizeValue: Int,
-    @Assisted("resume") private val resume: Boolean,
+    @Assisted("gameId") private val gameId: Long,
     private val sessionRepository: SessionRepository,
     private val gameSettingsRepository: GameSettingsRepository,
     private val recordSolve: RecordSolveUseCase,
@@ -132,7 +132,7 @@ class GameViewModel @AssistedInject constructor(
     private suspend fun restore() {
         val saved = sessionRepository.observeSavedSession().first()
 
-        if (resume && saved != null && saved.session.boardSize == boardSize) {
+        if (saved != null && saved.gameId == gameId && saved.session.boardSize == boardSize) {
             session = saved.session
             startedAt = timeProvider.elapsedMillis() - saved.elapsedMillis
         } else {
@@ -150,7 +150,7 @@ class GameViewModel @AssistedInject constructor(
 
     private fun saveSession(session: GameSession, elapsedMillis: Long) {
         viewModelScope.launch {
-            sessionRepository.save(session, elapsedMillis)
+            sessionRepository.save(gameId, session, elapsedMillis)
         }
     }
 
@@ -233,7 +233,7 @@ class GameViewModel @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("boardSize") boardSize: Int,
-            @Assisted("resume") resume: Boolean,
+            @Assisted("gameId") gameId: Long,
         ): GameViewModel
     }
 }
