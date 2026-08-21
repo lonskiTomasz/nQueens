@@ -307,6 +307,17 @@ class GameViewModelTest {
     }
 
     @Test
+    fun `leaving a board the player played is stored`() = runTest {
+        val viewModel = viewModel()
+        observe(viewModel)
+
+        viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
+        viewModel.onScreenStopped()
+
+        assertEquals(setOf(Position(0, 0)), sessionRepository.current?.session?.queens)
+    }
+
+    @Test
     fun `attack lines follow the stored setting`() = runTest {
         val viewModel = viewModel()
         observe(viewModel)

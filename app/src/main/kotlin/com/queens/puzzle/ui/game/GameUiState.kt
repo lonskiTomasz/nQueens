@@ -12,6 +12,7 @@ data class GameUiState(
     val conflictKinds: Set<ConflictKind> = emptySet(),
     val canUndo: Boolean = false,
     val isSolved: Boolean = false,
+    val isRestoring: Boolean = false,
     val settings: GameSettings = GameSettings(),
     val isResetDialogVisible: Boolean = false,
     val isSettingsSheetVisible: Boolean = false,
@@ -21,4 +22,6 @@ data class GameUiState(
     val hasConflicts: Boolean get() = conflictKinds.isNotEmpty()
 
     val canReset: Boolean get() = queensPlaced > 0 || canUndo
+
+    val isBoardEnabled: Boolean get() = !isRestoring && !isSolved
 }

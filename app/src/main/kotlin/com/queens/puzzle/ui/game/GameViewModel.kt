@@ -57,7 +57,8 @@ class GameViewModel @AssistedInject constructor(
     private var runningSince: Long? = timeProvider.elapsedMillis()
     private var finalElapsedMillis: Long? = null
 
-    private val _uiState = MutableStateFlow(GameUiState(boardSize = boardSize))
+    private val _uiState =
+        MutableStateFlow(GameUiState(boardSize = boardSize, isRestoring = true))
 
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
@@ -98,7 +99,7 @@ class GameViewModel @AssistedInject constructor(
             setElapsed(0L)
         }
 
-        val evaluation = BoardEvaluator.evaluate(after)
+        val evaluation = evaluate(after)
         emitPlacementFeedback(action, after, evaluation)
 
         if (evaluation.isSolved) {
@@ -120,7 +121,16 @@ class GameViewModel @AssistedInject constructor(
         val startedAt = runningSince ?: return
         accumulatedMillis += timeProvider.elapsedMillis() - startedAt
         runningSince = null
-        if (finalElapsedMillis == null) saveSession(session, accumulatedMillis)
+
+        if (finalElapsedMillis != null) return
+        if (_uiState.value.isRestoring) return
+
+        if (session.isPristine) {
+            pendingSave.value = null
+            viewModelScope.launch { sessionRepository.clear() }
+        } else {
+            saveSession(session, accumulatedMillis)
+        }
     }
 
     fun onResetRequested() = update { copy(isResetDialogVisible = true) }
@@ -157,13 +167,14 @@ class GameViewModel @AssistedInject constructor(
         } else {
             sessionRepository.clear()
         }
-        publish(evaluation = BoardEvaluator.evaluate(session))
+        update { copy(isRestoring = false) }
+        publish(evaluation = evaluate(session))
     }
 
     private suspend fun observeSettings() {
         gameSettingsRepository.observeGameSettings().collect { settings ->
             update { copy(settings = settings) }
-            publish(evaluation = BoardEvaluator.evaluate(session))
+            publish(evaluation = evaluate(session))
         }
     }
 
@@ -236,9 +247,12 @@ class GameViewModel @AssistedInject constructor(
         if (runningSince != null) runningSince = timeProvider.elapsedMillis()
     }
 
-    private fun publish(evaluation: BoardEvaluation) {
-        val showAttackLines = _uiState.value.settings.showAttackLines
+    private fun evaluate(session: GameSession): BoardEvaluation = BoardEvaluator.evaluate(
+        session = session,
+        includeAttackedSquares = _uiState.value.settings.showAttackLines,
+    )
 
+    private fun publish(evaluation: BoardEvaluation) {
         update {
             copy(
                 squares = positions.map { position ->
@@ -246,7 +260,7 @@ class GameViewModel @AssistedInject constructor(
                         position = position,
                         hasQueen = session.hasQueenAt(position),
                         isConflicting = evaluation.isConflicting(position),
-                        isAttacked = showAttackLines && evaluation.isAttacked(position),
+                        isAttacked = evaluation.isAttacked(position),
                     )
                 },
                 queensPlaced = session.queens.size,

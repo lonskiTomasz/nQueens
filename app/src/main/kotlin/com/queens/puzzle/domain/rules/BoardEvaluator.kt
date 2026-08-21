@@ -11,17 +11,25 @@ import com.queens.puzzle.model.Position
  * is solved.
  *
  * Works by counting occupancy per line: a queen is in conflict exactly when it sits on a row,
- * column, diagonal or anti-diagonal holding more than one queen. Two linear passes over the
- * queens, O(n) time and space.
+ * column, diagonal or anti-diagonal holding more than one queen. That is two linear passes over
+ * the queens — O(n) time and space.
+ *
+ * The attacked squares are the expensive half: covering them walks the four lines through every
+ * queen, which makes a call that asks for them O(n²). A caller that does not draw the attack
+ * marks should leave `includeAttackedSquares` off and pay for the conflict pass alone.
  *
  * Stateless and pure.
  */
 object BoardEvaluator {
 
-    fun evaluate(session: GameSession): BoardEvaluation =
-        evaluate(session.boardSize, session.queens)
+    fun evaluate(session: GameSession, includeAttackedSquares: Boolean = true): BoardEvaluation =
+        evaluate(session.boardSize, session.queens, includeAttackedSquares)
 
-    fun evaluate(boardSize: BoardSize, queens: Set<Position>): BoardEvaluation {
+    fun evaluate(
+        boardSize: BoardSize,
+        queens: Set<Position>,
+        includeAttackedSquares: Boolean = true,
+    ): BoardEvaluation {
         if (queens.isEmpty()) return BoardEvaluation()
 
         val rows = mutableMapOf<Int, Int>()
@@ -59,7 +67,8 @@ object BoardEvaluator {
         return BoardEvaluation(
             conflicts = conflicts,
             conflictKinds = conflictKinds,
-            attackedSquares = attackedSquares(boardSize, queens),
+            attackedSquares =
+                if (includeAttackedSquares) attackedSquares(boardSize, queens) else emptySet(),
             isSolved = queens.size == boardSize.value && conflicts.isEmpty(),
         )
     }

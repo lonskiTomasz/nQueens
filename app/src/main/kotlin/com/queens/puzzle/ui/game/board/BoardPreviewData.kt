@@ -24,14 +24,15 @@ fun previewSquares(
     queens: Set<Position>,
     showAttackLines: Boolean = true,
 ): List<BoardSquareState> {
-    val evaluation = BoardEvaluator.evaluate(boardSize, queens)
+    val evaluation =
+        BoardEvaluator.evaluate(boardSize, queens, includeAttackedSquares = showAttackLines)
 
     return boardSize.positions().map { position ->
         BoardSquareState(
             position = position,
             hasQueen = position in queens,
             isConflicting = evaluation.isConflicting(position),
-            isAttacked = showAttackLines && evaluation.isAttacked(position),
+            isAttacked = evaluation.isAttacked(position),
         )
     }
 }

@@ -18,7 +18,7 @@ fun previewGameUiState(
     isSettingsSheetVisible: Boolean = false,
 ): GameUiState {
     val size = BoardSize(boardSize)
-    val evaluation = BoardEvaluator.evaluate(size, queens)
+    val evaluation = BoardEvaluator.evaluate(size, queens, includeAttackedSquares = false)
 
     return GameUiState(
         boardSize = size,

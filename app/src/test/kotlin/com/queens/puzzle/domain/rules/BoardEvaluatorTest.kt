@@ -160,6 +160,28 @@ class BoardEvaluatorTest {
         assertEquals(emptySquares, evaluation.attackedSquares)
     }
 
+    @Test
+    fun `attacked squares are left out when they are not asked for`() {
+        val queens = setOf(Position(0, 0), Position(1, 1))
+
+        val evaluation = BoardEvaluator.evaluate(size, queens, includeAttackedSquares = false)
+
+        assertTrue(evaluation.attackedSquares.isEmpty())
+        assertFalse(evaluation.isAttacked(Position(0, 1)))
+        assertEquals(queens, evaluation.conflicts)
+    }
+
+    @Test
+    fun `a solved board is still solved without the attacked squares`() {
+        val boardSize = BoardSize(4)
+
+        val evaluation =
+            BoardEvaluator.evaluate(boardSize, FOUR_QUEENS_SOLUTION, includeAttackedSquares = false)
+
+        assertTrue(evaluation.isSolved)
+        assertTrue(evaluation.attackedSquares.isEmpty())
+    }
+
     private companion object {
         /** The 4x4 solution, in row order: columns 1, 3, 0, 2. */
         val FOUR_QUEENS_SOLUTION = setOf(

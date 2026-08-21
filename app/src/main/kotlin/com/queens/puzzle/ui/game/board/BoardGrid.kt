@@ -10,20 +10,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.min
 import com.queens.puzzle.R
-import com.queens.puzzle.model.BoardSize
-import com.queens.puzzle.model.Position
 import com.queens.puzzle.core.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.core.designsystem.theme.Dimens
+import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.Position
 
 /** The glyph fills about two thirds of its square */
 private const val GLYPH_SIZE_RATIO = 0.66f
@@ -43,7 +42,7 @@ fun BoardGrid(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    val byPosition = squares.associateBy { it.position }
+    val byPosition = remember(squares) { squares.associateBy { it.position } }
 
     BoxWithConstraints(modifier = modifier) {
         // An unbounded axis reports Dp.Infinity, so this picks the bounded one — which is what

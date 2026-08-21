@@ -225,7 +225,7 @@ private fun ColumnScope.GameContentStacked(
                 boardSize = uiState.boardSize,
                 squares = uiState.squares,
                 onSquareClick = { onAction(GameAction.TapSquare(it)) },
-                enabled = !uiState.isSolved,
+                enabled = uiState.isBoardEnabled,
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .padding(horizontal = Spacing.ScreenPaddingHorizontal),
@@ -279,7 +279,7 @@ private fun ColumnScope.GameContentSideBySide(
             boardSize = uiState.boardSize,
             squares = uiState.squares,
             onSquareClick = { onAction(GameAction.TapSquare(it)) },
-            enabled = !uiState.isSolved,
+            enabled = uiState.isBoardEnabled,
             // Square off the height, which is the scarce axis here.
             modifier = Modifier
                 .fillMaxHeight()

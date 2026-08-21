@@ -145,6 +145,7 @@ class GameScreenTest {
         queensPlaced: Int = 0,
         conflictKinds: Set<ConflictKind> = emptySet(),
         canUndo: Boolean = false,
+        isRestoring: Boolean = false,
         isResetDialogVisible: Boolean = false,
         isSettingsSheetVisible: Boolean = false,
     ): GameUiState {
@@ -155,6 +156,7 @@ class GameScreenTest {
             queensPlaced = queensPlaced,
             conflictKinds = conflictKinds,
             canUndo = canUndo,
+            isRestoring = isRestoring,
             settings = GameSettings(),
             isResetDialogVisible = isResetDialogVisible,
             isSettingsSheetVisible = isSettingsSheetVisible,
