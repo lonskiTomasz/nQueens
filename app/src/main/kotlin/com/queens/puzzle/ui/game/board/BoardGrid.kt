@@ -89,29 +89,6 @@ fun BoardGrid(
     }
 }
 
-/** A read-only board, for the win screen and history rows. */
-@Composable
-fun BoardGrid(
-    boardSize: BoardSize,
-    squares: List<BoardSquareState>,
-    modifier: Modifier = Modifier,
-    contentDescription: String? = null,
-) {
-    BoardGrid(
-        boardSize = boardSize,
-        squares = squares,
-        onSquareClick = {},
-        enabled = false,
-        modifier = if (contentDescription == null) {
-            modifier
-        } else {
-            modifier.semantics {
-                this.contentDescription = contentDescription
-            }
-        },
-    )
-}
-
 /** "Row 3, column 5, queen, in conflict" — rows and columns are spoken one-indexed. */
 @Composable
 private fun BoardSquareState.describe(): String {

@@ -9,6 +9,7 @@ import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.domain.game.reduce
 import com.queens.puzzle.domain.rules.BoardEvaluator
 import com.queens.puzzle.domain.usecase.RecordSolveUseCase
+import com.queens.puzzle.model.BoardEvaluation
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSession
 import com.queens.puzzle.ui.game.board.BoardSquareState
@@ -23,7 +24,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -45,6 +45,8 @@ class GameViewModel @AssistedInject constructor(
 
     private val boardSize = BoardSize(boardSizeValue)
 
+    private val positions = boardSize.positions()
+
     private val boardState = MutableStateFlow(GameUiState(boardSize = boardSize))
 
     val uiState: StateFlow<GameUiState> =
@@ -64,12 +66,9 @@ class GameViewModel @AssistedInject constructor(
 
     private var finalElapsedMillis: Long? = null
 
-    private val pendingSave = MutableStateFlow<SavedPoint?>(null)
-
     init {
         viewModelScope.launch { restore() }
         viewModelScope.launch { observeSettings() }
-        viewModelScope.launch { drainSaves() }
     }
 
     fun onAction(action: GameAction) {
@@ -91,26 +90,17 @@ class GameViewModel @AssistedInject constructor(
         if (action is GameAction.Reset) {
             startedAt = timeProvider.elapsedMillis()
         }
-        val evaluation = BoardEvaluator.evaluate(after)
 
-        if (action is GameAction.TapSquare && after.hasQueenAt(action.position)) {
-            emit(
-                if (evaluation.isConflicting(action.position)) {
-                    GameEffect.HapticConflict
-                } else {
-                    GameEffect.HapticPlace
-                }
-            )
-            emit(GameEffect.SoundPlace)
-        }
+        val evaluation = BoardEvaluator.evaluate(after)
+        emitPlacementFeedback(action, after, evaluation)
 
         if (evaluation.isSolved) {
             finalElapsedMillis = elapsedSinceStart()
-            publish()
-            viewModelScope.launch { finish() }
+            publish(evaluation)
+            finish()
         } else {
-            publish()
-            pendingSave.value = SavedPoint(session, elapsedSinceStart())
+            publish(evaluation)
+            saveSession(session, elapsedSinceStart())
         }
     }
 
@@ -148,33 +138,52 @@ class GameViewModel @AssistedInject constructor(
         } else {
             sessionRepository.clear()
         }
-        publish()
+        publish(evaluation = BoardEvaluator.evaluate(session))
     }
 
     private suspend fun observeSettings() {
         gameSettingsRepository.observeGameSettings().collect { settings ->
             update { copy(settings = settings) }
-            publish()
+            publish(evaluation = BoardEvaluator.evaluate(session))
         }
     }
 
-    private suspend fun drainSaves() {
-        pendingSave.filterNotNull().collect { point ->
-            sessionRepository.save(point.session, point.elapsedMillis)
+    private fun saveSession(session: GameSession, elapsedMillis: Long) {
+        viewModelScope.launch {
+            sessionRepository.save(session, elapsedMillis)
         }
     }
 
-    private suspend fun finish() {
-        emit(GameEffect.CelebrateWin)
-        sessionRepository.clear()
+    private fun finish() {
+        viewModelScope.launch {
+            emit(GameEffect.CelebrateWin)
+            sessionRepository.clear()
 
-        val outcome = recordSolve(
-            boardSize = boardSize,
-            durationMillis = finalElapsedMillis ?: elapsedSinceStart(),
-            taps = session.taps,
-            undos = session.undos,
+            val outcome = recordSolve(
+                boardSize = boardSize,
+                durationMillis = finalElapsedMillis ?: elapsedSinceStart(),
+                taps = session.taps,
+                undos = session.undos,
+            )
+            emit(GameEffect.NavigateToWin(outcome.solveId))
+        }
+    }
+
+    private fun emitPlacementFeedback(
+        action: GameAction,
+        session: GameSession,
+        evaluation: BoardEvaluation
+    ) {
+        if (action !is GameAction.TapSquare || !session.hasQueenAt(action.position)) return
+
+        emit(
+            if (evaluation.isConflicting(action.position)) {
+                GameEffect.HapticConflict
+            } else {
+                GameEffect.HapticPlace
+            }
         )
-        emit(GameEffect.NavigateToWin(outcome.solveId))
+        emit(GameEffect.SoundPlace)
     }
 
     private fun elapsedTicks(): Flow<Long> = flow {
@@ -191,14 +200,12 @@ class GameViewModel @AssistedInject constructor(
 
     private fun elapsedSinceStart(): Long = timeProvider.elapsedMillis() - startedAt
 
-    private fun publish() {
-        val evaluation = BoardEvaluator.evaluate(session)
+    private fun publish(evaluation: BoardEvaluation) {
         val showAttackLines = boardState.value.settings.showAttackLines
 
         update {
             copy(
-                boardSize = boardSize,
-                squares = boardSize.positions().map { position ->
+                squares = positions.map { position ->
                     BoardSquareState(
                         position = position,
                         hasQueen = session.hasQueenAt(position),
@@ -221,8 +228,6 @@ class GameViewModel @AssistedInject constructor(
     private fun emit(effect: GameEffect) {
         _effects.trySend(effect)
     }
-
-    private data class SavedPoint(val session: GameSession, val elapsedMillis: Long)
 
     @AssistedFactory
     interface Factory {

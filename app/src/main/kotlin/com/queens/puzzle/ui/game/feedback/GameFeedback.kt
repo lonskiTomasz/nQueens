@@ -24,7 +24,7 @@ object SilentGameFeedback : GameFeedback {
 
 private class HapticGameFeedback(private val haptics: HapticFeedback) : GameFeedback {
 
-    override fun place() = haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+    override fun place() = haptics.performHapticFeedback(HapticFeedbackType.Confirm)
 
     override fun conflict() = haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 

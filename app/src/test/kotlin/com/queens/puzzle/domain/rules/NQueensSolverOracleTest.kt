@@ -1,13 +1,13 @@
 package com.queens.puzzle.domain.rules
 
 import com.queens.puzzle.model.BoardSize
-import com.queens.puzzle.model.Position
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.random.Random
 
 /**
  * Cross-checks [BoardEvaluator] against [NQueensSolver].
@@ -82,7 +82,7 @@ class NQueensSolverOracleTest {
 
     @Test
     fun `the evaluator agrees with a pairwise scan on random boards`() {
-        val random = kotlin.random.Random(seed = 20260818)
+        val random = Random(seed = 20260818)
         val boardSize = BoardSize(8)
 
         repeat(500) {

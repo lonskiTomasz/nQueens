@@ -68,13 +68,11 @@ object BoardEvaluator {
     private fun attackedSquares(boardSize: BoardSize, queens: Set<Position>): Set<Position> {
         val attacked = mutableSetOf<Position>()
         for (queen in queens) {
-            for (offset in 0 until boardSize.value) {
-                attacked += Position(queen.row, offset)
-                attacked += Position(offset, queen.column)
-            }
-            for (row in 0 until boardSize.value) {
-                Position(row, row - queen.diagonal).takeIf { it in boardSize }?.let { attacked += it }
-                Position(row, queen.antiDiagonal - row).takeIf { it in boardSize }?.let { attacked += it }
+            for (i in 0 until boardSize.value) {
+                attacked += Position(queen.row, i)
+                attacked += Position(i, queen.column)
+                Position(i, i - queen.diagonal).takeIf { it in boardSize }?.let { attacked += it }
+                Position(i, queen.antiDiagonal - i).takeIf { it in boardSize }?.let { attacked += it }
             }
         }
         return attacked - queens

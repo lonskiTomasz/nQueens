@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -231,8 +232,13 @@ private fun BestTimesCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp)
-                .padding(start = Spacing.ScreenPaddingHorizontal, end = Spacing.TightPadding),
+                .heightIn(min = 56.dp)
+                .padding(
+                    start = Spacing.ScreenPaddingHorizontal,
+                    end = Spacing.TightPadding,
+                    top = Spacing.TightPadding,
+                    bottom = Spacing.TightPadding,
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
