@@ -4,6 +4,7 @@ import com.queens.puzzle.data.repository.SolveRepository
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
+import com.queens.puzzle.model.SolveSizeSummary
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -25,6 +26,18 @@ class TestSolveRepository(initialSolves: List<Solve> = emptyList()) : SolveRepos
 
     override suspend fun bestFor(boardSize: BoardSize): Solve? =
         solves.value.filter { it.boardSize == boardSize }.minByOrNull { it.durationMillis }
+
+    override suspend fun solveSizeSummaryFor(id: Long): SolveSizeSummary? {
+        val solve = solves.value.firstOrNull { it.id == id } ?: return null
+        val forSize = solves.value.filter { it.boardSize == solve.boardSize }
+        return SolveSizeSummary(
+            solve = solve,
+            solveCount = forSize.size,
+            bestMillisExcludingSelf = forSize
+                .filter { it.id != id }
+                .minOfOrNull { it.durationMillis },
+        )
+    }
 
     override suspend fun record(solve: Solve): Long {
         val stored = solve.copy(id = nextId++)

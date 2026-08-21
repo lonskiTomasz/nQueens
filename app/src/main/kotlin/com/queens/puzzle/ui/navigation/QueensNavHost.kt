@@ -54,7 +54,10 @@ fun QueensNavHost(modifier: Modifier = Modifier) {
                         backStack.removeLastOrNull()
                         backStack.add(GameKey(boardSize, gameId))
                     },
-                    onSeeBestTimes = { backStack.add(BestTimesKey) },
+                    onSeeBestTimes = {
+                        backStack.removeLastOrNull()
+                        backStack.add(BestTimesKey)
+                    },
                     onClose = {
                         // Straight home: the win screen is the end of a game, not a step in one.
                         backStack.removeAll { it != HomeKey }

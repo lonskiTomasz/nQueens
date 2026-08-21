@@ -2,9 +2,11 @@ package com.queens.puzzle.data.mapper
 
 import com.queens.puzzle.data.local.database.BestTimeRow
 import com.queens.puzzle.data.local.database.SolveEntity
+import com.queens.puzzle.data.local.database.SolveWithSizeSummary
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
+import com.queens.puzzle.model.SolveSizeSummary
 
 fun SolveEntity.toModel(): Solve = Solve(
     id = id,
@@ -29,4 +31,10 @@ fun BestTimeRow.toModel(): BestTime = BestTime(
     boardSize = BoardSize(boardSize),
     bestMillis = bestMillis,
     solveCount = solveCount,
+)
+
+fun SolveWithSizeSummary.toModel(): SolveSizeSummary = SolveSizeSummary(
+    solve = solve.toModel(),
+    solveCount = solveCount,
+    bestMillisExcludingSelf = bestMillisExcludingSelf,
 )

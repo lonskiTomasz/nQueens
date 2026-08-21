@@ -3,7 +3,6 @@ package com.queens.puzzle.domain.usecase
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.repository.TestSolveRepository
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -11,16 +10,16 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class ObserveWinSummaryUseCaseTest {
+class GetWinSummaryUseCaseTest {
 
     private val solveRepository = TestSolveRepository()
-    private val observeWinSummary = ObserveWinSummaryUseCase(solveRepository)
+    private val getWinSummary = GetWinSummaryUseCase(solveRepository)
 
     @Test
     fun `a first solve of a size is a personal best with no delta`() = runTest {
         val id = solveRepository.record(solve(boardSize = 8, durationMillis = 100_000))
 
-        val summary = observeWinSummary(id).first()!!
+        val summary = getWinSummary(id)!!
 
         assertTrue(summary.isNewBest)
         assertNull(summary.improvementMillis)
@@ -32,7 +31,7 @@ class ObserveWinSummaryUseCaseTest {
         solveRepository.record(solve(boardSize = 8, durationMillis = 160_000))
         val id = solveRepository.record(solve(boardSize = 8, durationMillis = 106_000))
 
-        val summary = observeWinSummary(id).first()!!
+        val summary = getWinSummary(id)!!
 
         assertTrue(summary.isNewBest)
         assertEquals(54_000L, summary.improvementMillis)
@@ -44,7 +43,7 @@ class ObserveWinSummaryUseCaseTest {
         solveRepository.record(solve(boardSize = 8, durationMillis = 100_000))
         val id = solveRepository.record(solve(boardSize = 8, durationMillis = 111_000))
 
-        val summary = observeWinSummary(id).first()!!
+        val summary = getWinSummary(id)!!
 
         assertFalse(summary.isNewBest)
         assertEquals(-11_000L, summary.improvementMillis)
@@ -54,7 +53,7 @@ class ObserveWinSummaryUseCaseTest {
     fun `a solve is never compared against itself`() = runTest {
         val id = solveRepository.record(solve(boardSize = 8, durationMillis = 100_000))
 
-        val summary = observeWinSummary(id).first()!!
+        val summary = getWinSummary(id)!!
 
         assertTrue(summary.isNewBest)
         assertNull(summary.improvementMillis)
@@ -65,7 +64,7 @@ class ObserveWinSummaryUseCaseTest {
         solveRepository.record(solve(boardSize = 4, durationMillis = 5_000))
         val id = solveRepository.record(solve(boardSize = 8, durationMillis = 100_000))
 
-        val summary = observeWinSummary(id).first()!!
+        val summary = getWinSummary(id)!!
 
         assertTrue(summary.isNewBest)
         assertNull(summary.improvementMillis)
@@ -76,7 +75,7 @@ class ObserveWinSummaryUseCaseTest {
     fun `an unknown id has no summary`() = runTest {
         solveRepository.record(solve(boardSize = 8, durationMillis = 100_000))
 
-        assertNull(observeWinSummary(999L).first())
+        assertNull(getWinSummary(999L))
     }
 
     private fun solve(boardSize: Int, durationMillis: Long) = Solve(

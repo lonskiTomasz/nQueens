@@ -24,6 +24,23 @@ interface SolveDao {
     @Query("SELECT * FROM solves WHERE board_size = :boardSize ORDER BY duration_millis ASC LIMIT 1")
     suspend fun bestFor(boardSize: Int): SolveEntity?
 
+    /**
+     * One solve by id, alongside how it compares to the rest of its size: how many times that
+     * size has been solved, and the fastest of the *other* solves — so a solve is never
+     * compared against itself. Null when the id no longer exists.
+     */
+    @Query(
+        """
+        SELECT s.*,
+               (SELECT COUNT(*) FROM solves WHERE board_size = s.board_size) AS solve_count,
+               (SELECT MIN(duration_millis) FROM solves
+                 WHERE board_size = s.board_size AND id != s.id) AS best_millis
+        FROM solves s
+        WHERE s.id = :id
+        """
+    )
+    suspend fun getWithSizeSummary(id: Long): SolveWithSizeSummary?
+
     @Query(
         """
         SELECT board_size,

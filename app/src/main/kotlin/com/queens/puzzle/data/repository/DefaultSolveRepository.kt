@@ -6,6 +6,7 @@ import com.queens.puzzle.data.mapper.toModel
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Solve
+import com.queens.puzzle.model.SolveSizeSummary
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -24,6 +25,9 @@ class DefaultSolveRepository @Inject constructor(
 
     override suspend fun bestFor(boardSize: BoardSize): Solve? =
         solveDao.bestFor(boardSize.value)?.toModel()
+
+    override suspend fun solveSizeSummaryFor(id: Long): SolveSizeSummary? =
+        solveDao.getWithSizeSummary(id)?.toModel()
 
     override suspend fun record(solve: Solve): Long = solveDao.insert(solve.toEntity())
 

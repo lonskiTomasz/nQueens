@@ -28,3 +28,14 @@ data class SolveOutcome(
     val isNewBest: Boolean,
     val improvementMillis: Long?,
 )
+
+/**
+ * A solve alongside how it compares to the rest of its size: how many times that size has
+ * been solved, and the fastest of the *other* solves — so a solve is never compared against
+ * itself.
+ */
+data class SolveSizeSummary(
+    val solve: Solve,
+    val solveCount: Int,
+    val bestMillisExcludingSelf: Long?,
+)

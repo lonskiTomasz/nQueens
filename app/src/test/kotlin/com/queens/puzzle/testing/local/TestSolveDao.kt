@@ -3,6 +3,7 @@ package com.queens.puzzle.testing.local
 import com.queens.puzzle.data.local.database.BestTimeRow
 import com.queens.puzzle.data.local.database.SolveDao
 import com.queens.puzzle.data.local.database.SolveEntity
+import com.queens.puzzle.data.local.database.SolveWithSizeSummary
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -25,6 +26,18 @@ class TestSolveDao : SolveDao {
 
     override suspend fun bestFor(boardSize: Int): SolveEntity? =
         rows.value.filter { it.boardSize == boardSize }.minByOrNull { it.durationMillis }
+
+    override suspend fun getWithSizeSummary(id: Long): SolveWithSizeSummary? {
+        val solve = rows.value.firstOrNull { it.id == id } ?: return null
+        val forSize = rows.value.filter { it.boardSize == solve.boardSize }
+        return SolveWithSizeSummary(
+            solve = solve,
+            solveCount = forSize.size,
+            bestMillisExcludingSelf = forSize
+                .filter { it.id != id }
+                .minOfOrNull { it.durationMillis },
+        )
+    }
 
     override fun observeBestTimes(): Flow<List<BestTimeRow>> = rows.map { list ->
         list.groupBy { it.boardSize }
