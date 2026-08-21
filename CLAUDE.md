@@ -11,9 +11,10 @@ times.
 
 ## Architecture
 
-**Read `docs/Architecture.md` before making structural changes.** It is the plan of
-record: layering, package layout, domain design, data model, presentation, testing
-strategy, and a decision log explaining why each choice was made over its alternatives.
+**Read `.ai/Architecture.md` before making structural changes.** It is untracked and
+local (see `.gitignore`), and it is the plan of record: layering, package layout,
+domain design, data model, presentation, testing strategy, and a decision log
+explaining why each choice was made over its alternatives.
 
 Layering follows the [Android architecture guide](https://developer.android.com/topic/architecture).
 Dependencies point one way, downwards:
@@ -30,7 +31,7 @@ ui ──→ domain ──→ data ──→ model
   by the guide's framing — do not add a use case that only forwards one call.
 
 This is deliberately not Clean Architecture; see §2 and decision log rows 2, 13 and 14 in
-`docs/Architecture.md`. There is no architecture-enforcement test — the layering is held by
+`.ai/Architecture.md`. There is no architecture-enforcement test — the layering is held by
 convention and review.
 
 ## Build and test
@@ -44,7 +45,7 @@ convention and review.
 ```
 
 `connectedDebugAndroidTest` needs a running emulator or an attached device; without one it
-cannot run, so it does not gate local development. See §11 of `docs/Architecture.md` for
+cannot run, so it does not gate local development. See §11 of `.ai/Architecture.md` for
 the plan to move those tests onto the JVM.
 
 ## Conventions
