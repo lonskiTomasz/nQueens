@@ -8,6 +8,10 @@ Place `n` queens on an `n × n` board so no two share a row, column or diagonal,
 running clock. Board sizes 4–12, live conflict highlighting, undo and reset, a resumable
 board, a history of solve times with bests per size, and a light/dark theme toggle.
 
+## Demo
+
+https://github.com/user-attachments/assets/f5056e70-2850-40fa-87a1-c12e22d3ef95
+
 ## Requirements
 
 * JDK 17+ (21 is used here)
