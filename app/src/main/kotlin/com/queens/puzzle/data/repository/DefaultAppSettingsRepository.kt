@@ -19,7 +19,4 @@ class DefaultAppSettingsRepository @Inject constructor(
 
     override suspend fun setLastBoardSize(boardSize: BoardSize) =
         settingsDataSource.setLastBoardSize(boardSize)
-
-    override suspend fun seedThemeIfUnset(systemTheme: ThemePreference) =
-        settingsDataSource.seedThemeIfUnset(systemTheme)
 }

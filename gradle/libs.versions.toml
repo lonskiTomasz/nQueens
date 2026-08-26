@@ -1,6 +1,7 @@
 [versions]
 androidGradlePlugin = "9.3.1"
 androidxCore = "1.19.0"
+androidxCoreSplashscreen = "1.2.0"
 androidxLifecycle = "2.11.0"
 androidxActivity = "1.13.0"
 androidxComposeBom = "2026.08.00"
@@ -22,6 +23,7 @@ lifecycleViewmodelNav3 = "2.11.0"
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3"}
 androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core"}

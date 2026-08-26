@@ -38,12 +38,11 @@ private const val THUMB_SLIDE_MILLIS = 180
 
 @Composable
 fun ThemeToggle(
-    theme: ThemePreference,
+    isDark: Boolean,
     onThemeSelected: (ThemePreference) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    val isDark = theme.isDark
     val thumbOffset by animateDpAsState(
         targetValue = if (isDark) SegmentWidth else 0.dp,
         animationSpec = tween(durationMillis = THUMB_SLIDE_MILLIS),
@@ -59,7 +58,9 @@ fun ThemeToggle(
             .toggleable(
                 value = isDark,
                 role = Role.Switch,
-                onValueChange = { onThemeSelected(theme.toggled()) },
+                onValueChange = { dark ->
+                    onThemeSelected(if (dark) ThemePreference.Dark else ThemePreference.Light)
+                },
             )
             .semantics { contentDescription = label }
             .padding(4.dp),
@@ -139,12 +140,12 @@ private fun ThemeTogglePreview() {
     QueensPreviewSurface {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             ThemeToggle(
-                theme = ThemePreference.Light,
+                isDark = false,
                 onThemeSelected = {},
                 label = "Dark theme",
             )
             ThemeToggle(
-                theme = ThemePreference.Dark,
+                isDark = true,
                 onThemeSelected = {},
                 label = "Dark theme",
             )

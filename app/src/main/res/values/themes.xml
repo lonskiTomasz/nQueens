@@ -5,12 +5,14 @@
         The window the activity is handed before Compose draws anything. Everything visible is
         drawn by QueensTheme; all this style has to get right is the colour of that first frame,
         because MainActivity holds rendering until the stored theme preference arrives.
-
-        It can only follow the *system* night setting, which is what the stored preference is
-        seeded from — so a player who has since switched the in-app toggle the other way still
-        sees one frame of the scheme they left.
     -->
     <style name="Theme.NQueens" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/window_background</item>
+    </style>
+
+    <style name="Theme.NQueens.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.NQueens</item>
     </style>
 </resources>

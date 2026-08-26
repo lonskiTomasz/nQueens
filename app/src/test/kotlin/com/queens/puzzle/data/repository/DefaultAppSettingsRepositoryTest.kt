@@ -18,11 +18,11 @@ import org.junit.Test
 class DefaultAppSettingsRepositoryTest {
 
     @Test
-    fun `an empty store gives the default theme and board size`() = runTest {
+    fun `an empty store follows the system theme and gives the default board size`() = runTest {
         val repository = repositoryOver(emptyPreferences())
 
         assertEquals(
-            AppSettings(theme = ThemePreference.Light, lastBoardSize = BoardSize.Default),
+            AppSettings(theme = ThemePreference.System, lastBoardSize = BoardSize.Default),
             repository.observeAppSettings().first(),
         )
     }
@@ -43,42 +43,6 @@ class DefaultAppSettingsRepositoryTest {
         repository.setLastBoardSize(BoardSize(12))
 
         assertEquals(BoardSize(12), repository.observeAppSettings().first().lastBoardSize)
-    }
-
-    @Test
-    fun `seeding writes the system theme when the player has not chosen`() = runTest {
-        val repository = repositoryOver(emptyPreferences())
-
-        repository.seedThemeIfUnset(ThemePreference.Dark)
-
-        assertEquals(ThemePreference.Dark, repository.observeAppSettings().first().theme)
-    }
-
-    @Test
-    fun `seeding does not overwrite a stored choice`() = runTest {
-        val repository = repositoryOver(emptyPreferences())
-        repository.setTheme(ThemePreference.Light)
-
-        repository.seedThemeIfUnset(ThemePreference.Dark)
-
-        assertEquals(ThemePreference.Light, repository.observeAppSettings().first().theme)
-    }
-
-    @Test
-    fun `seeding twice keeps the first seeded value`() = runTest {
-        val repository = repositoryOver(emptyPreferences())
-
-        repository.seedThemeIfUnset(ThemePreference.Dark)
-        repository.seedThemeIfUnset(ThemePreference.Light)
-
-        assertEquals(ThemePreference.Dark, repository.observeAppSettings().first().theme)
-    }
-
-    @Test
-    fun `an unrecognised stored theme falls back to the default`() = runTest {
-        val repository = repositoryOver(preferencesOf(stringPreferencesKey("theme") to "Sepia"))
-
-        assertEquals(ThemePreference.Light, repository.observeAppSettings().first().theme)
     }
 
     @Test

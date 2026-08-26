@@ -7,7 +7,7 @@ import com.queens.puzzle.model.ThemePreference
 data class HomeUiState(
     val sizes: List<BoardSize> = BoardSize.selectable,
     val selectedSize: BoardSize = BoardSize.Default,
-    val theme: ThemePreference = ThemePreference.Light,
+    val theme: ThemePreference = ThemePreference.System,
     val bestTimes: List<BestTime> = emptyList(),
     /** The stored board, when there is one to carry on with. */
     val resumable: ResumableGame? = null,

@@ -61,17 +61,6 @@ class SettingsDataSource @Inject constructor(
 
     suspend fun setLastBoardSize(boardSize: BoardSize) = edit(Keys.LAST_BOARD_SIZE, boardSize.value)
 
-    /**
-     * Writes [systemTheme] only when no theme has been stored, so calling this on every launch
-     * cannot overwrite a choice the player has made. The check and the write share one [edit],
-     * which DataStore applies atomically.
-     */
-    suspend fun seedThemeIfUnset(systemTheme: ThemePreference) {
-        dataStore.edit { stored ->
-            if (stored[Keys.THEME] == null) stored[Keys.THEME] = systemTheme.name
-        }
-    }
-
     private suspend fun <T> edit(key: Preferences.Key<T>, value: T) {
         dataStore.edit { it[key] = value }
     }

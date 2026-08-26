@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class TestAppSettingsRepository(
     initial: AppSettings = AppSettings(),
-    private var themeStored: Boolean = false,
 ) : AppSettingsRepository {
 
     private val settings = MutableStateFlow(initial)
@@ -19,17 +18,10 @@ class TestAppSettingsRepository(
     override fun observeAppSettings(): Flow<AppSettings> = settings
 
     override suspend fun setTheme(theme: ThemePreference) {
-        themeStored = true
         settings.value = settings.value.copy(theme = theme)
     }
 
     override suspend fun setLastBoardSize(boardSize: BoardSize) {
         settings.value = settings.value.copy(lastBoardSize = boardSize)
-    }
-
-    override suspend fun seedThemeIfUnset(systemTheme: ThemePreference) {
-        if (themeStored) return
-        themeStored = true
-        settings.value = settings.value.copy(theme = systemTheme)
     }
 }

@@ -6,6 +6,8 @@ import com.queens.puzzle.testing.MainDispatcherRule
 import com.queens.puzzle.testing.repository.TestAppSettingsRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -16,10 +18,7 @@ class MainViewModelTest {
 
     @Test
     fun `the stored theme is what gets painted`() = runTest {
-        val repository = TestAppSettingsRepository(
-            AppSettings(theme = ThemePreference.Dark),
-            themeStored = true,
-        )
+        val repository = TestAppSettingsRepository(AppSettings(theme = ThemePreference.Dark))
 
         val viewModel = MainViewModel(repository)
 
@@ -27,24 +26,25 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `the system theme seeds the setting on a first launch`() = runTest {
+    fun `a player who has never chosen follows the system, with nothing written`() = runTest {
         val repository = TestAppSettingsRepository()
+
         val viewModel = MainViewModel(repository)
 
-        viewModel.seedTheme(ThemePreference.Dark)
-
-        assertEquals(ThemePreference.Dark, repository.current.theme)
-        assertEquals(ThemeState.Ready(ThemePreference.Dark), viewModel.themeState.value)
+        val theme = (viewModel.themeState.value as ThemeState.Ready).theme
+        assertEquals(ThemePreference.System, theme)
+        assertTrue(theme.shouldUseDarkTheme(systemDark = true))
+        assertFalse(theme.shouldUseDarkTheme(systemDark = false))
+        assertEquals(AppSettings(), repository.current)
     }
 
     @Test
-    fun `seeding never overrides a choice the player has made`() = runTest {
-        val repository = TestAppSettingsRepository()
+    fun `a stored choice ignores the system scheme`() = runTest {
+        val repository = TestAppSettingsRepository(AppSettings(theme = ThemePreference.Light))
+
         val viewModel = MainViewModel(repository)
-        repository.setTheme(ThemePreference.Light)
 
-        viewModel.seedTheme(ThemePreference.Dark)
-
-        assertEquals(ThemePreference.Light, repository.current.theme)
+        val theme = (viewModel.themeState.value as ThemeState.Ready).theme
+        assertFalse(theme.shouldUseDarkTheme(systemDark = true))
     }
 }

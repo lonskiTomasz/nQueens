@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /** Nothing renders until the stored theme is known, so the app cannot flash the wrong scheme. */
@@ -22,7 +21,7 @@ sealed interface ThemeState {
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val appSettingsRepository: AppSettingsRepository,
+    appSettingsRepository: AppSettingsRepository,
 ) : ViewModel() {
 
     val themeState: StateFlow<ThemeState> = appSettingsRepository.observeAppSettings()
@@ -32,8 +31,4 @@ class MainViewModel @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = ThemeState.Loading,
         )
-
-    fun seedTheme(systemTheme: ThemePreference) {
-        viewModelScope.launch { appSettingsRepository.seedThemeIfUnset(systemTheme) }
-    }
 }

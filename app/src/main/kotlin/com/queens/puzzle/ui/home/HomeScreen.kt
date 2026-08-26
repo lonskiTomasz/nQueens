@@ -1,6 +1,7 @@
 package com.queens.puzzle.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -90,7 +91,7 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState()),
         ) {
             HomeTopBar(
-                theme = uiState.theme,
+                isDark = uiState.theme.shouldUseDarkTheme(isSystemInDarkTheme()),
                 onThemeSelected = onThemeSelected,
             )
 
@@ -182,7 +183,7 @@ fun HomeScreen(
 
 @Composable
 private fun HomeTopBar(
-    theme: ThemePreference,
+    isDark: Boolean,
     onThemeSelected: (ThemePreference) -> Unit,
 ) {
     Row(
@@ -215,7 +216,7 @@ private fun HomeTopBar(
         }
 
         ThemeToggle(
-            theme = theme,
+            isDark = isDark,
             onThemeSelected = onThemeSelected,
             label = stringResource(R.string.home_theme_dark),
         )
