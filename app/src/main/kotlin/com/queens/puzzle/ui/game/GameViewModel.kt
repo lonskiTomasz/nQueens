@@ -7,7 +7,7 @@ import com.queens.puzzle.data.repository.SessionRepository
 import com.queens.puzzle.data.util.TimeProvider
 import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.domain.game.reduce
-import com.queens.puzzle.domain.rules.BoardEvaluator
+import com.queens.puzzle.domain.rules.QueenRules
 import com.queens.puzzle.domain.usecase.RecordSolveUseCase
 import com.queens.puzzle.model.BoardEvaluation
 import com.queens.puzzle.model.BoardSize
@@ -88,7 +88,7 @@ class GameViewModel @AssistedInject constructor(
         if (after == before) {
             // The reducer refuses a placement once every queen is down; say so rather than
             // letting the tap look broken.
-            if (action is GameAction.TapSquare && before.queensRemaining == 0) {
+            if (action is GameAction.TapSquare && before.piecesRemaining == 0) {
                 emit(GameEffect.BoardFull)
             }
             return
@@ -211,7 +211,7 @@ class GameViewModel @AssistedInject constructor(
         session: GameSession,
         evaluation: BoardEvaluation
     ) {
-        if (action !is GameAction.TapSquare || !session.hasQueenAt(action.position)) return
+        if (action !is GameAction.TapSquare || !session.hasPieceAt(action.position)) return
 
         emit(
             if (evaluation.isConflicting(action.position)) {
@@ -247,7 +247,7 @@ class GameViewModel @AssistedInject constructor(
         if (runningSince != null) runningSince = timeProvider.elapsedMillis()
     }
 
-    private fun evaluate(session: GameSession): BoardEvaluation = BoardEvaluator.evaluate(
+    private fun evaluate(session: GameSession): BoardEvaluation = QueenRules.evaluate(
         session = session,
         includeAttackedSquares = _uiState.value.settings.showAttackLines,
     )
@@ -258,12 +258,12 @@ class GameViewModel @AssistedInject constructor(
                 squares = positions.map { position ->
                     BoardSquareState(
                         position = position,
-                        hasQueen = session.hasQueenAt(position),
+                        hasPiece = session.hasPieceAt(position),
                         isConflicting = evaluation.isConflicting(position),
                         isAttacked = evaluation.isAttacked(position),
                     )
                 },
-                queensPlaced = session.queens.size,
+                piecesPlaced = session.pieces.size,
                 conflictKinds = evaluation.conflictKinds,
                 canUndo = session.canUndo,
                 isSolved = evaluation.isSolved,

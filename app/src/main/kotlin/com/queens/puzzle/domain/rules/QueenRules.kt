@@ -20,10 +20,10 @@ import com.queens.puzzle.model.Position
  *
  * Stateless and pure.
  */
-object BoardEvaluator {
+object QueenRules {
 
     fun evaluate(session: GameSession, includeAttackedSquares: Boolean = true): BoardEvaluation =
-        evaluate(session.boardSize, session.queens, includeAttackedSquares)
+        evaluate(session.boardSize, session.pieces, includeAttackedSquares)
 
     fun evaluate(
         boardSize: BoardSize,

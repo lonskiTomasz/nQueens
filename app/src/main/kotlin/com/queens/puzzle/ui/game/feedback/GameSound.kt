@@ -59,7 +59,7 @@ private class SoundPoolHolder(context: Context) {
         )
         .build()
 
-    val sound: GameSound = SoundPoolGameSound(soundPool, soundPool.load(context, R.raw.queen_place, 1))
+    val sound: GameSound = SoundPoolGameSound(soundPool, soundPool.load(context, R.raw.piece_place, 1))
 
     fun release() = soundPool.release()
 }

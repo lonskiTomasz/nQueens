@@ -148,14 +148,14 @@ fun WinScreen(
     }
 }
 
-/** How far the queen glyph rises during its post-badge flip, before easing back to center. */
-private val QueenFlipLift = 10.dp
+/** How far the piece glyph rises during its post-badge flip, before easing back to center. */
+private val PieceFlipLift = 10.dp
 
 /** Roughly how long the badge's entrance spring takes to visually settle. */
 private const val BadgeSettleDelayMillis = 350L
 
-/** Duration of the queen's 3D flip; the lift-up half runs at [QueenFlipDurationMillis] / 2. */
-private const val QueenFlipDurationMillis = 1300
+/** Duration of the piece's 3D flip; the lift-up half runs at [PieceFlipDurationMillis] / 2. */
+private const val PieceFlipDurationMillis = 1300
 
 /**
  * The celebration at two scales.
@@ -337,7 +337,7 @@ private fun Summary(
 }
 
 /**
- * The circled queen glyph on the win screen: springs in, then flips into place once settled.
+ * The circled piece glyph on the win screen: springs in, then flips into place once settled.
  */
 @Composable
 private fun WinBadge(size: Dp, glyphSize: TextUnit, modifier: Modifier = Modifier) {
@@ -352,27 +352,27 @@ private fun WinBadge(size: Dp, glyphSize: TextUnit, modifier: Modifier = Modifie
     )
 
     var flourishPlayed by rememberSaveable { mutableStateOf(false) }
-    val queenFlip = remember { Animatable(0f) }
-    val queenLift = remember { Animatable(0f) }
+    val pieceFlip = remember { Animatable(0f) }
+    val pieceLift = remember { Animatable(0f) }
     val localDensity = LocalDensity.current
     LaunchedEffect(Unit) {
         badgeVisible = true
         if (flourishPlayed) return@LaunchedEffect
         delay(BadgeSettleDelayMillis)
-        val liftPx = with(localDensity) { QueenFlipLift.toPx() }
+        val liftPx = with(localDensity) { PieceFlipLift.toPx() }
         coroutineScope {
             launch {
-                queenFlip.animateTo(
+                pieceFlip.animateTo(
                     targetValue = 360f,
-                    animationSpec = tween(QueenFlipDurationMillis, easing = FastOutSlowInEasing),
+                    animationSpec = tween(PieceFlipDurationMillis, easing = FastOutSlowInEasing),
                 )
             }
             launch {
-                queenLift.animateTo(
+                pieceLift.animateTo(
                     targetValue = -liftPx,
-                    animationSpec = tween(QueenFlipDurationMillis / 2, easing = FastOutSlowInEasing),
+                    animationSpec = tween(PieceFlipDurationMillis / 2, easing = FastOutSlowInEasing),
                 )
-                queenLift.animateTo(
+                pieceLift.animateTo(
                     targetValue = 0f,
                     animationSpec = spring(
                         dampingRatio = Spring.DampingRatioMediumBouncy,
@@ -395,8 +395,8 @@ private fun WinBadge(size: Dp, glyphSize: TextUnit, modifier: Modifier = Modifie
             color = QueensTheme.extendedColors.queenOnDarkSquare,
             fontSize = glyphSize,
             modifier = Modifier.graphicsLayer {
-                rotationY = queenFlip.value
-                translationY = queenLift.value
+                rotationY = pieceFlip.value
+                translationY = pieceLift.value
                 cameraDistance = 12f * density
             },
         )

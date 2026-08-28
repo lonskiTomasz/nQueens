@@ -29,14 +29,14 @@ class GameScreenTest {
 
     @Test
     fun theQueensLeftCounterReflectsTheBoard() {
-        setScreen(state(boardSize = 4, queensPlaced = 1))
+        setScreen(state(boardSize = 4, piecesPlaced = 1))
 
         composeRule.onNodeWithText("3 queens left").assertIsDisplayed()
     }
 
     @Test
     fun theCounterIsSingularWithOneQueenLeft() {
-        setScreen(state(boardSize = 4, queensPlaced = 3))
+        setScreen(state(boardSize = 4, piecesPlaced = 3))
 
         composeRule.onNodeWithText("1 queen left").assertIsDisplayed()
     }
@@ -83,7 +83,7 @@ class GameScreenTest {
 
     @Test
     fun undoIsOnOnceThereIsSomethingToUndo() {
-        setScreen(state(boardSize = 4, queensPlaced = 1, canUndo = true))
+        setScreen(state(boardSize = 4, piecesPlaced = 1, canUndo = true))
 
         composeRule.onNodeWithText("Undo").assertIsEnabled()
     }
@@ -91,7 +91,7 @@ class GameScreenTest {
     @Test
     fun theResetDialogAsksBeforeClearing() {
         setScreen(
-            state(boardSize = 4, queensPlaced = 2, isResetDialogVisible = true),
+            state(boardSize = 4, piecesPlaced = 2, isResetDialogVisible = true),
         )
 
         composeRule.onNodeWithText("Reset board?").assertIsDisplayed()
@@ -104,7 +104,7 @@ class GameScreenTest {
     fun confirmingTheResetDialogReportsIt() {
         var confirmed = false
         setScreen(
-            state(boardSize = 4, queensPlaced = 2, isResetDialogVisible = true),
+            state(boardSize = 4, piecesPlaced = 2, isResetDialogVisible = true),
             onResetConfirmed = { confirmed = true },
         )
 
@@ -122,7 +122,7 @@ class GameScreenTest {
     fun cancellingTheResetDialogReportsIt() {
         var dismissed = false
         setScreen(
-            state(boardSize = 4, queensPlaced = 2, isResetDialogVisible = true),
+            state(boardSize = 4, piecesPlaced = 2, isResetDialogVisible = true),
             onResetDismissed = { dismissed = true },
         )
 
@@ -142,7 +142,7 @@ class GameScreenTest {
 
     private fun state(
         boardSize: Int,
-        queensPlaced: Int = 0,
+        piecesPlaced: Int = 0,
         conflictKinds: Set<ConflictKind> = emptySet(),
         canUndo: Boolean = false,
         isRestoring: Boolean = false,
@@ -153,7 +153,7 @@ class GameScreenTest {
         return GameUiState(
             boardSize = size,
             squares = size.positions().map { BoardSquareState(it) },
-            queensPlaced = queensPlaced,
+            piecesPlaced = piecesPlaced,
             conflictKinds = conflictKinds,
             canUndo = canUndo,
             isRestoring = isRestoring,

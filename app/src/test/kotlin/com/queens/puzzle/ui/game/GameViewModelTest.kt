@@ -42,9 +42,9 @@ class GameViewModelTest {
         viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
 
         val state = viewModel.uiState.value
-        assertTrue(state.squares.single { it.position == Position(0, 0) }.hasQueen)
-        assertEquals(1, state.queensPlaced)
-        assertEquals(3, state.queensRemaining)
+        assertTrue(state.squares.single { it.position == Position(0, 0) }.hasPiece)
+        assertEquals(1, state.piecesPlaced)
+        assertEquals(3, state.piecesRemaining)
     }
 
     @Test
@@ -55,7 +55,7 @@ class GameViewModelTest {
         viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
         viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
 
-        assertEquals(0, viewModel.uiState.value.queensPlaced)
+        assertEquals(0, viewModel.uiState.value.piecesPlaced)
     }
 
     @Test
@@ -109,7 +109,7 @@ class GameViewModelTest {
         viewModel.onAction(GameAction.TapSquare(Position(0, 3)))
 
         assertEquals(listOf(GameEffect.BoardFull), effects)
-        assertEquals(4, viewModel.uiState.value.queensPlaced)
+        assertEquals(4, viewModel.uiState.value.piecesPlaced)
     }
 
     @Test
@@ -122,8 +122,8 @@ class GameViewModelTest {
         viewModel.onAction(GameAction.Undo)
 
         val state = viewModel.uiState.value
-        assertEquals(1, state.queensPlaced)
-        assertTrue(state.squares.single { it.position == Position(0, 0) }.hasQueen)
+        assertEquals(1, state.piecesPlaced)
+        assertTrue(state.squares.single { it.position == Position(0, 0) }.hasPiece)
     }
 
     @Test
@@ -139,7 +139,7 @@ class GameViewModelTest {
 
         val state = viewModel.uiState.value
         assertFalse(state.isResetDialogVisible)
-        assertEquals(0, state.queensPlaced)
+        assertEquals(0, state.piecesPlaced)
         assertFalse(state.canUndo)
     }
 
@@ -167,7 +167,7 @@ class GameViewModelTest {
         viewModel.onResetDismissed()
 
         assertFalse(viewModel.uiState.value.isResetDialogVisible)
-        assertEquals(1, viewModel.uiState.value.queensPlaced)
+        assertEquals(1, viewModel.uiState.value.piecesPlaced)
     }
 
     @Test
@@ -210,7 +210,7 @@ class GameViewModelTest {
 
         viewModel.onAction(GameAction.TapSquare(SOLUTION_4x4.first()))
 
-        assertEquals(4, viewModel.uiState.value.queensPlaced)
+        assertEquals(4, viewModel.uiState.value.piecesPlaced)
         assertEquals(1, solveRepository.recorded.size)
     }
 
@@ -248,14 +248,14 @@ class GameViewModelTest {
         viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
 
         val saved = sessionRepository.current!!
-        assertEquals(setOf(Position(0, 0)), saved.session.queens)
+        assertEquals(setOf(Position(0, 0)), saved.session.pieces)
     }
 
     @Test
     fun `resuming restores the queens and the elapsed time`() = runTest {
         sessionRepository.save(
             gameId = GAME_ID,
-            session = GameSession(BoardSize(4), queens = setOf(Position(0, 0)), taps = 1),
+            session = GameSession(BoardSize(4), pieces = setOf(Position(0, 0)), taps = 1),
             elapsedMillis = 45_000,
         )
 
@@ -263,7 +263,7 @@ class GameViewModelTest {
         observe(viewModel)
         advanceTimeBy(TICK)
 
-        assertEquals(1, viewModel.uiState.value.queensPlaced)
+        assertEquals(1, viewModel.uiState.value.piecesPlaced)
         assertEquals(45_000L, viewModel.elapsedMillis.value)
     }
 
@@ -271,14 +271,14 @@ class GameViewModelTest {
     fun `starting a fresh game discards the board another game stored`() = runTest {
         sessionRepository.save(
             gameId = GAME_ID,
-            session = GameSession(BoardSize(4), queens = setOf(Position(0, 0))),
+            session = GameSession(BoardSize(4), pieces = setOf(Position(0, 0))),
             elapsedMillis = 45_000,
         )
 
         val viewModel = viewModel(gameId = GAME_ID + 1)
         observe(viewModel)
 
-        assertEquals(0, viewModel.uiState.value.queensPlaced)
+        assertEquals(0, viewModel.uiState.value.piecesPlaced)
         assertNull(sessionRepository.current)
     }
 
@@ -286,14 +286,14 @@ class GameViewModelTest {
     fun `a stored board of another size is not resumed`() = runTest {
         sessionRepository.save(
             gameId = GAME_ID,
-            session = GameSession(BoardSize(8), queens = setOf(Position(0, 0))),
+            session = GameSession(BoardSize(8), pieces = setOf(Position(0, 0))),
             elapsedMillis = 45_000,
         )
 
         val viewModel = viewModel(boardSize = 4, gameId = GAME_ID)
         observe(viewModel)
 
-        assertEquals(0, viewModel.uiState.value.queensPlaced)
+        assertEquals(0, viewModel.uiState.value.piecesPlaced)
     }
 
     @Test
@@ -314,7 +314,7 @@ class GameViewModelTest {
         viewModel.onAction(GameAction.TapSquare(Position(0, 0)))
         viewModel.onScreenStopped()
 
-        assertEquals(setOf(Position(0, 0)), sessionRepository.current?.session?.queens)
+        assertEquals(setOf(Position(0, 0)), sessionRepository.current?.session?.pieces)
     }
 
     @Test

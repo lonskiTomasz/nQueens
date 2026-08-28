@@ -10,7 +10,7 @@ import org.junit.Test
 import kotlin.random.Random
 
 /**
- * Cross-checks [BoardEvaluator] against [NQueensSolver].
+ * Cross-checks [QueenRules] against [NQueensSolver].
  *
  * The solver is pinned to the known solution counts first, so a broken oracle cannot bless a
  * broken evaluator; the evaluator is then held to the solver's output.
@@ -39,7 +39,7 @@ class NQueensSolverOracleTest {
     fun `every generated solution is confirmed solved by the evaluator`() {
         forEachPlayableSize { boardSize ->
             NQueensSolver.solutions(boardSize.value).forEach { solution ->
-                val evaluation = BoardEvaluator.evaluate(boardSize, solution)
+                val evaluation = QueenRules.evaluate(boardSize, solution)
 
                 assertTrue("$boardSize $solution", evaluation.isSolved)
                 assertTrue("$boardSize $solution", evaluation.conflicts.isEmpty())
@@ -57,7 +57,7 @@ class NQueensSolverOracleTest {
                     if (target in solution) continue
 
                     val perturbed = solution - queen + target
-                    val evaluation = BoardEvaluator.evaluate(boardSize, perturbed)
+                    val evaluation = QueenRules.evaluate(boardSize, perturbed)
 
                     assertFalse("$boardSize moved $queen to $target", evaluation.isSolved)
                     assertTrue("$boardSize moved $queen to $target", evaluation.hasConflicts)
@@ -72,7 +72,7 @@ class NQueensSolverOracleTest {
             val solution = NQueensSolver.firstSolution(boardSize.value)!!
 
             for (queen in solution) {
-                val evaluation = BoardEvaluator.evaluate(boardSize, solution - queen)
+                val evaluation = QueenRules.evaluate(boardSize, solution - queen)
 
                 assertFalse(evaluation.isSolved)
                 assertFalse(evaluation.hasConflicts)
@@ -93,7 +93,7 @@ class NQueensSolverOracleTest {
 
             val expected = queens.filter { queen -> queens.any { queen.attacks(it) } }.toSet()
 
-            assertEquals(queens.toString(), expected, BoardEvaluator.evaluate(boardSize, queens).conflicts)
+            assertEquals(queens.toString(), expected, QueenRules.evaluate(boardSize, queens).conflicts)
         }
     }
 

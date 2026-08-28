@@ -18,24 +18,24 @@ fun GameSession.reduce(action: GameAction): GameSession = when (action) {
 }
 
 /**
- * Places a queen on an empty square, removes one from an occupied square.
+ * Places a piece on an empty square, removes one from an occupied square.
  *
- * Placement is refused once the board holds `n` queens. Removal is always allowed.
+ * Placement is refused once the board holds `n` pieces. Removal is always allowed.
  */
 private fun GameSession.tapSquare(position: Position): GameSession {
     if (position !in boardSize) return this
 
     return when {
-        hasQueenAt(position) -> copy(
-            queens = queens - position,
+        hasPieceAt(position) -> copy(
+            pieces = pieces - position,
             moves = moves + Move.Remove(position),
             taps = taps + 1,
         )
 
-        queensRemaining == 0 -> this
+        piecesRemaining == 0 -> this
 
         else -> copy(
-            queens = queens + position,
+            pieces = pieces + position,
             moves = moves + Move.Place(position),
             taps = taps + 1,
         )
@@ -54,13 +54,13 @@ private fun GameSession.undo(): GameSession {
 
     return when (lastMove) {
         is Move.Place -> copy(
-            queens = queens - lastMove.position,
+            pieces = pieces - lastMove.position,
             moves = remaining,
             undos = undos + 1,
         )
 
         is Move.Remove -> copy(
-            queens = queens + lastMove.position,
+            pieces = pieces + lastMove.position,
             moves = remaining,
             undos = undos + 1,
         )

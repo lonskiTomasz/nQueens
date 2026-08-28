@@ -13,7 +13,7 @@ import com.queens.puzzle.model.Position
 fun GameSession.toSavedSession(gameId: Long, elapsedMillis: Long): SavedSession = SavedSession(
     gameId = gameId,
     boardSize = boardSize.value,
-    queens = queens.map { it.toSaved() },
+    pieces = pieces.map { it.toSaved() },
     moves = moves.map { it.toSaved() },
     taps = taps,
     undos = undos,
@@ -34,7 +34,7 @@ fun SavedSession.toSavedGameOrNull(): SavedGame? {
             gameId = gameId,
             session = GameSession(
                 boardSize = size,
-                queens = queens.map { it.toModel() }.toSet(),
+                pieces = pieces.map { it.toModel() }.toSet(),
                 moves = moves.map { it.toModel() },
                 taps = taps,
                 undos = undos,

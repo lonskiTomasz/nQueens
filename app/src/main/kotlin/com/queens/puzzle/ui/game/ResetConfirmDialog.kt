@@ -14,7 +14,7 @@ import com.queens.puzzle.core.designsystem.preview.QueensPreviewDialog
 
 @Composable
 fun ResetConfirmDialog(
-    queensPlaced: Int,
+    piecesPlaced: Int,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -29,7 +29,7 @@ fun ResetConfirmDialog(
         },
         text = {
             Text(
-                text = pluralStringResource(R.plurals.reset_message, queensPlaced, queensPlaced),
+                text = pluralStringResource(R.plurals.reset_message, piecesPlaced, piecesPlaced),
                 style = MaterialTheme.typography.bodyLarge,
             )
         },
@@ -50,6 +50,6 @@ fun ResetConfirmDialog(
 @Composable
 private fun ResetConfirmDialogPreview() {
     QueensPreviewDialog {
-        ResetConfirmDialog(queensPlaced = 5, onConfirm = {}, onDismiss = {})
+        ResetConfirmDialog(piecesPlaced = 5, onConfirm = {}, onDismiss = {})
     }
 }

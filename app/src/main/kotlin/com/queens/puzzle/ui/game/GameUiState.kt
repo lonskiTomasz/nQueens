@@ -8,7 +8,7 @@ import com.queens.puzzle.ui.game.board.BoardSquareState
 data class GameUiState(
     val boardSize: BoardSize = BoardSize.Default,
     val squares: List<BoardSquareState> = emptyList(),
-    val queensPlaced: Int = 0,
+    val piecesPlaced: Int = 0,
     val conflictKinds: Set<ConflictKind> = emptySet(),
     val canUndo: Boolean = false,
     val isSolved: Boolean = false,
@@ -17,11 +17,11 @@ data class GameUiState(
     val isResetDialogVisible: Boolean = false,
     val isSettingsSheetVisible: Boolean = false,
 ) {
-    val queensRemaining: Int get() = boardSize.value - queensPlaced
+    val piecesRemaining: Int get() = boardSize.value - piecesPlaced
 
     val hasConflicts: Boolean get() = conflictKinds.isNotEmpty()
 
-    val canReset: Boolean get() = queensPlaced > 0 || canUndo
+    val canReset: Boolean get() = piecesPlaced > 0 || canUndo
 
     val isBoardEnabled: Boolean get() = !isRestoring && !isSolved
 }

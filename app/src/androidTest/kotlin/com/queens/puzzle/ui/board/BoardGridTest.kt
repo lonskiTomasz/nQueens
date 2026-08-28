@@ -41,7 +41,7 @@ class BoardGridTest {
     fun aQueenIsAnnouncedOnItsSquare() {
         setBoard(
             BoardSize(4),
-            listOf(BoardSquareState(Position(0, 0), hasQueen = true)),
+            listOf(BoardSquareState(Position(0, 0), hasPiece = true)),
         )
 
         composeRule.onNodeWithContentDescription("Row 1, column 1, queen").assertIsDisplayed()
@@ -51,7 +51,7 @@ class BoardGridTest {
     fun aConflictingQueenSaysSo() {
         setBoard(
             BoardSize(4),
-            listOf(BoardSquareState(Position(0, 0), hasQueen = true, isConflicting = true)),
+            listOf(BoardSquareState(Position(0, 0), hasPiece = true, isConflicting = true)),
         )
 
         composeRule

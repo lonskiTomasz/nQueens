@@ -3,28 +3,28 @@ package com.queens.puzzle.model
 /**
  * The complete state of one game in progress.
  *
- * Holds only what the player did. Conflicts and solved-ness are derived from [queens] by
- * `BoardEvaluator`, and elapsed time is tracked outside the session.
+ * Holds only what the player did. Conflicts and solved-ness are derived from [pieces] by
+ * `QueenRules`, and elapsed time is tracked outside the session.
  */
 data class GameSession(
     val boardSize: BoardSize,
-    val queens: Set<Position> = emptySet(),
+    val pieces: Set<Position> = emptySet(),
     val moves: List<Move> = emptyList(),
     val taps: Int = 0,
     val undos: Int = 0,
 ) {
     init {
-        require(queens.all { it in boardSize }) { "Queen outside $boardSize board" }
-        require(queens.size <= boardSize.value) { "More queens than the board allows" }
+        require(pieces.all { it in boardSize }) { "Piece outside $boardSize board" }
+        require(pieces.size <= boardSize.value) { "More pieces than the board allows" }
     }
 
-    /** Queens still to be placed. Never negative; the reducer refuses the (n + 1)th placement. */
-    val queensRemaining: Int get() = boardSize.value - queens.size
+    /** Pieces still to be placed. Never negative; the reducer refuses the (n + 1)th placement. */
+    val piecesRemaining: Int get() = boardSize.value - pieces.size
 
     val canUndo: Boolean get() = moves.isNotEmpty()
 
-    /** True while the board is untouched: no queens placed and nothing on the undo stack. */
-    val isPristine: Boolean get() = queens.isEmpty() && moves.isEmpty()
+    /** True while the board is untouched: no pieces placed and nothing on the undo stack. */
+    val isPristine: Boolean get() = pieces.isEmpty() && moves.isEmpty()
 
-    fun hasQueenAt(position: Position): Boolean = position in queens
+    fun hasPieceAt(position: Position): Boolean = position in pieces
 }

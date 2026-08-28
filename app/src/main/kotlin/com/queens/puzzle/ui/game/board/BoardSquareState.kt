@@ -4,7 +4,7 @@ import com.queens.puzzle.model.Position
 
 data class BoardSquareState(
     val position: Position,
-    val hasQueen: Boolean = false,
+    val hasPiece: Boolean = false,
     val isConflicting: Boolean = false,
     val isAttacked: Boolean = false,
 ) {

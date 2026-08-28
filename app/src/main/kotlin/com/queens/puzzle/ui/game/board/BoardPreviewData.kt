@@ -1,6 +1,6 @@
 package com.queens.puzzle.ui.game.board
 
-import com.queens.puzzle.domain.rules.BoardEvaluator
+import com.queens.puzzle.domain.rules.QueenRules
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Position
 
@@ -25,12 +25,12 @@ fun previewSquares(
     showAttackLines: Boolean = true,
 ): List<BoardSquareState> {
     val evaluation =
-        BoardEvaluator.evaluate(boardSize, queens, includeAttackedSquares = showAttackLines)
+        QueenRules.evaluate(boardSize, queens, includeAttackedSquares = showAttackLines)
 
     return boardSize.positions().map { position ->
         BoardSquareState(
             position = position,
-            hasQueen = position in queens,
+            hasPiece = position in queens,
             isConflicting = evaluation.isConflicting(position),
             isAttacked = evaluation.isAttacked(position),
         )

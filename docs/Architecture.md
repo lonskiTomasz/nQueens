@@ -116,11 +116,11 @@ com.queens.puzzle
 │   └── designsystem/
 │       ├── theme/                Color, Type, Spacing, Dimens, Theme (QueensTheme)
 │       ├── component/            QueenGlyph, AttackGlyph, AlertBadge, SizeChip,
-│       │                         QueenPips, TimerChip, ThemeToggle
+│       │                         PiecePips, TimerChip, ThemeToggle
 │       └── preview/              themed preview wrapper + shared sample state
 │
 ├── domain/
-│   ├── rules/BoardEvaluator.kt   line-counting conflict + attack computation
+│   ├── rules/QueenRules.kt       line-counting conflict + attack computation
 │   ├── game/                     GameAction (sealed intents), GameReducer
 │   │                             pure (GameSession, GameAction) -> GameSession
 │   └── usecase/
@@ -167,18 +167,19 @@ they stand in for and grouped the way the production code is.
 
 ### 4.1 The game as a pure state machine
 
-`GameSession` holds the board size, the queens, the undo stack and the tap and undo counters.
+`GameSession` holds the board size, the pieces placed so far, the undo stack and the tap and
+undo counters.
 `GameAction` is three intents — `TapSquare`, `Undo`, `Reset` — and `reduce` maps one session to
 the next: pure, total, free of I/O, a refused action returning the receiver unchanged. So a rules
 test is one call and one assertion, and a new mechanic is a new branch the UI picks up unchanged.
 
-`TapSquare` toggles place/remove and refuses to place once `n` queens are down, so the
-queens-left counter cannot go negative; the ViewModel turns the refusal into feedback.
+`TapSquare` toggles place/remove and refuses to place once `n` pieces are down, so
+`piecesRemaining` cannot go negative; the ViewModel turns the refusal into feedback.
 
 ### 4.2 Evaluation is derived, never stored
 
-`BoardEvaluator.evaluate` returns the conflicting positions, the kinds of conflict, the attacked
-squares and whether the board is solved — recomputed from the queens on every change, so there is
+`QueenRules.evaluate` returns the conflicting positions, the kinds of conflict, the attacked
+squares and whether the board is solved — recomputed from the pieces on every change, so there is
 no second source of truth to drift. Counting occupancy per row, column and both diagonals makes
 the conflict pass O(n) rather than a pairwise O(n²). Covering the attacked squares is the O(n²)
 half, so it sits behind a flag and is paid for only when the overlay is on.
@@ -187,7 +188,7 @@ half, so it sits behind a flag and is paid for only when the overlay is on.
 
 `NQueensSolver` (backtracking with column and diagonal bitmasks) has no production caller — no
 hint, no auto-solve — so it lives in test sources rather than `domain/rules/`. It generates real
-solutions, which lets the rules tests check `BoardEvaluator` against a second implementation of
+solutions, which lets the rules tests check `QueenRules` against a second implementation of
 the problem instead of against fixtures that could encode the same misunderstanding twice.
 Promoting it is a file move if a hint ever lands.
 
@@ -220,7 +221,7 @@ in what each caller can reach, not in the storage.
 
 ### 5.3 Typed DataStore — resumable session
 
-`SavedSession(gameId, boardSize, queens, moves, taps,
+`SavedSession(gameId, boardSize, pieces, moves, taps,
 undos, elapsedMillis)`, serialized with kotlinx-serialization: written on each committed move —
 conflated, so a tap burst is one write — and cleared on solve or reset. Its own shape rather than
 the `model` types, which keeps `model` dependency-free and puts a format change in one file and its
@@ -237,7 +238,7 @@ mapper. `moves` is the undo stack, without which a resumed board comes back unab
 One ViewModel per screen: a `StateFlow` of an immutable `UiState`
 and one way in — the game screen takes the sealed `GameAction` the reducer already speaks, the
 quieter screens take lambdas. `GameUiState` is fully derived, each square carrying its own
-`hasQueen`, `isConflicting` and `isAttacked`, so the composable renders and never computes.
+`hasPiece`, `isConflicting` and `isAttacked`, so the composable renders and never computes.
 One-shot signals — feedback, navigation — go over a `Channel`, because a boolean in state replays
 on every configuration change.
 
@@ -299,7 +300,7 @@ at once, which caps it around 8% black — too faint to connect to the queen jus
 `BoardGrid` takes square states and a click lambda, with no knowledge of the game, so it previews
 at every size and is reused on the win screen. Every screen has a stateless overload taking
 `UiState` plus lambdas, and it is that overload the previews and the Compose tests drive; board
-fixtures run through the real `BoardEvaluator`, so a preview cannot quietly disagree with the rules
+fixtures run through the real `QueenRules`, so a preview cannot quietly disagree with the rules
 it illustrates.
 
 *Not yet done:* squares are sized by the grid alone, so on a 10×10 or 12×12 board the touch target
@@ -328,7 +329,7 @@ so most of the value comes from fast JVM tests.
 
 | Scope                             | Tests                                                                                                                         | Runner                       |
 |-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------|------------------------------|
-| `BoardEvaluator`                  | conflicts by row, column and both diagonals; solved detection; attacked squares on and off                                    | JUnit, JVM                   |
+| `QueenRules`                      | conflicts by row, column and both diagonals; solved detection; attacked squares on and off                                    | JUnit, JVM                   |
 | `NQueensSolver` (test source)     | solution counts pinned to OEIS A000170, so a broken oracle cannot bless a broken evaluator; every solution confirmed solved, and not solved once a queen moves | JUnit, JVM                   |
 | `GameReducer`                     | place/remove, undo unwinds one move, undo past empty is a no-op, reset, refusal at `n` queens, counters                       | JUnit, JVM                   |
 | `model`, `core/util/time`         | `BoardSize` range and ladder, `Position` diagonals; duration and relative-day formatting                                      | JUnit, JVM                   |
