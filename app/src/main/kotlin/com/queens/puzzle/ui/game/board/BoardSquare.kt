@@ -28,8 +28,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.queens.puzzle.model.Position
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.core.designsystem.component.AttackGlyph
-import com.queens.puzzle.core.designsystem.component.QueenGlyph
+import com.queens.puzzle.core.designsystem.component.PieceGlyph
 import com.queens.puzzle.core.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.core.designsystem.theme.QueensTheme
 
@@ -45,6 +46,7 @@ private const val ATTACK_GLYPH_RATIO = 0.5f
 @Composable
 fun BoardSquare(
     state: BoardSquareState,
+    puzzleType: PuzzleType,
     glyphSize: TextUnit,
     contentDescription: String,
     onClick: () -> Unit,
@@ -108,7 +110,8 @@ fun BoardSquare(
         }
 
         if (glyphScale > 0f) {
-            QueenGlyph(
+            PieceGlyph(
+                puzzleType = puzzleType,
                 color = when {
                     state.isConflicting -> extended.queenConflict
                     state.isDarkSquare -> extended.queenOnDarkSquare
@@ -136,6 +139,7 @@ private fun BoardSquareStatesPreview() {
             ).forEach { state ->
                 BoardSquare(
                     state = state,
+                    puzzleType = PuzzleType.Queens,
                     glyphSize = 38.sp,
                     contentDescription = "",
                     onClick = {},
@@ -159,6 +163,7 @@ private fun BoardSquareOnDarkSquarePreview() {
             ).forEach { state ->
                 BoardSquare(
                     state = state,
+                    puzzleType = PuzzleType.Queens,
                     glyphSize = 38.sp,
                     contentDescription = "",
                     onClick = {},

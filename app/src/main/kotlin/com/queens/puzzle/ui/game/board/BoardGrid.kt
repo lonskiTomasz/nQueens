@@ -23,6 +23,7 @@ import com.queens.puzzle.core.designsystem.preview.QueensPreviewSurface
 import com.queens.puzzle.core.designsystem.theme.Dimens
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.Position
+import com.queens.puzzle.model.PuzzleType
 
 /** The glyph fills about two thirds of its square */
 private const val GLYPH_SIZE_RATIO = 0.66f
@@ -37,6 +38,7 @@ private const val GLYPH_SIZE_RATIO = 0.66f
 @Composable
 fun BoardGrid(
     boardSize: BoardSize,
+    puzzleType: PuzzleType,
     squares: List<BoardSquareState>,
     onSquareClick: (Position) -> Unit,
     modifier: Modifier = Modifier,
@@ -71,8 +73,9 @@ fun BoardGrid(
 
                         BoardSquare(
                             state = state,
+                            puzzleType = puzzleType,
                             glyphSize = glyphSize,
-                            contentDescription = state.describe(),
+                            contentDescription = state.describe(puzzleType),
                             onClick = { onSquareClick(position) },
                             enabled = enabled,
                             // Weights rather than an aspect ratio: the container is already
@@ -90,10 +93,20 @@ fun BoardGrid(
 
 /** "Row 3, column 5, queen, in conflict" — rows and columns are spoken one-indexed. */
 @Composable
-private fun BoardSquareState.describe(): String {
+private fun BoardSquareState.describe(puzzleType: PuzzleType): String {
     val occupancy = when {
-        hasPiece && isConflicting -> stringResource(R.string.board_square_queen_conflict)
-        hasPiece -> stringResource(R.string.board_square_queen)
+        hasPiece && isConflicting -> stringResource(
+            when (puzzleType) {
+                PuzzleType.Queens -> R.string.board_square_queen_conflict
+                PuzzleType.Knights -> R.string.board_square_knight_conflict
+            },
+        )
+        hasPiece -> stringResource(
+            when (puzzleType) {
+                PuzzleType.Queens -> R.string.board_square_queen
+                PuzzleType.Knights -> R.string.board_square_knight
+            },
+        )
         isAttacked -> stringResource(R.string.board_square_attacked)
         else -> stringResource(R.string.board_square_empty)
     }
@@ -111,6 +124,7 @@ private fun BoardGridEmptyPreview() {
     QueensPreviewSurface {
         BoardGrid(
             boardSize = BoardSize(8),
+            puzzleType = PuzzleType.Queens,
             squares = emptyList(),
             onSquareClick = {},
         )
@@ -123,6 +137,7 @@ private fun BoardGridInPlayPreview() {
     QueensPreviewSurface {
         BoardGrid(
             boardSize = BoardSize(8),
+            puzzleType = PuzzleType.Queens,
             squares = previewSquares(BoardSize(8), PreviewQueens),
             onSquareClick = {},
         )
@@ -135,6 +150,7 @@ private fun BoardGridSolvedPreview() {
     QueensPreviewSurface {
         BoardGrid(
             boardSize = BoardSize(4),
+            puzzleType = PuzzleType.Queens,
             squares = previewSquares(BoardSize(4), PreviewSolvedQueens),
             onSquareClick = {},
         )
@@ -147,6 +163,7 @@ private fun BoardGridLargestPreview() {
     QueensPreviewSurface {
         BoardGrid(
             boardSize = BoardSize(12),
+            puzzleType = PuzzleType.Queens,
             squares = previewSquares(BoardSize(12), setOf(Position(0, 0), Position(5, 7))),
             onSquareClick = {},
         )

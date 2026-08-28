@@ -301,6 +301,21 @@ class GameViewModelTest {
     }
 
     @Test
+    fun `a stored board of another puzzle type is not resumed`() = runTest {
+        sessionRepository.save(
+            gameId = GAME_ID,
+            puzzleType = PuzzleType.Knights,
+            session = GameSession(BoardSize(4), pieces = setOf(Position(0, 0))),
+            elapsedMillis = 45_000,
+        )
+
+        val viewModel = viewModel(boardSize = 4, gameId = GAME_ID)
+        observe(viewModel)
+
+        assertEquals(0, viewModel.uiState.value.piecesPlaced)
+    }
+
+    @Test
     fun `solving clears the stored board so it cannot be resumed`() = runTest {
         val viewModel = viewModel()
         observe(viewModel)
@@ -372,6 +387,7 @@ class GameViewModelTest {
     private fun viewModel(boardSize: Int = 4, gameId: Long = GAME_ID) = GameViewModel(
         boardSizeValue = boardSize,
         gameId = gameId,
+        puzzleType = PuzzleType.Queens,
         sessionRepository = sessionRepository,
         gameSettingsRepository = gameSettingsRepository,
         recordSolve = RecordSolveUseCase(solveRepository, timeProvider),

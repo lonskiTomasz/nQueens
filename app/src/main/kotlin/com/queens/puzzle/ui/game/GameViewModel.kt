@@ -3,10 +3,13 @@ package com.queens.puzzle.ui.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.queens.puzzle.data.repository.GameSettingsRepository
+import com.queens.puzzle.data.repository.SavedGame
 import com.queens.puzzle.data.repository.SessionRepository
 import com.queens.puzzle.data.util.TimeProvider
 import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.domain.game.reduce
+import com.queens.puzzle.domain.rules.KnightRules
+import com.queens.puzzle.domain.rules.PieceRules
 import com.queens.puzzle.domain.rules.QueenRules
 import com.queens.puzzle.domain.rules.evaluate
 import com.queens.puzzle.domain.usecase.RecordSolveUseCase
@@ -43,6 +46,7 @@ private const val TICK_MILLIS = 1_000L
 class GameViewModel @AssistedInject constructor(
     @Assisted("boardSize") private val boardSizeValue: Int,
     @Assisted("gameId") private val gameId: Long,
+    @Assisted("puzzleType") private val puzzleType: PuzzleType,
     private val sessionRepository: SessionRepository,
     private val gameSettingsRepository: GameSettingsRepository,
     private val recordSolve: RecordSolveUseCase,
@@ -53,14 +57,24 @@ class GameViewModel @AssistedInject constructor(
 
     private val positions = boardSize.positions()
 
+    private val rules: PieceRules = when (puzzleType) {
+        PuzzleType.Queens -> QueenRules
+        PuzzleType.Knights -> KnightRules
+    }
+
     private var session = GameSession(boardSize)
 
     private var accumulatedMillis = 0L
     private var runningSince: Long? = timeProvider.elapsedMillis()
     private var finalElapsedMillis: Long? = null
 
-    private val _uiState =
-        MutableStateFlow(GameUiState(boardSize = boardSize, isRestoring = true))
+    private val _uiState = MutableStateFlow(
+        GameUiState(
+            boardSize = boardSize,
+            puzzleType = puzzleType,
+            isRestoring = true
+        ),
+    )
 
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
@@ -163,7 +177,7 @@ class GameViewModel @AssistedInject constructor(
     private suspend fun restore() {
         val saved = sessionRepository.observeSavedSession().first()
 
-        if (saved != null && saved.gameId == gameId && saved.session.boardSize == boardSize) {
+        if (saved != null && saved.matches(gameId, boardSize, puzzleType)) {
             session = saved.session
             setElapsed(saved.elapsedMillis)
         } else {
@@ -183,12 +197,7 @@ class GameViewModel @AssistedInject constructor(
     private suspend fun writePendingSaves() {
         pendingSave.collectLatest { pending ->
             if (pending != null) {
-                sessionRepository.save(
-                    gameId,
-                    PuzzleType.Queens,
-                    pending.session,
-                    pending.elapsedMillis,
-                )
+                sessionRepository.save(gameId, puzzleType, pending.session, pending.elapsedMillis)
             }
         }
     }
@@ -205,7 +214,7 @@ class GameViewModel @AssistedInject constructor(
 
             val outcome = recordSolve(
                 boardSize = boardSize,
-                puzzleType = PuzzleType.Queens,
+                puzzleType = puzzleType,
                 durationMillis = finalElapsedMillis ?: elapsedSinceStart(),
                 taps = session.taps,
                 undos = session.undos,
@@ -255,7 +264,7 @@ class GameViewModel @AssistedInject constructor(
         if (runningSince != null) runningSince = timeProvider.elapsedMillis()
     }
 
-    private fun evaluate(session: GameSession): BoardEvaluation = QueenRules.evaluate(
+    private fun evaluate(session: GameSession): BoardEvaluation = rules.evaluate(
         session = session,
         includeAttackedSquares = _uiState.value.settings.showAttackLines,
     )
@@ -292,8 +301,15 @@ class GameViewModel @AssistedInject constructor(
         fun create(
             @Assisted("boardSize") boardSize: Int,
             @Assisted("gameId") gameId: Long,
+            @Assisted("puzzleType") puzzleType: PuzzleType,
         ): GameViewModel
     }
 }
 
 private data class PendingSave(val session: GameSession, val elapsedMillis: Long)
+
+private fun SavedGame.matches(
+    gameId: Long,
+    boardSize: BoardSize,
+    puzzleType: PuzzleType,
+): Boolean = this.gameId == gameId && session.boardSize == boardSize && this.puzzleType == puzzleType

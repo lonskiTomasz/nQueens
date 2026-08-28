@@ -8,12 +8,16 @@ import com.queens.puzzle.core.designsystem.preview.PreviewState
 
 fun previewHomeUiState(
     selectedSize: Int = 8,
+    puzzleType: PuzzleType = PuzzleType.Queens,
     bestTimes: List<BestTime> = PreviewBestTimes,
     resumableSize: Int? = null,
 ): HomeUiState = HomeUiState(
     selectedSize = BoardSize(selectedSize),
+    puzzleType = puzzleType,
     bestTimes = bestTimes,
-    resumable = resumableSize?.let { ResumableGame(gameId = 1L, boardSize = BoardSize(it)) },
+    resumable = resumableSize?.let {
+        ResumableGame(gameId = 1L, boardSize = BoardSize(it), puzzleType = puzzleType)
+    },
 )
 
 val PreviewBestTimes: List<BestTime> = listOf(
@@ -31,6 +35,10 @@ class HomeScreenPreviewProvider :
             PreviewState(
                 previewHomeUiState(selectedSize = 10, resumableSize = 6),
                 "returning player, board to resume",
+            ),
+            PreviewState(
+                previewHomeUiState(puzzleType = PuzzleType.Knights, bestTimes = emptyList()),
+                "knights mode, no history for it yet",
             ),
         ),
     )

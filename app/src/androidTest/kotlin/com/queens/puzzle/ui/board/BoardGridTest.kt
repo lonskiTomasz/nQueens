@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Position
 import com.queens.puzzle.core.designsystem.theme.QueensTheme
 import com.queens.puzzle.ui.game.board.BoardGrid
@@ -80,6 +81,7 @@ class BoardGridTest {
             QueensTheme {
                 BoardGrid(
                     boardSize = boardSize,
+                    puzzleType = PuzzleType.Queens,
                     squares = squares,
                     onSquareClick = onSquareClick,
                 )

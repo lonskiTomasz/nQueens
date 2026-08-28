@@ -70,14 +70,14 @@ class HomeScreenTest {
         setScreen(
             HomeUiState(
                 selectedSize = BoardSize(8),
-                resumable = ResumableGame(gameId = 42L, boardSize = BoardSize(6)),
+                resumable = ResumableGame(gameId = 42L, boardSize = BoardSize(6), puzzleType = PuzzleType.Queens),
             ),
             onResumeGame = { resumed = it },
         )
 
         composeRule.onNodeWithText("Resume last board").performClick()
 
-        assertEquals(ResumableGame(gameId = 42L, boardSize = BoardSize(6)), resumed)
+        assertEquals(ResumableGame(gameId = 42L, boardSize = BoardSize(6), puzzleType = PuzzleType.Queens), resumed)
     }
 
     @Test
@@ -125,6 +125,7 @@ class HomeScreenTest {
     private fun setScreen(
         uiState: HomeUiState,
         onSizeSelected: (BoardSize) -> Unit = {},
+        onPuzzleTypeSelected: (PuzzleType) -> Unit = {},
         onThemeSelected: (ThemePreference) -> Unit = {},
         onStartGame: (BoardSize) -> Unit = {},
         onResumeGame: (ResumableGame) -> Unit = {},
@@ -134,6 +135,7 @@ class HomeScreenTest {
                 HomeScreen(
                     uiState = uiState,
                     onSizeSelected = onSizeSelected,
+                    onPuzzleTypeSelected = onPuzzleTypeSelected,
                     onThemeSelected = onThemeSelected,
                     onStartGame = onStartGame,
                     onResumeGame = onResumeGame,

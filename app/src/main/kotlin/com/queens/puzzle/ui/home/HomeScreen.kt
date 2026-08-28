@@ -42,7 +42,10 @@ import com.queens.puzzle.R
 import com.queens.puzzle.core.util.time.DurationFormatter
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.ThemePreference
+import com.queens.puzzle.core.designsystem.component.PieceGlyph
+import com.queens.puzzle.core.designsystem.component.PieceModeToggle
 import com.queens.puzzle.core.designsystem.component.QueenGlyph
 import com.queens.puzzle.core.designsystem.preview.PreviewState
 import com.queens.puzzle.core.designsystem.preview.QueensPreviewScreen
@@ -54,7 +57,7 @@ import com.queens.puzzle.core.designsystem.theme.Spacing
 
 @Composable
 fun HomeScreen(
-    onStartGame: (BoardSize, Long) -> Unit,
+    onStartGame: (BoardSize, PuzzleType, Long) -> Unit,
     onResumeGame: (ResumableGame) -> Unit,
     onSeeAllBestTimes: () -> Unit,
     modifier: Modifier = Modifier,
@@ -65,8 +68,9 @@ fun HomeScreen(
     HomeScreen(
         uiState = uiState,
         onSizeSelected = viewModel::onSizeSelected,
+        onPuzzleTypeSelected = viewModel::onPuzzleTypeSelected,
         onThemeSelected = viewModel::onThemeSelected,
-        onStartGame = { boardSize -> onStartGame(boardSize, viewModel.newGameId()) },
+        onStartGame = { boardSize -> onStartGame(boardSize, uiState.puzzleType, viewModel.newGameId()) },
         onResumeGame = onResumeGame,
         onSeeAllBestTimes = onSeeAllBestTimes,
         modifier = modifier,
@@ -77,6 +81,7 @@ fun HomeScreen(
 fun HomeScreen(
     uiState: HomeUiState,
     onSizeSelected: (BoardSize) -> Unit,
+    onPuzzleTypeSelected: (PuzzleType) -> Unit,
     onThemeSelected: (ThemePreference) -> Unit,
     onStartGame: (BoardSize) -> Unit,
     onResumeGame: (ResumableGame) -> Unit,
@@ -97,13 +102,30 @@ fun HomeScreen(
 
             Column(Modifier.padding(horizontal = Spacing.ScreenPaddingHorizontal)) {
                 Spacer(Modifier.height(Spacing.ContentGap))
+                PieceModeToggle(
+                    selected = uiState.puzzleType,
+                    onModeSelected = onPuzzleTypeSelected,
+                    queensLabel = stringResource(R.string.piece_mode_queens),
+                    knightsLabel = stringResource(R.string.piece_mode_knights),
+                )
+                Spacer(Modifier.height(Spacing.ContentGap))
                 Text(
-                    text = stringResource(R.string.home_headline),
+                    text = stringResource(
+                        when (uiState.puzzleType) {
+                            PuzzleType.Queens -> R.string.home_headline
+                            PuzzleType.Knights -> R.string.home_headline_knights
+                        },
+                    ),
                     style = MaterialTheme.typography.headlineLarge,
                 )
                 Spacer(Modifier.height(Spacing.TextGap))
                 Text(
-                    text = stringResource(R.string.home_subtitle),
+                    text = stringResource(
+                        when (uiState.puzzleType) {
+                            PuzzleType.Queens -> R.string.home_subtitle
+                            PuzzleType.Knights -> R.string.home_subtitle_knights
+                        },
+                    ),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -141,17 +163,14 @@ fun HomeScreen(
                     shape = RoundedCornerShape(percent = 50),
                 ) {
                     Text(
-                        text = stringResource(
-                            R.string.home_start_game,
-                            uiState.selectedSize.value,
-                        ),
+                        text = stringResource(R.string.home_start_game, uiState.selectedSize.value),
                         style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp),
                     )
                 }
 
-                if (uiState.resumable != null) {
+                if (uiState.canResume) {
                     TextButton(
-                        onClick = { onResumeGame(uiState.resumable) },
+                        onClick = { onResumeGame(uiState.resumable!!) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(Dimens.SecondaryButtonHeight),
@@ -280,13 +299,23 @@ private fun BestTimesCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(
-                        text = stringResource(
-                            R.string.best_times_board_label,
-                            best.boardSize.value,
-                        ),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        PieceGlyph(
+                            puzzleType = best.puzzleType,
+                            color = MaterialTheme.colorScheme.outline,
+                            fontSize = 15.sp,
+                        )
+                        Text(
+                            text = stringResource(
+                                R.string.best_times_board_label,
+                                best.boardSize.value,
+                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
                     Text(
                         text = DurationFormatter.format(best.bestMillis),
                         style = MaterialTheme.typography.bodyLarge,
@@ -308,6 +337,7 @@ private fun HomeScreenThemePreview(
         HomeScreen(
             uiState = preview.state,
             onSizeSelected = {},
+            onPuzzleTypeSelected = {},
             onThemeSelected = {},
             onStartGame = {},
             onResumeGame = {},
@@ -323,6 +353,7 @@ private fun HomeScreenSmallScreenPreview() {
         HomeScreen(
             uiState = previewHomeUiState(resumableSize = 8),
             onSizeSelected = {},
+            onPuzzleTypeSelected = {},
             onThemeSelected = {},
             onStartGame = {},
             onResumeGame = {},

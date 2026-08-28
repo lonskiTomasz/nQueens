@@ -64,7 +64,7 @@ class WinScreenTest {
     @Test
     fun theNextBoardUpIsWhatIsOffered() {
         var played: Int? = null
-        setScreen(summary(boardSize = 6), onPlay = { played = it })
+        setScreen(summary(boardSize = 6), onPlay = { size, _ -> played = size })
 
         composeRule.onNodeWithText("Play 7 × 7").performClick()
 
@@ -75,7 +75,7 @@ class WinScreenTest {
     @Test
     fun theLargestBoardIsOfferedAgain() {
         var played: Int? = null
-        setScreen(summary(boardSize = 12), onPlay = { played = it })
+        setScreen(summary(boardSize = 12), onPlay = { size, _ -> played = size })
 
         composeRule.onNodeWithText("Play again").performClick()
 
@@ -139,7 +139,7 @@ class WinScreenTest {
 
     private fun setScreen(
         summary: WinSummary,
-        onPlay: (Int) -> Unit = {},
+        onPlay: (Int, PuzzleType) -> Unit = { _, _ -> },
         onSeeBestTimes: () -> Unit = {},
         onClose: () -> Unit = {},
         size: DpSize? = null,
