@@ -1,7 +1,7 @@
 package com.queens.puzzle.ui.game
 
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
-import com.queens.puzzle.domain.rules.BoardEvaluator
+import com.queens.puzzle.domain.rules.QueenRules
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSettings
 import com.queens.puzzle.model.Position
@@ -18,12 +18,12 @@ fun previewGameUiState(
     isSettingsSheetVisible: Boolean = false,
 ): GameUiState {
     val size = BoardSize(boardSize)
-    val evaluation = BoardEvaluator.evaluate(size, queens, includeAttackedSquares = false)
+    val evaluation = QueenRules.evaluate(size, queens, includeAttackedSquares = false)
 
     return GameUiState(
         boardSize = size,
         squares = previewSquares(size, queens, settings.showAttackLines),
-        queensPlaced = queens.size,
+        piecesPlaced = queens.size,
         conflictKinds = evaluation.conflictKinds,
         canUndo = queens.isNotEmpty(),
         isSolved = evaluation.isSolved,

@@ -8,7 +8,7 @@ sealed interface GameEffect {
 
     data object SoundPlace : GameEffect
 
-    /** A tap refused because every queen is already down. */
+    /** A tap refused because every piece is already down. */
     data object BoardFull : GameEffect
 
     data object CelebrateWin : GameEffect

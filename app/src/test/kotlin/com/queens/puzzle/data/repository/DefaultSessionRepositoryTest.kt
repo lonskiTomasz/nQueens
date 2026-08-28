@@ -28,7 +28,7 @@ class DefaultSessionRepositoryTest {
         val repository = repositoryOver(null)
         val session = GameSession(
             boardSize = BoardSize(6),
-            queens = setOf(Position(0, 1), Position(2, 3)),
+            pieces = setOf(Position(0, 1), Position(2, 3)),
             moves = listOf(Move.Place(Position(0, 1)), Move.Place(Position(2, 3))),
             taps = 5,
             undos = 1,
@@ -53,7 +53,7 @@ class DefaultSessionRepositoryTest {
 
         repository.save(
             gameId = 7L,
-            session = GameSession(BoardSize(6), queens = setOf(Position(0, 1)), moves = moves),
+            session = GameSession(BoardSize(6), pieces = setOf(Position(0, 1)), moves = moves),
             elapsedMillis = 0,
         )
 
@@ -94,7 +94,7 @@ class DefaultSessionRepositoryTest {
     @Test
     fun `a stored queen off the board reads as nothing saved`() = runTest {
         val repository = repositoryOver(
-            savedSession(boardSize = 4, queens = listOf(SavedPosition(9, 9)))
+            savedSession(boardSize = 4, pieces = listOf(SavedPosition(9, 9)))
         )
 
         assertNull(repository.observeSavedSession().first())
@@ -105,7 +105,7 @@ class DefaultSessionRepositoryTest {
         val repository = repositoryOver(
             savedSession(
                 boardSize = 4,
-                queens = (0 until 4).flatMap { row -> (0 until 2).map { SavedPosition(row, it) } },
+                pieces = (0 until 4).flatMap { row -> (0 until 2).map { SavedPosition(row, it) } },
             )
         )
 
@@ -114,13 +114,13 @@ class DefaultSessionRepositoryTest {
 
     private fun savedSession(
         boardSize: Int,
-        queens: List<SavedPosition> = emptyList(),
-        moves: List<SavedMove> = queens.map { SavedMove(SavedMoveKind.Place, it) },
+        pieces: List<SavedPosition> = emptyList(),
+        moves: List<SavedMove> = pieces.map { SavedMove(SavedMoveKind.Place, it) },
     ) = SavedSession(
         boardSize = boardSize,
-        queens = queens,
+        pieces = pieces,
         moves = moves,
-        taps = queens.size,
+        taps = pieces.size,
         undos = 0,
         elapsedMillis = 1_000,
     )

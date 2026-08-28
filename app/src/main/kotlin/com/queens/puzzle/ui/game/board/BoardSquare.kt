@@ -62,9 +62,9 @@ fun BoardSquare(
         animationSpec = tween(durationMillis = CONFLICT_FADE_MILLIS),
         label = "conflictTint",
     )
-    // A square a queen covers is crossed out rather than shaded: a tint that reads on both
+    // A square a piece covers is crossed out rather than shaded: a tint that reads on both
     // square shades is too faint to notice, and the cross is unambiguous at any board size.
-    val showAttackMark = state.isAttacked && !state.hasQueen
+    val showAttackMark = state.isAttacked && !state.hasPiece
     val attackMarkAlpha by animateFloatAsState(
         targetValue = if (showAttackMark) 1f else 0f,
         animationSpec = tween(durationMillis = CONFLICT_FADE_MILLIS),
@@ -76,14 +76,14 @@ fun BoardSquare(
         extended.attackMarkOnLightSquare
     }
 
-    // The queen springs in rather than appearing, which reads as placing a piece.
+    // The piece springs in rather than appearing, which reads as placing it.
     val glyphScale by animateFloatAsState(
-        targetValue = if (state.hasQueen) 1f else 0f,
+        targetValue = if (state.hasPiece) 1f else 0f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMediumLow,
         ),
-        label = "queenScale",
+        label = "pieceScale",
     )
 
     Box(
@@ -131,8 +131,8 @@ private fun BoardSquareStatesPreview() {
             listOf(
                 BoardSquareState(Position(0, 0)),
                 BoardSquareState(Position(0, 0), isAttacked = true),
-                BoardSquareState(Position(0, 0), hasQueen = true),
-                BoardSquareState(Position(0, 0), hasQueen = true, isConflicting = true),
+                BoardSquareState(Position(0, 0), hasPiece = true),
+                BoardSquareState(Position(0, 0), hasPiece = true, isConflicting = true),
             ).forEach { state ->
                 BoardSquare(
                     state = state,
@@ -154,8 +154,8 @@ private fun BoardSquareOnDarkSquarePreview() {
             listOf(
                 BoardSquareState(Position(0, 1)),
                 BoardSquareState(Position(0, 1), isAttacked = true),
-                BoardSquareState(Position(0, 1), hasQueen = true),
-                BoardSquareState(Position(0, 1), hasQueen = true, isConflicting = true),
+                BoardSquareState(Position(0, 1), hasPiece = true),
+                BoardSquareState(Position(0, 1), hasPiece = true, isConflicting = true),
             ).forEach { state ->
                 BoardSquare(
                     state = state,

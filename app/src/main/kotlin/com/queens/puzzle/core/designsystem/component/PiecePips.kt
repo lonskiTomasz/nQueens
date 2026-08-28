@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.queens.puzzle.core.designsystem.preview.QueensPreviewSurface
 
 @Composable
-fun QueenPips(
+fun PiecePips(
     total: Int,
     placed: Int,
     modifier: Modifier = Modifier,
@@ -45,14 +45,14 @@ fun QueenPips(
 
 @PreviewLightDark
 @Composable
-private fun QueenPipsPreview() {
+private fun PiecePipsPreview() {
     QueensPreviewSurface {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            QueenPips(total = 8, placed = 0)
-            QueenPips(total = 8, placed = 5)
-            QueenPips(total = 8, placed = 8)
+            PiecePips(total = 8, placed = 0)
+            PiecePips(total = 8, placed = 5)
+            PiecePips(total = 8, placed = 8)
             // The widest board: twelve pips still have to fit beside the counter.
-            QueenPips(total = 12, placed = 7)
+            PiecePips(total = 12, placed = 7)
         }
     }
 }

@@ -18,7 +18,7 @@ class GameReducerTest {
     fun `tapping an empty square places a queen`() {
         val result = session.reduce(tap(1, 2))
 
-        assertEquals(setOf(Position(1, 2)), result.queens)
+        assertEquals(setOf(Position(1, 2)), result.pieces)
         assertEquals(listOf(Move.Place(Position(1, 2))), result.moves)
         assertEquals(1, result.taps)
     }
@@ -29,7 +29,7 @@ class GameReducerTest {
             .reduce(tap(1, 2))
             .reduce(tap(1, 2))
 
-        assertTrue(result.queens.isEmpty())
+        assertTrue(result.pieces.isEmpty())
         assertEquals(listOf(Move.Place(Position(1, 2)), Move.Remove(Position(1, 2))), result.moves)
         assertEquals(2, result.taps)
     }
@@ -41,7 +41,7 @@ class GameReducerTest {
         val result = full.reduce(tap(3, 3))
 
         assertSame(full, result)
-        assertEquals(4, result.queens.size)
+        assertEquals(4, result.pieces.size)
         assertEquals(4, result.taps)
     }
 
@@ -51,8 +51,8 @@ class GameReducerTest {
 
         val result = full.reduce(tap(0, 1))
 
-        assertEquals(3, result.queens.size)
-        assertEquals(1, result.queensRemaining)
+        assertEquals(3, result.pieces.size)
+        assertEquals(1, result.piecesRemaining)
     }
 
     @Test
@@ -60,7 +60,7 @@ class GameReducerTest {
         var result = fillBoard()
         repeat(5) { result = result.reduce(tap(3, 3)) }
 
-        assertEquals(0, result.queensRemaining)
+        assertEquals(0, result.piecesRemaining)
     }
 
     @Test
@@ -78,7 +78,7 @@ class GameReducerTest {
             .reduce(tap(1, 2))
             .reduce(GameAction.Undo)
 
-        assertEquals(setOf(Position(0, 0)), result.queens)
+        assertEquals(setOf(Position(0, 0)), result.pieces)
         assertEquals(listOf(Move.Place(Position(0, 0))), result.moves)
         assertEquals(1, result.undos)
     }
@@ -90,7 +90,7 @@ class GameReducerTest {
             .reduce(tap(0, 0))
             .reduce(GameAction.Undo)
 
-        assertEquals(setOf(Position(0, 0)), result.queens)
+        assertEquals(setOf(Position(0, 0)), result.pieces)
         assertEquals(1, result.undos)
     }
 
@@ -109,7 +109,7 @@ class GameReducerTest {
             .reduce(GameAction.Undo)
             .reduce(GameAction.Undo)
 
-        assertTrue(result.queens.isEmpty())
+        assertTrue(result.pieces.isEmpty())
         assertFalse(result.canUndo)
         assertEquals(1, result.undos)
     }
@@ -125,7 +125,7 @@ class GameReducerTest {
         val rewound = generateSequence(played) { it.reduce(GameAction.Undo) }
             .first { !it.canUndo }
 
-        assertEquals(session.queens, rewound.queens)
+        assertEquals(session.pieces, rewound.pieces)
         assertEquals(4, rewound.taps)
         assertEquals(4, rewound.undos)
     }
@@ -154,7 +154,7 @@ class GameReducerTest {
     fun `a fresh session is pristine and cannot undo`() {
         assertTrue(session.isPristine)
         assertFalse(session.canUndo)
-        assertEquals(4, session.queensRemaining)
+        assertEquals(4, session.piecesRemaining)
     }
 
     @Test
@@ -163,7 +163,7 @@ class GameReducerTest {
             .reduce(tap(0, 0))
             .reduce(tap(0, 1))
 
-        assertEquals(setOf(Position(0, 0), Position(0, 1)), result.queens)
+        assertEquals(setOf(Position(0, 0), Position(0, 1)), result.pieces)
     }
 
     private fun tap(row: Int, column: Int) = GameAction.TapSquare(Position(row, column))

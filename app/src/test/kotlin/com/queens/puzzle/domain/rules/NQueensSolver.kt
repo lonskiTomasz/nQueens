@@ -3,7 +3,7 @@ package com.queens.puzzle.domain.rules
 import com.queens.puzzle.model.Position
 
 /**
- * A backtracking N-Queens solver, used as an independent oracle for [BoardEvaluator].
+ * A backtracking N-Queens solver, used as an independent oracle for [QueenRules].
  *
  * Test-source only: nothing in the app calls it.
  *

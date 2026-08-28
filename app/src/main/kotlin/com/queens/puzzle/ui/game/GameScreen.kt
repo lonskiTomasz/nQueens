@@ -55,7 +55,7 @@ import com.queens.puzzle.core.util.time.DurationFormatter
 import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.ui.game.board.BoardGrid
 import com.queens.puzzle.core.designsystem.component.AlertBadge
-import com.queens.puzzle.core.designsystem.component.QueenPips
+import com.queens.puzzle.core.designsystem.component.PiecePips
 import com.queens.puzzle.core.designsystem.component.TimerChip
 import com.queens.puzzle.core.designsystem.preview.PreviewState
 import com.queens.puzzle.core.designsystem.preview.QueensPreviewScreen
@@ -179,7 +179,7 @@ fun GameScreen(
 
     if (uiState.isResetDialogVisible) {
         ResetConfirmDialog(
-            queensPlaced = uiState.queensPlaced,
+            piecesPlaced = uiState.piecesPlaced,
             onConfirm = onResetConfirmed,
             onDismiss = onResetDismissed,
         )
@@ -207,7 +207,7 @@ private fun ColumnScope.GameContentStacked(
             .weight(1f)
             .fillMaxWidth(),
     ) {
-        QueensRemaining(
+        PiecesRemaining(
             uiState = uiState,
             modifier = Modifier
                 .fillMaxWidth()
@@ -291,7 +291,7 @@ private fun ColumnScope.GameContentSideBySide(
                 .weight(1f)
                 .fillMaxHeight(),
         ) {
-            QueensRemaining(uiState = uiState, modifier = Modifier.fillMaxWidth())
+            PiecesRemaining(uiState = uiState, modifier = Modifier.fillMaxWidth())
 
             ConflictBannerSlot(
                 hasConflicts = uiState.hasConflicts,
@@ -311,7 +311,7 @@ private fun ColumnScope.GameContentSideBySide(
 }
 
 @Composable
-private fun QueensRemaining(uiState: GameUiState, modifier: Modifier = Modifier) {
+private fun PiecesRemaining(uiState: GameUiState, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -320,14 +320,14 @@ private fun QueensRemaining(uiState: GameUiState, modifier: Modifier = Modifier)
         Text(
             text = pluralStringResource(
                 R.plurals.game_queens_left,
-                uiState.queensRemaining,
-                uiState.queensRemaining,
+                uiState.piecesRemaining,
+                uiState.piecesRemaining,
             ),
             style = MaterialTheme.typography.labelLarge.copy(
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             ),
         )
-        QueenPips(total = uiState.boardSize.value, placed = uiState.queensPlaced)
+        PiecePips(total = uiState.boardSize.value, placed = uiState.piecesPlaced)
     }
 }
 

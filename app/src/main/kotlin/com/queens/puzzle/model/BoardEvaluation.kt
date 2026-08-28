@@ -1,7 +1,7 @@
 package com.queens.puzzle.model
 
 /**
- * Everything derived from a set of queens: which of them are in conflict, why, which squares
+ * Everything derived from a set of pieces: which of them are in conflict, why, which squares
  * they cover, and whether the board is solved.
  */
 data class BoardEvaluation(

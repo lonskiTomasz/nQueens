@@ -11,12 +11,16 @@ import kotlinx.serialization.Serializable
  *
  * [moves] is stored so that undo survives a resume — without it a resumed board could not be
  * unwound past the point it was reloaded.
+ *
+ * The field names are the on-disk format, so renaming one is a format change. A board saved by
+ * an older version no longer parses and is dropped by the store's corruption handler, which
+ * costs the player an unfinished board and nothing else — solve history lives in Room.
  */
 @Serializable
 data class SavedSession(
     val gameId: Long = 0L,
     val boardSize: Int,
-    val queens: List<SavedPosition>,
+    val pieces: List<SavedPosition>,
     val moves: List<SavedMove>,
     val taps: Int,
     val undos: Int,

@@ -15,7 +15,7 @@ class SessionSerializerTest {
     fun `a session survives a write and read`() = runTest {
         val session = SavedSession(
             boardSize = 6,
-            queens = listOf(SavedPosition(0, 1), SavedPosition(2, 3)),
+            pieces = listOf(SavedPosition(0, 1), SavedPosition(2, 3)),
             moves = listOf(
                 SavedMove(SavedMoveKind.Place, SavedPosition(0, 1)),
                 SavedMove(SavedMoveKind.Remove, SavedPosition(4, 4)),
@@ -41,13 +41,32 @@ class SessionSerializerTest {
     @Test
     fun `keys written by a later version are ignored`() = runTest {
         val json = """
-            {"boardSize":4,"queens":[],"moves":[],"taps":0,"undos":0,"elapsedMillis":0,
+            {"boardSize":4,"pieces":[],"moves":[],"taps":0,"undos":0,"elapsedMillis":0,
              "hintsUsed":3}
         """.trimIndent()
 
         val restored = SessionSerializer.readFrom(ByteArrayInputStream(json.encodeToByteArray()))
 
         assertEquals(4, restored?.boardSize)
+    }
+
+    /**
+     * The 1.0 format called this field `queens`. Renaming it means a board saved by that version
+     * no longer parses — reported as corruption so the store replaces it with no saved game,
+     * rather than surfacing as a crash on launch.
+     */
+    @Test
+    fun `a board saved by the previous version is reported as corruption`() = runTest {
+        val json = """
+            {"boardSize":4,"queens":[{"row":0,"column":1}],"moves":[],
+             "taps":1,"undos":0,"elapsedMillis":9000}
+        """.trimIndent()
+
+        val thrown = runCatching {
+            SessionSerializer.readFrom(ByteArrayInputStream(json.encodeToByteArray()))
+        }.exceptionOrNull()
+
+        assertTrue("expected a CorruptionException, was $thrown", thrown is CorruptionException)
     }
 
     @Test

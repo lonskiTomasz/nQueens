@@ -92,8 +92,8 @@ fun BoardGrid(
 @Composable
 private fun BoardSquareState.describe(): String {
     val occupancy = when {
-        hasQueen && isConflicting -> stringResource(R.string.board_square_queen_conflict)
-        hasQueen -> stringResource(R.string.board_square_queen)
+        hasPiece && isConflicting -> stringResource(R.string.board_square_queen_conflict)
+        hasPiece -> stringResource(R.string.board_square_queen)
         isAttacked -> stringResource(R.string.board_square_attacked)
         else -> stringResource(R.string.board_square_empty)
     }
