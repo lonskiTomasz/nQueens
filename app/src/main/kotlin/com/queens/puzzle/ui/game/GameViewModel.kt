@@ -13,6 +13,7 @@ import com.queens.puzzle.domain.usecase.RecordSolveUseCase
 import com.queens.puzzle.model.BoardEvaluation
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSession
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.ui.game.board.BoardSquareState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -199,6 +200,7 @@ class GameViewModel @AssistedInject constructor(
 
             val outcome = recordSolve(
                 boardSize = boardSize,
+                puzzleType = PuzzleType.Queens,
                 durationMillis = finalElapsedMillis ?: elapsedSinceStart(),
                 taps = session.taps,
                 undos = session.undos,

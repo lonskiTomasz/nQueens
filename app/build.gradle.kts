@@ -32,6 +32,9 @@ android {
         }
     }
 
+    // MigrationTestHelper reads the exported schemas off the test APK's assets.
+    sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
+
     signingConfigs {
         if (keystoreProperties.isNotEmpty()) {
             create("release") {
@@ -99,6 +102,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+    androidTestImplementation(libs.androidx.room.testing)
     // Preferences store for settings, typed store for the resumable session.
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)

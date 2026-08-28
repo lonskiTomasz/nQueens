@@ -3,6 +3,7 @@ package com.queens.puzzle.ui.home
 import com.queens.puzzle.domain.usecase.ObserveBestTimesUseCase
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSession
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.model.ThemePreference
 import com.queens.puzzle.testing.MainDispatcherRule
@@ -127,9 +128,14 @@ class HomeViewModelTest {
         observeBestTimes = ObserveBestTimesUseCase(solveRepository),
     )
 
-    private fun solve(boardSize: Int, durationMillis: Long) = Solve(
+    private fun solve(
+        boardSize: Int,
+        durationMillis: Long,
+        puzzleType: PuzzleType = PuzzleType.Queens,
+    ) = Solve(
         id = 0L,
         boardSize = BoardSize(boardSize),
+        puzzleType = puzzleType,
         durationMillis = durationMillis,
         taps = 10,
         undos = 0,

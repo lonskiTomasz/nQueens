@@ -1,6 +1,7 @@
 package com.queens.puzzle.domain.usecase
 
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.repository.TestSolveRepository
 import kotlinx.coroutines.test.runTest
@@ -81,6 +82,7 @@ class GetWinSummaryUseCaseTest {
     private fun solve(boardSize: Int, durationMillis: Long) = Solve(
         id = 0L,
         boardSize = BoardSize(boardSize),
+        puzzleType = PuzzleType.Queens,
         durationMillis = durationMillis,
         taps = 20,
         undos = 1,

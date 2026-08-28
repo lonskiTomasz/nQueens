@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.ThemePreference
 import com.queens.puzzle.core.designsystem.theme.QueensTheme
 import org.junit.Assert.assertEquals
@@ -113,7 +114,7 @@ class HomeScreenTest {
     fun bestTimesAreListed() {
         setScreen(
             HomeUiState(
-                bestTimes = listOf(BestTime(BoardSize(8), bestMillis = 161_000, solveCount = 3)),
+                bestTimes = listOf(BestTime(BoardSize(8), PuzzleType.Queens, bestMillis = 161_000, solveCount = 3)),
             )
         )
 

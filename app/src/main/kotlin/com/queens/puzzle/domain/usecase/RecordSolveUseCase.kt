@@ -3,6 +3,7 @@ package com.queens.puzzle.domain.usecase
 import com.queens.puzzle.data.repository.SolveRepository
 import com.queens.puzzle.data.util.TimeProvider
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.model.SolveOutcome
 import javax.inject.Inject
@@ -19,16 +20,18 @@ class RecordSolveUseCase @Inject constructor(
 
     suspend operator fun invoke(
         boardSize: BoardSize,
+        puzzleType: PuzzleType,
         durationMillis: Long,
         taps: Int,
         undos: Int,
     ): SolveOutcome {
-        val previousBest = solveRepository.bestFor(boardSize)
+        val previousBest = solveRepository.bestFor(boardSize, puzzleType)
 
         val solveId = solveRepository.record(
             Solve(
                 id = 0L,
                 boardSize = boardSize,
+                puzzleType = puzzleType,
                 durationMillis = durationMillis,
                 taps = taps,
                 undos = undos,

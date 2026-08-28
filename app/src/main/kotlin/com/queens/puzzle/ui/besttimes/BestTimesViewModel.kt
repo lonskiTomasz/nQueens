@@ -29,9 +29,9 @@ class BestTimesViewModel @Inject constructor(
         solveRepository.observeSolves(),
         selectedFilter,
     ) { solves, filter ->
-        val bestBySize = solves
-            .groupBy { it.boardSize }
-            .mapValues { (_, forSize) -> forSize.minOf { it.durationMillis } }
+        val bestByModeAndSize = solves
+            .groupBy { it.puzzleType to it.boardSize }
+            .mapValues { (_, forModeAndSize) -> forModeAndSize.minOf { it.durationMillis } }
 
         val now = timeProvider.nowMillis()
 
@@ -41,7 +41,7 @@ class BestTimesViewModel @Inject constructor(
             rows = solves
                 .filter { filter == null || it.boardSize == filter }
                 .map { solve ->
-                    val best = bestBySize.getValue(solve.boardSize)
+                    val best = bestByModeAndSize.getValue(solve.puzzleType to solve.boardSize)
                     val isBest = solve.durationMillis == best
 
                     SolveRow(

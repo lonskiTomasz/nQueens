@@ -7,6 +7,7 @@ import com.queens.puzzle.data.repository.SessionRepository
 import com.queens.puzzle.data.util.TimeProvider
 import com.queens.puzzle.domain.usecase.ObserveBestTimesUseCase
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,7 +28,7 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = combine(
         appSettingsRepository.observeAppSettings(),
         sessionRepository.observeSavedSession(),
-        observeBestTimes(),
+        observeBestTimes(PuzzleType.Queens),
     ) { appSettings, savedGame, bestTimes ->
         HomeUiState(
             selectedSize = appSettings.lastBoardSize,
