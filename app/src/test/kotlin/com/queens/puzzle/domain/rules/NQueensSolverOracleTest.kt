@@ -1,6 +1,7 @@
 package com.queens.puzzle.domain.rules
 
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.Position
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -91,7 +92,7 @@ class NQueensSolverOracleTest {
                 .take(random.nextInt(0, boardSize.value + 1))
                 .toSet()
 
-            val expected = queens.filter { queen -> queens.any { queen.attacks(it) } }.toSet()
+            val expected = queens.filter { queen -> queens.any { queenAttacks(queen, it) } }.toSet()
 
             assertEquals(queens.toString(), expected, QueenRules.evaluate(boardSize, queens).conflicts)
         }
@@ -100,4 +101,13 @@ class NQueensSolverOracleTest {
     private fun forEachPlayableSize(block: (BoardSize) -> Unit) {
         for (n in BoardSize.MIN..8) block(BoardSize(n))
     }
+
+    /** A queen on [a] attacks [b] iff they share a row, column, or either diagonal. */
+    private fun queenAttacks(a: Position, b: Position): Boolean =
+        a != b && (
+            a.row == b.row ||
+                a.column == b.column ||
+                a.diagonal == b.diagonal ||
+                a.antiDiagonal == b.antiDiagonal
+            )
 }

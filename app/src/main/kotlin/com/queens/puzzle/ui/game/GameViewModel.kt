@@ -8,6 +8,7 @@ import com.queens.puzzle.data.util.TimeProvider
 import com.queens.puzzle.domain.game.GameAction
 import com.queens.puzzle.domain.game.reduce
 import com.queens.puzzle.domain.rules.QueenRules
+import com.queens.puzzle.domain.rules.evaluate
 import com.queens.puzzle.domain.usecase.RecordSolveUseCase
 import com.queens.puzzle.model.BoardEvaluation
 import com.queens.puzzle.model.BoardSize
