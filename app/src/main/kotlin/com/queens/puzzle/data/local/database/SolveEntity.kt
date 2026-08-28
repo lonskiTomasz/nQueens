@@ -6,12 +6,12 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
- * The index covers the two queries that matter — best-per-size and the best for one size —
- * so both are served from the index without touching the table.
+ * The index covers the two queries that matter — best-per-(mode, size) and the best for one
+ * (mode, size) — so both are served from the index without touching the table.
  */
 @Entity(
     tableName = "solves",
-    indices = [Index(value = ["board_size", "duration_millis"])],
+    indices = [Index(value = ["puzzle_type", "board_size", "duration_millis"])],
 )
 data class SolveEntity(
     @PrimaryKey(autoGenerate = true)
@@ -19,6 +19,9 @@ data class SolveEntity(
 
     @ColumnInfo(name = "board_size")
     val boardSize: Int,
+
+    @ColumnInfo(name = "puzzle_type")
+    val puzzleType: String,
 
     @ColumnInfo(name = "duration_millis")
     val durationMillis: Long,

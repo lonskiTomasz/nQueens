@@ -3,6 +3,7 @@ package com.queens.puzzle.ui.besttimes
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
 import com.queens.puzzle.core.util.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.core.designsystem.preview.PreviewState
 import com.queens.puzzle.core.designsystem.preview.previewSolve
 
@@ -45,6 +46,17 @@ val PreviewSolveRows: List<SolveRow> = listOf(
         isBestForSize = false,
         deltaMillis = -80_000,
         occurred = RelativeDay.WeeksAgo(2),
+    ),
+    SolveRow(
+        solve = previewSolve(
+            id = 6,
+            boardSize = 8,
+            puzzleType = PuzzleType.Knights,
+            durationMillis = 96_000,
+        ),
+        isBestForSize = true,
+        deltaMillis = null,
+        occurred = RelativeDay.DaysAgo(4),
     ),
 )
 

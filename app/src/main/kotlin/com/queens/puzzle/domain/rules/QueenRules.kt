@@ -3,7 +3,6 @@ package com.queens.puzzle.domain.rules
 import com.queens.puzzle.model.BoardEvaluation
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.ConflictKind
-import com.queens.puzzle.model.GameSession
 import com.queens.puzzle.model.Position
 
 /**
@@ -20,16 +19,14 @@ import com.queens.puzzle.model.Position
  *
  * Stateless and pure.
  */
-object QueenRules {
+object QueenRules : PieceRules {
 
-    fun evaluate(session: GameSession, includeAttackedSquares: Boolean = true): BoardEvaluation =
-        evaluate(session.boardSize, session.pieces, includeAttackedSquares)
-
-    fun evaluate(
+    override fun evaluate(
         boardSize: BoardSize,
-        queens: Set<Position>,
-        includeAttackedSquares: Boolean = true,
+        pieces: Set<Position>,
+        includeAttackedSquares: Boolean,
     ): BoardEvaluation {
+        val queens = pieces
         if (queens.isEmpty()) return BoardEvaluation()
 
         val rows = mutableMapOf<Int, Int>()

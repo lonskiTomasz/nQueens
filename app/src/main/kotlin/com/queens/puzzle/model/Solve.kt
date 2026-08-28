@@ -4,15 +4,17 @@ package com.queens.puzzle.model
 data class Solve(
     val id: Long,
     val boardSize: BoardSize,
+    val puzzleType: PuzzleType,
     val durationMillis: Long,
     val taps: Int,
     val undos: Int,
     val completedAtMillis: Long,
 )
 
-/** The fastest recorded solve for one board size, with how many times that size was solved. */
+/** The fastest recorded solve for one board size and puzzle type, with how many times it was solved. */
 data class BestTime(
     val boardSize: BoardSize,
+    val puzzleType: PuzzleType,
     val bestMillis: Long,
     val solveCount: Int,
 )

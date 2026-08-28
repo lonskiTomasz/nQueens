@@ -53,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.queens.puzzle.R
 import com.queens.puzzle.core.util.time.DurationFormatter
 import com.queens.puzzle.domain.game.GameAction
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.ui.game.board.BoardGrid
 import com.queens.puzzle.core.designsystem.component.AlertBadge
 import com.queens.puzzle.core.designsystem.component.PiecePips
@@ -70,11 +71,12 @@ import kotlinx.coroutines.launch
 fun GameScreen(
     boardSize: Int,
     gameId: Long,
+    puzzleType: PuzzleType,
     onNavigateBack: () -> Unit,
     onNavigateToWin: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: GameViewModel = hiltViewModel<GameViewModel, GameViewModel.Factory>(
-        creationCallback = { factory -> factory.create(boardSize, gameId) },
+        creationCallback = { factory -> factory.create(boardSize, gameId, puzzleType) },
     ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -223,6 +225,7 @@ private fun ColumnScope.GameContentStacked(
         ) {
             BoardGrid(
                 boardSize = uiState.boardSize,
+                puzzleType = uiState.puzzleType,
                 squares = uiState.squares,
                 onSquareClick = { onAction(GameAction.TapSquare(it)) },
                 enabled = uiState.isBoardEnabled,
@@ -233,6 +236,7 @@ private fun ColumnScope.GameContentStacked(
 
             ConflictBannerSlot(
                 hasConflicts = uiState.hasConflicts,
+                puzzleType = uiState.puzzleType,
                 modifier = Modifier.padding(
                     start = Spacing.ScreenPaddingHorizontal,
                     end = Spacing.ScreenPaddingHorizontal,
@@ -277,6 +281,7 @@ private fun ColumnScope.GameContentSideBySide(
     ) {
         BoardGrid(
             boardSize = uiState.boardSize,
+            puzzleType = uiState.puzzleType,
             squares = uiState.squares,
             onSquareClick = { onAction(GameAction.TapSquare(it)) },
             enabled = uiState.isBoardEnabled,
@@ -295,6 +300,7 @@ private fun ColumnScope.GameContentSideBySide(
 
             ConflictBannerSlot(
                 hasConflicts = uiState.hasConflicts,
+                puzzleType = uiState.puzzleType,
                 modifier = Modifier.padding(top = Spacing.ContentGap),
             )
 
@@ -319,7 +325,10 @@ private fun PiecesRemaining(uiState: GameUiState, modifier: Modifier = Modifier)
     ) {
         Text(
             text = pluralStringResource(
-                R.plurals.game_queens_left,
+                when (uiState.puzzleType) {
+                    PuzzleType.Queens -> R.plurals.game_queens_left
+                    PuzzleType.Knights -> R.plurals.game_knights_left
+                },
                 uiState.piecesRemaining,
                 uiState.piecesRemaining,
             ),
@@ -414,6 +423,7 @@ private fun GameTopBar(
 @Composable
 private fun ConflictBannerSlot(
     hasConflicts: Boolean,
+    puzzleType: PuzzleType,
     modifier: Modifier = Modifier,
 ) {
     val alpha by animateFloatAsState(
@@ -423,6 +433,7 @@ private fun ConflictBannerSlot(
     )
 
     ConflictBanner(
+        puzzleType = puzzleType,
         modifier = modifier
             .alpha(alpha)
             // Invisible to the eye is invisible to a screen reader: a live region left in the
@@ -432,7 +443,7 @@ private fun ConflictBannerSlot(
 }
 
 @Composable
-private fun ConflictBanner(modifier: Modifier = Modifier) {
+private fun ConflictBanner(puzzleType: PuzzleType, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -452,7 +463,12 @@ private fun ConflictBanner(modifier: Modifier = Modifier) {
             textStyle = MaterialTheme.typography.labelLarge,
         )
         Text(
-            text = stringResource(R.string.game_conflict),
+            text = stringResource(
+                when (puzzleType) {
+                    PuzzleType.Queens -> R.string.game_conflict
+                    PuzzleType.Knights -> R.string.game_conflict_knights
+                },
+            ),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onErrorContainer,
         )

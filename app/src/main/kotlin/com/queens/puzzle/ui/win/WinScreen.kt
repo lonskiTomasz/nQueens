@@ -65,8 +65,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.queens.puzzle.R
 import com.queens.puzzle.core.util.time.DurationFormatter
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.WinSummary
-import com.queens.puzzle.core.designsystem.component.QueenGlyph
+import com.queens.puzzle.core.designsystem.component.PieceGlyph
 import com.queens.puzzle.core.designsystem.preview.PreviewState
 import com.queens.puzzle.core.designsystem.preview.QueensPreviewScreen
 import com.queens.puzzle.core.designsystem.theme.Dimens
@@ -80,7 +81,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun WinScreen(
     solveId: Long,
-    onPlay: (Int, Long) -> Unit,
+    onPlay: (Int, PuzzleType, Long) -> Unit,
     onSeeBestTimes: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -92,7 +93,7 @@ fun WinScreen(
 
     WinScreen(
         uiState = uiState,
-        onPlay = { boardSize -> onPlay(boardSize, viewModel.newGameId()) },
+        onPlay = { boardSize, puzzleType -> onPlay(boardSize, puzzleType, viewModel.newGameId()) },
         onSeeBestTimes = onSeeBestTimes,
         onClose = onClose,
         modifier = modifier,
@@ -102,7 +103,7 @@ fun WinScreen(
 @Composable
 fun WinScreen(
     uiState: WinUiState,
-    onPlay: (Int) -> Unit,
+    onPlay: (Int, PuzzleType) -> Unit,
     onSeeBestTimes: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -222,7 +223,7 @@ private fun MissingSolve(onClose: () -> Unit) {
 @Composable
 private fun SolvedContent(
     summary: WinSummary,
-    onPlay: (Int) -> Unit,
+    onPlay: (Int, PuzzleType) -> Unit,
     onSeeBestTimes: () -> Unit,
     viewportHeight: Dp,
 ) {
@@ -242,6 +243,7 @@ private fun SolvedContent(
             )
             WinActions(
                 boardSize = summary.solve.boardSize,
+                puzzleType = summary.solve.puzzleType,
                 onPlay = onPlay,
                 onSeeBestTimes = onSeeBestTimes,
                 compact = true,
@@ -262,6 +264,7 @@ private fun SolvedContent(
             )
             WinActions(
                 boardSize = summary.solve.boardSize,
+                puzzleType = summary.solve.puzzleType,
                 onPlay = onPlay,
                 onSeeBestTimes = onSeeBestTimes,
                 compact = false,
@@ -284,7 +287,11 @@ private fun Summary(
             .padding(horizontal = Spacing.ScreenPaddingHorizontal),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        WinBadge(size = metrics.badgeSize, glyphSize = metrics.badgeGlyph)
+        WinBadge(
+            puzzleType = solve.puzzleType,
+            size = metrics.badgeSize,
+            glyphSize = metrics.badgeGlyph,
+        )
 
         Spacer(Modifier.height(metrics.afterBadge))
         Text(
@@ -340,7 +347,12 @@ private fun Summary(
  * The circled piece glyph on the win screen: springs in, then flips into place once settled.
  */
 @Composable
-private fun WinBadge(size: Dp, glyphSize: TextUnit, modifier: Modifier = Modifier) {
+private fun WinBadge(
+    puzzleType: PuzzleType,
+    size: Dp,
+    glyphSize: TextUnit,
+    modifier: Modifier = Modifier,
+) {
     var badgeVisible by rememberSaveable { mutableStateOf(false) }
     val badgeScale by animateFloatAsState(
         targetValue = if (badgeVisible) 1f else 0.6f,
@@ -391,7 +403,8 @@ private fun WinBadge(size: Dp, glyphSize: TextUnit, modifier: Modifier = Modifie
             .background(MaterialTheme.colorScheme.tertiary, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
-        QueenGlyph(
+        PieceGlyph(
+            puzzleType = puzzleType,
             color = QueensTheme.extendedColors.queenOnDarkSquare,
             fontSize = glyphSize,
             modifier = Modifier.graphicsLayer {
@@ -406,7 +419,8 @@ private fun WinBadge(size: Dp, glyphSize: TextUnit, modifier: Modifier = Modifie
 @Composable
 private fun WinActions(
     boardSize: BoardSize,
-    onPlay: (Int) -> Unit,
+    puzzleType: PuzzleType,
+    onPlay: (Int, PuzzleType) -> Unit,
     onSeeBestTimes: () -> Unit,
     compact: Boolean,
 ) {
@@ -428,7 +442,7 @@ private fun WinActions(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Button(
-            onClick = { onPlay((next ?: boardSize).value) },
+            onClick = { onPlay((next ?: boardSize).value, puzzleType) },
             modifier = Modifier
                 .fillMaxWidth(buttonWidthFraction)
                 .height(Dimens.PrimaryButtonHeight),
@@ -537,7 +551,7 @@ private fun WinScreenLandscapePreview() {
     QueensPreviewScreen {
         WinScreen(
             uiState = WinUiState.Solved(previewWinSummary()),
-            onPlay = {},
+            onPlay = { _, _ -> },
             onSeeBestTimes = {},
             onClose = {},
         )
@@ -552,7 +566,7 @@ private fun WinScreenPreview(
     QueensPreviewScreen {
         WinScreen(
             uiState = preview.state,
-            onPlay = {},
+            onPlay = { _, _ -> },
             onSeeBestTimes = {},
             onClose = {},
         )

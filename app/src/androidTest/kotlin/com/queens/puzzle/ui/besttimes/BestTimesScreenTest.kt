@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.queens.puzzle.core.util.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.ForcedWindow
 import org.junit.Assert.assertEquals
@@ -55,6 +56,7 @@ class BestTimesScreenTest {
                 solve = Solve(
                     id = 1L,
                     boardSize = BoardSize(4),
+                    puzzleType = PuzzleType.Queens,
                     durationMillis = 107_000,
                     taps = 27,
                     undos = 2,

@@ -1,6 +1,7 @@
 package com.queens.puzzle.domain.usecase
 
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.repository.TestSolveRepository
 import com.queens.puzzle.testing.util.TestTimeProvider
@@ -20,7 +21,7 @@ class RecordSolveUseCaseTest {
     fun `a first solve of a size is a personal best with no delta`() = runTest {
         val useCase = useCase()
 
-        val outcome = useCase(boardSize, durationMillis = 90_000, taps = 27, undos = 2)
+        val outcome = useCase(boardSize, PuzzleType.Queens, durationMillis = 90_000, taps = 27, undos = 2)
 
         assertTrue(outcome.isNewBest)
         assertNull(outcome.improvementMillis)
@@ -30,7 +31,7 @@ class RecordSolveUseCaseTest {
     fun `beating the previous best reports the improvement`() = runTest {
         val useCase = useCase(existing(durationMillis = 120_000))
 
-        val outcome = useCase(boardSize, durationMillis = 66_000, taps = 20, undos = 0)
+        val outcome = useCase(boardSize, PuzzleType.Queens, durationMillis = 66_000, taps = 20, undos = 0)
 
         assertTrue(outcome.isNewBest)
         assertEquals(54_000L, outcome.improvementMillis)
@@ -40,7 +41,7 @@ class RecordSolveUseCaseTest {
     fun `a slower solve is not a best and reports a negative improvement`() = runTest {
         val useCase = useCase(existing(durationMillis = 60_000))
 
-        val outcome = useCase(boardSize, durationMillis = 72_000, taps = 31, undos = 4)
+        val outcome = useCase(boardSize, PuzzleType.Queens, durationMillis = 72_000, taps = 31, undos = 4)
 
         assertFalse(outcome.isNewBest)
         assertEquals(-12_000L, outcome.improvementMillis)
@@ -50,7 +51,7 @@ class RecordSolveUseCaseTest {
     fun `matching the previous best exactly is not a new best`() = runTest {
         val useCase = useCase(existing(durationMillis = 60_000))
 
-        val outcome = useCase(boardSize, durationMillis = 60_000, taps = 18, undos = 0)
+        val outcome = useCase(boardSize, PuzzleType.Queens, durationMillis = 60_000, taps = 18, undos = 0)
 
         assertFalse(outcome.isNewBest)
         assertEquals(0L, outcome.improvementMillis)
@@ -61,8 +62,8 @@ class RecordSolveUseCaseTest {
         val repository = TestSolveRepository()
         val useCase = RecordSolveUseCase(repository, timeProvider)
 
-        useCase(boardSize, durationMillis = 90_000, taps = 27, undos = 2)
-        val second = useCase(boardSize, durationMillis = 90_000, taps = 27, undos = 2)
+        useCase(boardSize, PuzzleType.Queens, durationMillis = 90_000, taps = 27, undos = 2)
+        val second = useCase(boardSize, PuzzleType.Queens, durationMillis = 90_000, taps = 27, undos = 2)
 
         // The first run is now stored, so the identical second run ties rather than wins.
         assertFalse(second.isNewBest)
@@ -73,7 +74,7 @@ class RecordSolveUseCaseTest {
     fun `a best on another size does not count as the previous best`() = runTest {
         val useCase = useCase(existing(durationMillis = 10_000, boardSize = BoardSize(4)))
 
-        val outcome = useCase(boardSize, durationMillis = 90_000, taps = 27, undos = 2)
+        val outcome = useCase(boardSize, PuzzleType.Queens, durationMillis = 90_000, taps = 27, undos = 2)
 
         assertTrue(outcome.isNewBest)
         assertNull(outcome.improvementMillis)
@@ -85,7 +86,7 @@ class RecordSolveUseCaseTest {
         val useCase = RecordSolveUseCase(repository, timeProvider)
         timeProvider.advanceBy(5_000)
 
-        val outcome = useCase(boardSize, durationMillis = 90_000, taps = 27, undos = 2)
+        val outcome = useCase(boardSize, PuzzleType.Queens, durationMillis = 90_000, taps = 27, undos = 2)
 
         val stored = repository.recorded.single()
         assertEquals(boardSize, stored.boardSize)
@@ -102,6 +103,7 @@ class RecordSolveUseCaseTest {
     private fun existing(durationMillis: Long, boardSize: BoardSize = this.boardSize) = Solve(
         id = 1L,
         boardSize = boardSize,
+        puzzleType = PuzzleType.Queens,
         durationMillis = durationMillis,
         taps = 30,
         undos = 1,

@@ -55,6 +55,7 @@ import com.queens.puzzle.R
 import com.queens.puzzle.core.util.time.DurationFormatter
 import com.queens.puzzle.core.util.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.core.designsystem.component.PieceGlyph
 import com.queens.puzzle.core.designsystem.component.SizeChip
 import com.queens.puzzle.core.designsystem.preview.PreviewState
 import com.queens.puzzle.core.designsystem.preview.QueensPreviewScreen
@@ -212,13 +213,21 @@ private fun SolveRowItem(row: SolveRow) {
         MiniBoard(boardSize = row.solve.boardSize)
 
         Column(Modifier.weight(1f)) {
-            Text(
-                text = stringResource(
-                    R.string.best_times_board_label,
-                    row.solve.boardSize.value,
-                ),
-                style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp),
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                PieceGlyph(
+                    puzzleType = row.solve.puzzleType,
+                    color = MaterialTheme.colorScheme.outline,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(end = 6.dp),
+                )
+                Text(
+                    text = stringResource(
+                        R.string.best_times_board_label,
+                        row.solve.boardSize.value,
+                    ),
+                    style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp),
+                )
+            }
             Spacer(Modifier.height(3.dp))
             Text(
                 text = row.occurred.label(row.solve.completedAtMillis),

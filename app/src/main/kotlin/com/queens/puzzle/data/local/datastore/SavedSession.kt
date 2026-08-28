@@ -20,6 +20,7 @@ import kotlinx.serialization.Serializable
 data class SavedSession(
     val gameId: Long = 0L,
     val boardSize: Int,
+    val puzzleType: SavedPuzzleType,
     val pieces: List<SavedPosition>,
     val moves: List<SavedMove>,
     val taps: Int,
@@ -35,3 +36,6 @@ data class SavedMove(val kind: SavedMoveKind, val position: SavedPosition)
 
 @Serializable
 enum class SavedMoveKind { Place, Remove }
+
+@Serializable
+enum class SavedPuzzleType { Queens, Knights }

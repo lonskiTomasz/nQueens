@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.ThemePreference
 import com.queens.puzzle.core.designsystem.theme.QueensTheme
 import org.junit.Assert.assertEquals
@@ -69,14 +70,14 @@ class HomeScreenTest {
         setScreen(
             HomeUiState(
                 selectedSize = BoardSize(8),
-                resumable = ResumableGame(gameId = 42L, boardSize = BoardSize(6)),
+                resumable = ResumableGame(gameId = 42L, boardSize = BoardSize(6), puzzleType = PuzzleType.Queens),
             ),
             onResumeGame = { resumed = it },
         )
 
         composeRule.onNodeWithText("Resume last board").performClick()
 
-        assertEquals(ResumableGame(gameId = 42L, boardSize = BoardSize(6)), resumed)
+        assertEquals(ResumableGame(gameId = 42L, boardSize = BoardSize(6), puzzleType = PuzzleType.Queens), resumed)
     }
 
     @Test
@@ -113,7 +114,7 @@ class HomeScreenTest {
     fun bestTimesAreListed() {
         setScreen(
             HomeUiState(
-                bestTimes = listOf(BestTime(BoardSize(8), bestMillis = 161_000, solveCount = 3)),
+                bestTimes = listOf(BestTime(BoardSize(8), PuzzleType.Queens, bestMillis = 161_000, solveCount = 3)),
             )
         )
 
@@ -124,6 +125,7 @@ class HomeScreenTest {
     private fun setScreen(
         uiState: HomeUiState,
         onSizeSelected: (BoardSize) -> Unit = {},
+        onPuzzleTypeSelected: (PuzzleType) -> Unit = {},
         onThemeSelected: (ThemePreference) -> Unit = {},
         onStartGame: (BoardSize) -> Unit = {},
         onResumeGame: (ResumableGame) -> Unit = {},
@@ -133,6 +135,7 @@ class HomeScreenTest {
                 HomeScreen(
                     uiState = uiState,
                     onSizeSelected = onSizeSelected,
+                    onPuzzleTypeSelected = onPuzzleTypeSelected,
                     onThemeSelected = onThemeSelected,
                     onStartGame = onStartGame,
                     onResumeGame = onResumeGame,

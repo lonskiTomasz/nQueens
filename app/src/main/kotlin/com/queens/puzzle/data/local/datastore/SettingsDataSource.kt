@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.queens.puzzle.model.AppSettings
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSettings
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.ThemePreference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -48,6 +49,8 @@ class SettingsDataSource @Inject constructor(
             theme = stored[Keys.THEME]?.toThemeOrNull() ?: DEFAULT_APP.theme,
             lastBoardSize = stored[Keys.LAST_BOARD_SIZE]?.let(BoardSize::ofOrNull)
                 ?: DEFAULT_APP.lastBoardSize,
+            lastPuzzleType = stored[Keys.LAST_PUZZLE_TYPE]?.toPuzzleTypeOrNull()
+                ?: DEFAULT_APP.lastPuzzleType,
         )
     }
 
@@ -61,6 +64,9 @@ class SettingsDataSource @Inject constructor(
 
     suspend fun setLastBoardSize(boardSize: BoardSize) = edit(Keys.LAST_BOARD_SIZE, boardSize.value)
 
+    suspend fun setLastPuzzleType(puzzleType: PuzzleType) =
+        edit(Keys.LAST_PUZZLE_TYPE, puzzleType.name)
+
     private suspend fun <T> edit(key: Preferences.Key<T>, value: T) {
         dataStore.edit { it[key] = value }
     }
@@ -68,12 +74,16 @@ class SettingsDataSource @Inject constructor(
     private fun String.toThemeOrNull(): ThemePreference? =
         ThemePreference.entries.firstOrNull { it.name == this }
 
+    private fun String.toPuzzleTypeOrNull(): PuzzleType? =
+        PuzzleType.entries.firstOrNull { it.name == this }
+
     private object Keys {
         val SHOW_ATTACK_LINES = booleanPreferencesKey("show_attack_lines")
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
         val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
         val THEME = stringPreferencesKey("theme")
         val LAST_BOARD_SIZE = intPreferencesKey("last_board_size")
+        val LAST_PUZZLE_TYPE = stringPreferencesKey("last_puzzle_type")
     }
 
     companion object {

@@ -96,7 +96,7 @@ class GameScreenTest {
 
         composeRule.onNodeWithText("Reset board?").assertIsDisplayed()
         composeRule
-            .onNodeWithText("This clears all 2 queens you’ve placed. It can’t be undone.")
+            .onNodeWithText("This clears all 2 pieces you’ve placed. It can’t be undone.")
             .assertIsDisplayed()
     }
 

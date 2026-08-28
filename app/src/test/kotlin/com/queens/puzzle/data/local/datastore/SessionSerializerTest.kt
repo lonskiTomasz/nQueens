@@ -15,6 +15,7 @@ class SessionSerializerTest {
     fun `a session survives a write and read`() = runTest {
         val session = SavedSession(
             boardSize = 6,
+            puzzleType = SavedPuzzleType.Knights,
             pieces = listOf(SavedPosition(0, 1), SavedPosition(2, 3)),
             moves = listOf(
                 SavedMove(SavedMoveKind.Place, SavedPosition(0, 1)),
@@ -41,7 +42,7 @@ class SessionSerializerTest {
     @Test
     fun `keys written by a later version are ignored`() = runTest {
         val json = """
-            {"boardSize":4,"pieces":[],"moves":[],"taps":0,"undos":0,"elapsedMillis":0,
+            {"boardSize":4,"puzzleType":"Queens","pieces":[],"moves":[],"taps":0,"undos":0,"elapsedMillis":0,
              "hintsUsed":3}
         """.trimIndent()
 

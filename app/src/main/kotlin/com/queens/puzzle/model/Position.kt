@@ -13,14 +13,5 @@ data class Position(val row: Int, val column: Int) {
 
     val antiDiagonal: Int get() = row + column
 
-    /** True when a queen on this square attacks [other] — same row, column, or diagonal. */
-    fun attacks(other: Position): Boolean =
-        this != other && (
-            row == other.row ||
-                column == other.column ||
-                diagonal == other.diagonal ||
-                antiDiagonal == other.antiDiagonal
-            )
-
     override fun toString(): String = "($row,$column)"
 }

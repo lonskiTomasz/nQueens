@@ -5,12 +5,14 @@ import com.queens.puzzle.data.local.database.SolveEntity
 import com.queens.puzzle.data.local.database.SolveWithSizeSummary
 import com.queens.puzzle.model.BestTime
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.model.SolveSizeSummary
 
 fun SolveEntity.toModel(): Solve = Solve(
     id = id,
     boardSize = BoardSize(boardSize),
+    puzzleType = PuzzleType.valueOf(puzzleType),
     durationMillis = durationMillis,
     taps = taps,
     undos = undos,
@@ -21,6 +23,7 @@ fun SolveEntity.toModel(): Solve = Solve(
 fun Solve.toEntity(): SolveEntity = SolveEntity(
     id = id,
     boardSize = boardSize.value,
+    puzzleType = puzzleType.name,
     durationMillis = durationMillis,
     taps = taps,
     undos = undos,
@@ -29,6 +32,7 @@ fun Solve.toEntity(): SolveEntity = SolveEntity(
 
 fun BestTimeRow.toModel(): BestTime = BestTime(
     boardSize = BoardSize(boardSize),
+    puzzleType = PuzzleType.valueOf(puzzleType),
     bestMillis = bestMillis,
     solveCount = solveCount,
 )

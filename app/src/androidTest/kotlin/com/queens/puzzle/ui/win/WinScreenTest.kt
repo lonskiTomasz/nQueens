@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.model.WinSummary
 import com.queens.puzzle.testing.ForcedWindow
@@ -63,7 +64,7 @@ class WinScreenTest {
     @Test
     fun theNextBoardUpIsWhatIsOffered() {
         var played: Int? = null
-        setScreen(summary(boardSize = 6), onPlay = { played = it })
+        setScreen(summary(boardSize = 6), onPlay = { size, _ -> played = size })
 
         composeRule.onNodeWithText("Play 7 × 7").performClick()
 
@@ -74,7 +75,7 @@ class WinScreenTest {
     @Test
     fun theLargestBoardIsOfferedAgain() {
         var played: Int? = null
-        setScreen(summary(boardSize = 12), onPlay = { played = it })
+        setScreen(summary(boardSize = 12), onPlay = { size, _ -> played = size })
 
         composeRule.onNodeWithText("Play again").performClick()
 
@@ -125,6 +126,7 @@ class WinScreenTest {
         solve = Solve(
             id = 1L,
             boardSize = BoardSize(boardSize),
+            puzzleType = PuzzleType.Queens,
             durationMillis = durationMillis,
             taps = taps,
             undos = undos,
@@ -137,7 +139,7 @@ class WinScreenTest {
 
     private fun setScreen(
         summary: WinSummary,
-        onPlay: (Int) -> Unit = {},
+        onPlay: (Int, PuzzleType) -> Unit = { _, _ -> },
         onSeeBestTimes: () -> Unit = {},
         onClose: () -> Unit = {},
         size: DpSize? = null,

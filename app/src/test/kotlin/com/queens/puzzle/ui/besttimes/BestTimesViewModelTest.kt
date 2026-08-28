@@ -2,6 +2,7 @@ package com.queens.puzzle.ui.besttimes
 
 import com.queens.puzzle.core.util.time.RelativeDay
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.MainDispatcherRule
 import com.queens.puzzle.testing.repository.TestSolveRepository
@@ -125,15 +126,30 @@ class BestTimesViewModelTest {
         assertNull(viewModel.uiState.value.selectedFilter)
     }
 
+    @Test
+    fun `history mixes both puzzle types, each carrying its own type`() = runTest {
+        solveRepository.record(solve(boardSize = 8, durationMillis = 100_000))
+        solveRepository.record(solve(boardSize = 8, puzzleType = PuzzleType.Knights, durationMillis = 90_000))
+
+        val viewModel = viewModel()
+        observe(viewModel)
+
+        val byType = viewModel.uiState.value.rows.associate { it.solve.puzzleType to it.solve.durationMillis }
+        assertEquals(100_000L, byType.getValue(PuzzleType.Queens))
+        assertEquals(90_000L, byType.getValue(PuzzleType.Knights))
+    }
+
     private fun viewModel() = BestTimesViewModel(solveRepository, timeProvider)
 
     private fun solve(
         boardSize: Int,
         durationMillis: Long,
+        puzzleType: PuzzleType = PuzzleType.Queens,
         completedAt: Long = TestTimeProvider.FIXED_NOW,
     ) = Solve(
         id = 0L,
         boardSize = BoardSize(boardSize),
+        puzzleType = puzzleType,
         durationMillis = durationMillis,
         taps = 20,
         undos = 0,

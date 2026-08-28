@@ -27,11 +27,13 @@ fun QueensNavHost(modifier: Modifier = Modifier) {
         entryProvider = entryProvider {
             entry<HomeKey> {
                 HomeScreen(
-                    onStartGame = { boardSize, gameId ->
-                        backStack.add(GameKey(boardSize.value, gameId))
+                    onStartGame = { boardSize, puzzleType, gameId ->
+                        backStack.add(GameKey(boardSize.value, gameId, puzzleType))
                     },
                     onResumeGame = { resumable ->
-                        backStack.add(GameKey(resumable.boardSize.value, resumable.gameId))
+                        backStack.add(
+                            GameKey(resumable.boardSize.value, resumable.gameId, resumable.puzzleType),
+                        )
                     },
                     onSeeAllBestTimes = { backStack.add(BestTimesKey) },
                 )
@@ -40,6 +42,7 @@ fun QueensNavHost(modifier: Modifier = Modifier) {
                 GameScreen(
                     boardSize = key.boardSize,
                     gameId = key.gameId,
+                    puzzleType = key.puzzleType,
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onNavigateToWin = { solveId ->
                         backStack.removeLastOrNull()
@@ -50,9 +53,9 @@ fun QueensNavHost(modifier: Modifier = Modifier) {
             entry<WinKey> { key ->
                 WinScreen(
                     solveId = key.solveId,
-                    onPlay = { boardSize, gameId ->
+                    onPlay = { boardSize, puzzleType, gameId ->
                         backStack.removeLastOrNull()
-                        backStack.add(GameKey(boardSize, gameId))
+                        backStack.add(GameKey(boardSize, gameId, puzzleType))
                     },
                     onSeeBestTimes = {
                         backStack.removeLastOrNull()

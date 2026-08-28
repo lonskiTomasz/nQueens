@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 /** Schemas are exported to `app/schemas` and committed. */
 @Database(
     entities = [SolveEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {

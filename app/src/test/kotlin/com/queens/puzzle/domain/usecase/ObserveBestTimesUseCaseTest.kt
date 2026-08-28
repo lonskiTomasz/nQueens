@@ -1,6 +1,7 @@
 package com.queens.puzzle.domain.usecase
 
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.repository.TestSolveRepository
 import com.queens.puzzle.testing.util.TestTimeProvider
@@ -14,7 +15,7 @@ class ObserveBestTimesUseCaseTest {
 
     @Test
     fun `no history yields no best times`() = runTest {
-        val bestTimes = ObserveBestTimesUseCase(TestSolveRepository())().first()
+        val bestTimes = ObserveBestTimesUseCase(TestSolveRepository())(PuzzleType.Queens).first()
 
         assertTrue(bestTimes.isEmpty())
     }
@@ -30,7 +31,7 @@ class ObserveBestTimesUseCaseTest {
             )
         )
 
-        val bestTimes = ObserveBestTimesUseCase(repository)().first()
+        val bestTimes = ObserveBestTimesUseCase(repository)(PuzzleType.Queens).first()
 
         val eight = bestTimes.single { it.boardSize == BoardSize(8) }
         assertEquals(66_000L, eight.bestMillis)
@@ -51,7 +52,7 @@ class ObserveBestTimesUseCaseTest {
             )
         )
 
-        val bestTimes = ObserveBestTimesUseCase(repository)().first()
+        val bestTimes = ObserveBestTimesUseCase(repository)(PuzzleType.Queens).first()
 
         assertEquals(listOf(12, 6, 4), bestTimes.map { it.boardSize.value })
     }
@@ -61,16 +62,38 @@ class ObserveBestTimesUseCaseTest {
         val repository = TestSolveRepository(listOf(solve(id = 1, boardSize = 8, durationMillis = 90_000)))
         val useCase = ObserveBestTimesUseCase(repository)
 
-        assertEquals(90_000L, useCase().first().single().bestMillis)
+        assertEquals(90_000L, useCase(PuzzleType.Queens).first().single().bestMillis)
 
         repository.record(solve(id = 0, boardSize = 8, durationMillis = 45_000))
 
-        assertEquals(45_000L, useCase().first().single().bestMillis)
+        assertEquals(45_000L, useCase(PuzzleType.Queens).first().single().bestMillis)
     }
 
-    private fun solve(id: Long, boardSize: Int, durationMillis: Long) = Solve(
+    @Test
+    fun `each puzzle type is observed separately`() = runTest {
+        val repository = TestSolveRepository(
+            listOf(
+                solve(id = 1, boardSize = 8, durationMillis = 90_000),
+                solve(id = 2, boardSize = 8, puzzleType = PuzzleType.Knights, durationMillis = 40_000),
+            )
+        )
+
+        val queenBests = ObserveBestTimesUseCase(repository)(PuzzleType.Queens).first()
+        assertEquals(90_000L, queenBests.single().bestMillis)
+
+        val knightBests = ObserveBestTimesUseCase(repository)(PuzzleType.Knights).first()
+        assertEquals(40_000L, knightBests.single().bestMillis)
+    }
+
+    private fun solve(
+        id: Long,
+        boardSize: Int,
+        puzzleType: PuzzleType = PuzzleType.Queens,
+        durationMillis: Long,
+    ) = Solve(
         id = id,
         boardSize = BoardSize(boardSize),
+        puzzleType = puzzleType,
         durationMillis = durationMillis,
         taps = 20,
         undos = 0,

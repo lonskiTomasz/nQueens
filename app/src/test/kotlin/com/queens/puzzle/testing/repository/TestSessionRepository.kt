@@ -3,6 +3,7 @@ package com.queens.puzzle.testing.repository
 import com.queens.puzzle.data.repository.SavedGame
 import com.queens.puzzle.data.repository.SessionRepository
 import com.queens.puzzle.model.GameSession
+import com.queens.puzzle.model.PuzzleType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -23,10 +24,11 @@ class TestSessionRepository(initial: SavedGame? = null) : SessionRepository {
 
     override suspend fun save(
         gameId: Long,
+        puzzleType: PuzzleType,
         session: GameSession,
-        elapsedMillis: Long
+        elapsedMillis: Long,
     ) {
-        val game = SavedGame(gameId, session, elapsedMillis)
+        val game = SavedGame(gameId, puzzleType, session, elapsedMillis)
         _writes += game
         saved.value = game
     }

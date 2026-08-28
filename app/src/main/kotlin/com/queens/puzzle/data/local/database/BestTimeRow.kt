@@ -7,6 +7,9 @@ data class BestTimeRow(
     @ColumnInfo(name = "board_size")
     val boardSize: Int,
 
+    @ColumnInfo(name = "puzzle_type")
+    val puzzleType: String,
+
     @ColumnInfo(name = "best_millis")
     val bestMillis: Long,
 

@@ -21,15 +21,21 @@ class TestSolveDao : SolveDao {
     override fun observeAll(): Flow<List<SolveEntity>> =
         rows.map { list -> list.sortedByDescending { it.completedAtMillis } }
 
-    override fun observeForSize(boardSize: Int): Flow<List<SolveEntity>> =
-        observeAll().map { list -> list.filter { it.boardSize == boardSize } }
+    override fun observeForSize(boardSize: Int, puzzleType: String): Flow<List<SolveEntity>> =
+        observeAll().map { list ->
+            list.filter { it.boardSize == boardSize && it.puzzleType == puzzleType }
+        }
 
-    override suspend fun bestFor(boardSize: Int): SolveEntity? =
-        rows.value.filter { it.boardSize == boardSize }.minByOrNull { it.durationMillis }
+    override suspend fun bestFor(boardSize: Int, puzzleType: String): SolveEntity? =
+        rows.value
+            .filter { it.boardSize == boardSize && it.puzzleType == puzzleType }
+            .minByOrNull { it.durationMillis }
 
     override suspend fun getWithSizeSummary(id: Long): SolveWithSizeSummary? {
         val solve = rows.value.firstOrNull { it.id == id } ?: return null
-        val forSize = rows.value.filter { it.boardSize == solve.boardSize }
+        val forSize = rows.value.filter {
+            it.boardSize == solve.boardSize && it.puzzleType == solve.puzzleType
+        }
         return SolveWithSizeSummary(
             solve = solve,
             solveCount = forSize.size,
@@ -39,11 +45,13 @@ class TestSolveDao : SolveDao {
         )
     }
 
-    override fun observeBestTimes(): Flow<List<BestTimeRow>> = rows.map { list ->
-        list.groupBy { it.boardSize }
+    override fun observeBestTimes(puzzleType: String): Flow<List<BestTimeRow>> = rows.map { list ->
+        list.filter { it.puzzleType == puzzleType }
+            .groupBy { it.boardSize }
             .map { (boardSize, forSize) ->
                 BestTimeRow(
                     boardSize = boardSize,
+                    puzzleType = puzzleType,
                     bestMillis = forSize.minOf { it.durationMillis },
                     solveCount = forSize.size,
                 )

@@ -2,6 +2,7 @@ package com.queens.puzzle.ui.win
 
 import com.queens.puzzle.domain.usecase.GetWinSummaryUseCase
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.testing.MainDispatcherRule
 import com.queens.puzzle.testing.repository.TestSolveRepository
@@ -25,7 +26,15 @@ class WinViewModelTest {
     @Test
     fun `the solve is loaded from its id alone`() = runTest {
         val id = solveRepository.record(
-            Solve(0L, BoardSize(8), durationMillis = 107_000, taps = 27, undos = 2, completedAtMillis = 1_000)
+            Solve(
+                0L,
+                BoardSize(8),
+                puzzleType = PuzzleType.Queens,
+                durationMillis = 107_000,
+                taps = 27,
+                undos = 2,
+                completedAtMillis = 1_000,
+            )
         )
 
         val viewModel = viewModel(id)
@@ -48,7 +57,15 @@ class WinViewModelTest {
     @Test
     fun `nothing is claimed before the solve has loaded`() = runTest {
         val id = solveRepository.record(
-            Solve(0L, BoardSize(8), durationMillis = 107_000, taps = 27, undos = 2, completedAtMillis = 1_000)
+            Solve(
+                0L,
+                BoardSize(8),
+                puzzleType = PuzzleType.Queens,
+                durationMillis = 107_000,
+                taps = 27,
+                undos = 2,
+                completedAtMillis = 1_000,
+            )
         )
 
         val viewModel = viewModel(id)

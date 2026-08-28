@@ -3,6 +3,7 @@ package com.queens.puzzle.ui.home
 import com.queens.puzzle.domain.usecase.ObserveBestTimesUseCase
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSession
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.Solve
 import com.queens.puzzle.model.ThemePreference
 import com.queens.puzzle.testing.MainDispatcherRule
@@ -54,6 +55,23 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `selecting a puzzle type remembers it and re-sources best times`() = runTest {
+        solveRepository.record(solve(boardSize = 8, durationMillis = 100_000))
+        solveRepository.record(
+            solve(boardSize = 8, puzzleType = PuzzleType.Knights, durationMillis = 40_000),
+        )
+
+        val viewModel = viewModel()
+        observe(viewModel)
+
+        viewModel.onPuzzleTypeSelected(PuzzleType.Knights)
+
+        assertEquals(PuzzleType.Knights, appSettingsRepository.current.lastPuzzleType)
+        assertEquals(PuzzleType.Knights, viewModel.uiState.value.puzzleType)
+        assertEquals(40_000L, viewModel.uiState.value.bestTimes.single().bestMillis)
+    }
+
+    @Test
     fun `choosing a theme stores it`() = runTest {
         val viewModel = viewModel()
         observe(viewModel)
@@ -75,13 +93,33 @@ class HomeViewModelTest {
 
     @Test
     fun `a stored board offers a resume at its own size`() = runTest {
-        sessionRepository.save(gameId = 1L, session = GameSession(BoardSize(12)), elapsedMillis = 5_000)
+        sessionRepository.save(
+            gameId = 1L,
+            puzzleType = PuzzleType.Queens,
+            session = GameSession(BoardSize(12)),
+            elapsedMillis = 5_000,
+        )
 
         val viewModel = viewModel()
         observe(viewModel)
 
         assertTrue(viewModel.uiState.value.canResume)
         assertEquals(BoardSize(12), viewModel.uiState.value.resumable?.boardSize)
+    }
+
+    @Test
+    fun `a stored board of the other puzzle type does not offer a resume`() = runTest {
+        sessionRepository.save(
+            gameId = 1L,
+            puzzleType = PuzzleType.Knights,
+            session = GameSession(BoardSize(12)),
+            elapsedMillis = 5_000,
+        )
+
+        val viewModel = viewModel()
+        observe(viewModel)
+
+        assertFalse(viewModel.uiState.value.canResume)
     }
 
     @Test
@@ -103,6 +141,7 @@ class HomeViewModelTest {
     fun `a new game is identified apart from the board already stored`() = runTest {
         sessionRepository.save(
             gameId = 1L,
+            puzzleType = PuzzleType.Queens,
             session = GameSession(BoardSize(8)),
             elapsedMillis = 5_000,
         )
@@ -127,9 +166,14 @@ class HomeViewModelTest {
         observeBestTimes = ObserveBestTimesUseCase(solveRepository),
     )
 
-    private fun solve(boardSize: Int, durationMillis: Long) = Solve(
+    private fun solve(
+        boardSize: Int,
+        durationMillis: Long,
+        puzzleType: PuzzleType = PuzzleType.Queens,
+    ) = Solve(
         id = 0L,
         boardSize = BoardSize(boardSize),
+        puzzleType = puzzleType,
         durationMillis = durationMillis,
         taps = 10,
         undos = 0,

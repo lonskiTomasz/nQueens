@@ -2,6 +2,7 @@ package com.queens.puzzle.data.local.database
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.queens.puzzle.model.PuzzleType
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -112,6 +113,7 @@ class SolveDaoTest {
         undos: Int = 1,
     ) = SolveEntity(
         boardSize = boardSize,
+        puzzleType = PuzzleType.Queens.name,
         durationMillis = durationMillis,
         taps = taps,
         undos = undos,
