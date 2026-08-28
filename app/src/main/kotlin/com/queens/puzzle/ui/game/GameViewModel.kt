@@ -183,7 +183,12 @@ class GameViewModel @AssistedInject constructor(
     private suspend fun writePendingSaves() {
         pendingSave.collectLatest { pending ->
             if (pending != null) {
-                sessionRepository.save(gameId, pending.session, pending.elapsedMillis)
+                sessionRepository.save(
+                    gameId,
+                    PuzzleType.Queens,
+                    pending.session,
+                    pending.elapsedMillis,
+                )
             }
         }
     }

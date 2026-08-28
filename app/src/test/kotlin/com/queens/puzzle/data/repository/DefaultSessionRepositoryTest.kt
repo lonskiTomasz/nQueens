@@ -3,12 +3,14 @@ package com.queens.puzzle.data.repository
 import com.queens.puzzle.data.local.datastore.SavedMove
 import com.queens.puzzle.data.local.datastore.SavedMoveKind
 import com.queens.puzzle.data.local.datastore.SavedPosition
+import com.queens.puzzle.data.local.datastore.SavedPuzzleType
 import com.queens.puzzle.data.local.datastore.SavedSession
 import com.queens.puzzle.data.local.datastore.SessionDataSource
 import com.queens.puzzle.model.BoardSize
 import com.queens.puzzle.model.GameSession
 import com.queens.puzzle.model.Move
 import com.queens.puzzle.model.Position
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.testing.local.InMemoryDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -34,12 +36,22 @@ class DefaultSessionRepositoryTest {
             undos = 1,
         )
 
-        repository.save(gameId = 7L, session = session, elapsedMillis = 42_000)
+        repository.save(gameId = 7L, puzzleType = PuzzleType.Queens, session = session, elapsedMillis = 42_000)
 
         assertEquals(
-            SavedGame(gameId = 7L, session = session, elapsedMillis = 42_000),
+            SavedGame(gameId = 7L, puzzleType = PuzzleType.Queens, session = session, elapsedMillis = 42_000),
             repository.observeSavedSession().first(),
         )
+    }
+
+    @Test
+    fun `a knights game round-trips its puzzle type`() = runTest {
+        val repository = repositoryOver(null)
+        val session = GameSession(boardSize = BoardSize(6), pieces = setOf(Position(0, 1)))
+
+        repository.save(gameId = 7L, puzzleType = PuzzleType.Knights, session = session, elapsedMillis = 0)
+
+        assertEquals(PuzzleType.Knights, repository.observeSavedSession().first()!!.puzzleType)
     }
 
     @Test
@@ -53,6 +65,7 @@ class DefaultSessionRepositoryTest {
 
         repository.save(
             gameId = 7L,
+            puzzleType = PuzzleType.Queens,
             session = GameSession(BoardSize(6), pieces = setOf(Position(0, 1)), moves = moves),
             elapsedMillis = 0,
         )
@@ -66,8 +79,8 @@ class DefaultSessionRepositoryTest {
     fun `saving replaces the previous game rather than accumulating`() = runTest {
         val repository = repositoryOver(null)
 
-        repository.save(gameId = 1L, session = GameSession(BoardSize(4)), elapsedMillis = 1_000)
-        repository.save(gameId = 2L, session = GameSession(BoardSize(8)), elapsedMillis = 2_000)
+        repository.save(gameId = 1L, puzzleType = PuzzleType.Queens, session = GameSession(BoardSize(4)), elapsedMillis = 1_000)
+        repository.save(gameId = 2L, puzzleType = PuzzleType.Queens, session = GameSession(BoardSize(8)), elapsedMillis = 2_000)
 
         val saved = repository.observeSavedSession().first()!!
         assertEquals(BoardSize(8), saved.session.boardSize)
@@ -77,7 +90,7 @@ class DefaultSessionRepositoryTest {
     @Test
     fun `clearing leaves nothing to resume`() = runTest {
         val repository = repositoryOver(null)
-        repository.save(gameId = 1L, session = GameSession(BoardSize(8)), elapsedMillis = 1_000)
+        repository.save(gameId = 1L, puzzleType = PuzzleType.Queens, session = GameSession(BoardSize(8)), elapsedMillis = 1_000)
 
         repository.clear()
 
@@ -114,10 +127,12 @@ class DefaultSessionRepositoryTest {
 
     private fun savedSession(
         boardSize: Int,
+        puzzleType: SavedPuzzleType = SavedPuzzleType.Queens,
         pieces: List<SavedPosition> = emptyList(),
         moves: List<SavedMove> = pieces.map { SavedMove(SavedMoveKind.Place, it) },
     ) = SavedSession(
         boardSize = boardSize,
+        puzzleType = puzzleType,
         pieces = pieces,
         moves = moves,
         taps = pieces.size,

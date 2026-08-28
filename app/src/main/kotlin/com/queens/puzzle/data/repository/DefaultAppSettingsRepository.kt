@@ -3,6 +3,7 @@ package com.queens.puzzle.data.repository
 import com.queens.puzzle.data.local.datastore.SettingsDataSource
 import com.queens.puzzle.model.AppSettings
 import com.queens.puzzle.model.BoardSize
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.model.ThemePreference
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -19,4 +20,7 @@ class DefaultAppSettingsRepository @Inject constructor(
 
     override suspend fun setLastBoardSize(boardSize: BoardSize) =
         settingsDataSource.setLastBoardSize(boardSize)
+
+    override suspend fun setLastPuzzleType(puzzleType: PuzzleType) =
+        settingsDataSource.setLastPuzzleType(puzzleType)
 }

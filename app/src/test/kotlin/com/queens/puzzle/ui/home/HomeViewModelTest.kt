@@ -76,7 +76,12 @@ class HomeViewModelTest {
 
     @Test
     fun `a stored board offers a resume at its own size`() = runTest {
-        sessionRepository.save(gameId = 1L, session = GameSession(BoardSize(12)), elapsedMillis = 5_000)
+        sessionRepository.save(
+            gameId = 1L,
+            puzzleType = PuzzleType.Queens,
+            session = GameSession(BoardSize(12)),
+            elapsedMillis = 5_000,
+        )
 
         val viewModel = viewModel()
         observe(viewModel)
@@ -104,6 +109,7 @@ class HomeViewModelTest {
     fun `a new game is identified apart from the board already stored`() = runTest {
         sessionRepository.save(
             gameId = 1L,
+            puzzleType = PuzzleType.Queens,
             session = GameSession(BoardSize(8)),
             elapsedMillis = 5_000,
         )

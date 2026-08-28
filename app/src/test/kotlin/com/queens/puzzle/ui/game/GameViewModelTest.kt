@@ -7,6 +7,7 @@ import com.queens.puzzle.model.ConflictKind
 import com.queens.puzzle.model.GameSession
 import com.queens.puzzle.model.GameSettings
 import com.queens.puzzle.model.Position
+import com.queens.puzzle.model.PuzzleType
 import com.queens.puzzle.testing.MainDispatcherRule
 import com.queens.puzzle.testing.repository.TestGameSettingsRepository
 import com.queens.puzzle.testing.repository.TestSessionRepository
@@ -255,6 +256,7 @@ class GameViewModelTest {
     fun `resuming restores the queens and the elapsed time`() = runTest {
         sessionRepository.save(
             gameId = GAME_ID,
+            puzzleType = PuzzleType.Queens,
             session = GameSession(BoardSize(4), pieces = setOf(Position(0, 0)), taps = 1),
             elapsedMillis = 45_000,
         )
@@ -271,6 +273,7 @@ class GameViewModelTest {
     fun `starting a fresh game discards the board another game stored`() = runTest {
         sessionRepository.save(
             gameId = GAME_ID,
+            puzzleType = PuzzleType.Queens,
             session = GameSession(BoardSize(4), pieces = setOf(Position(0, 0))),
             elapsedMillis = 45_000,
         )
@@ -286,6 +289,7 @@ class GameViewModelTest {
     fun `a stored board of another size is not resumed`() = runTest {
         sessionRepository.save(
             gameId = GAME_ID,
+            puzzleType = PuzzleType.Queens,
             session = GameSession(BoardSize(8), pieces = setOf(Position(0, 0))),
             elapsedMillis = 45_000,
         )
